@@ -10,8 +10,8 @@ Phil
 3.
 
 Bahar
-1. Add new line
-2. create DB   
+1. 
+2. User Registeration Form
 3.
 
 Dmitri
