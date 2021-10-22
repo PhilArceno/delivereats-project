@@ -20,11 +20,10 @@ $log->pushProcessor(function ($record) {
     return $record;
 });
 
-//FIXME
-// DB::$dbName = 'quiz1auctions';
-// DB::$user = 'quiz1auctions';
-// DB::$password = 'hbtd6Gz2vRTyUey@';
-// DB::$host = 'localhost';
+DB::$dbName = 'delivereats';
+DB::$user = 'delivereats';
+DB::$password = ')!sNqREdhs6EIlGx';
+DB::$host = 'localhost';
 
 DB::$error_handler = 'db_error_handler'; // runs on mysql query errors
 DB::$nonsql_error_handler = 'db_error_handler'; // runs on library errors (bad syntax, etc)
