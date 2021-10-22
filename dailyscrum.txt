@@ -11,7 +11,7 @@ Phil
 
 Bahar
 1.
-2.
+2. create DB
 3.
 
 Dmitri
