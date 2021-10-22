@@ -5,9 +5,9 @@ DeliverEats Scrum 10/22/2021
 3.	Where do I need assistance? What do I need to figure out?
 
 Phil
-1.
-2.
-3.
+1.  N/A
+2.  Templates for login and registration.
+3.  Think i'll be good for the templates. Need to look at tailweind tutorials for later.
 
 Bahar
 1. 
