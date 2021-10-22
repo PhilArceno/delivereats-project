@@ -1,0 +1,10 @@
+{
+    "name": "phil-jonathan/quiz1slim",
+    "require": {
+        "slim/slim": "^3.12",
+        "twig/twig": "v2.14.7",
+        "slim/twig-view": "^2.5",
+        "sergeytsalkov/meekrodb": "v2.3.1",
+        "monolog/monolog": "^2.3"
+    }
+}

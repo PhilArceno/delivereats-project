@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../styles.css"/>
+        <title>{% block title %}{% endblock %} - DeliverEats</title>
+        {% block addHead %}
+        {% endblock %}
+    </head>
+    <body>
+        <main id="main">
+            {% block content %}
+            {% endblock %}
+            <footer id ="footer">
+            {% block footer %}
+            {% endblock %}
+            <footer>
+        </main>
+    </body>
+</html>
