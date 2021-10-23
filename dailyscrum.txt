@@ -15,6 +15,6 @@ Bahar
 3.
 
 Dmitri
-1.
-2.
-3.
+1. N/A
+2. create add-restaurant template
+3. Brush up on libraries (slim and twig) and practice
