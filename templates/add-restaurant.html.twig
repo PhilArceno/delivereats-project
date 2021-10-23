@@ -1,6 +1,6 @@
 {% extends "master.html.twig" %}
 
-{% block title %}Add restaurant
+{% block title %}Add your restaurant
 {% endblock %}
 
 {% block addHead %}
@@ -22,15 +22,13 @@
 
 	<form method="post" enctype="multipart/form-data">
 		<h1>Add your restaurant:</h1>
+        <h2>Submit your business info</h2>
 		<div>
-			<label for="name">Name:</label>
+			<label for="name">Store name:</label>
 			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
 		</div>
 		<div>
-			Address:<br>
-		</div>
-		<div>
-			Description:
+			Store description:
 			<textarea name="description">{{ v.itemDescription}}</textarea><br>
 		</div>
 		<div>
@@ -41,7 +39,27 @@
 			Pricing:
 			<input type="number" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
 		</div>
+		<div>
+			<label for="streetAddress">Address</label>
+			<input type="text" id="streetAddress" size="30" maxlength="30"/><span>
+			</span>
+		</div>
+		<div>
+			<label for="city">City</label>
+			<input type="text" id="city" size="30" maxlength="15"/><span>
+			</span>
+		</div>
+		<div>
+			<label for="province">Province:</label>
+			<input type="text" id="province" size="2" maxlength="2"/><span>
+			</span>
+		</div>
+		<div>
+			<label for="postalCode">Postal code:</label>
+			<input type="text" id="postalCode" size="6" maxlength="6"/><span>
+			</span>
+		</div>
 		<button type="submit">Add restaurant</button>
-	</form>
 
+	</form>
 {% endblock content %}
