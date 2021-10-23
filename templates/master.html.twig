@@ -1,19 +1,30 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" href="../styles.css"/>
-        <title>{% block title %}{% endblock %} - DeliverEats</title>
-        {% block addHead %}
-        {% endblock %}
-    </head>
-    <body>
-        <main id="main">
-            {% block content %}
-            {% endblock %}
-            <footer id ="footer">
-            {% block footer %}
-            {% endblock %}
-            <footer>
-        </main>
-    </body>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="Food Delivery Service Project">
+		<meta name="keywords" content="Have to be added">
+		<meta name="author" content="Team 4: Phil Arceno, Dmitri Banshchikov, Bahareh Jabarzadnouri">
+		<meta name='date' content='November 01, 2021'>
+		<!-- Bootstrap or Tailwind styles -->
+		<!-- Custom Styles -->
+		<link rel="stylesheet" href="styles.css"/> <title>
+			{% block title %}{% endblock %}
+			- DeliverEats</title>
+		{% block addHead %}{% endblock %}
+	</head>
+	<body>
+		<!-- Logo -->
+		<!-- Search Bar -->
+		<!-- Menu Items -->
+		<!-- Body -->
+			<main id="main">{% block content %}{% endblock %}
+			<!-- Footer -->
+			<footer id="footer"> {% block footer %}{% endblock %}
+				<footer></main>
+			</body>
+		</html>
+	</body>
 </html>

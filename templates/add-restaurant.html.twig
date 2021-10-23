@@ -1,0 +1,47 @@
+{% extends "master.html.twig" %}
+
+{% block title %}Add restaurant
+{% endblock %}
+
+{% block addHead %}
+	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+	<script>
+		tinymce.init({selector: 'textarea[name=description]'});
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	{% if errorList %}
+		<ul>
+			{% for error in errorList %}
+				<li>{{ error }}</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+
+	<form method="post" enctype="multipart/form-data">
+		<h1>Add your restaurant:</h1>
+		<div>
+			<label for="name">Name:</label>
+			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
+		</div>
+		<div>
+			Address:<br>
+		</div>
+		<div>
+			Description:
+			<textarea name="description">{{ v.itemDescription}}</textarea><br>
+		</div>
+		<div>
+			Image:
+			<input type="file" name="image"/><br>
+		</div>
+		<div>
+			Pricing:
+			<input type="number" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
+		</div>
+		<button type="submit">Add restaurant</button>
+	</form>
+
+{% endblock content %}
