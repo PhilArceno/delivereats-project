@@ -10,9 +10,9 @@ Phil
 3.  Think i'll be good for the templates. Need to look at tailweind tutorials for later.
 
 Bahar
-1. 
-2. User Registeration Form
-3.
+1. N/A
+2. Create registeration template.
+3. I need to review some materials.
 
 Dmitri
 1. N/A
