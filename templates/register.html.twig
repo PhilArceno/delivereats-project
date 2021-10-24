@@ -1,0 +1,31 @@
+    {% extends "master.html.twig"%}
+
+    {% block content%}
+
+    {% if errorList %}
+        <ul>
+        {% for error in errorList %}
+        <li>{{error}}
+        {% endfor %}
+        </ul>
+    {% endif %}
+    
+    
+        <form class="" method="post" enctype="multipart/form-data">
+            User Name:<br> <input type="text" name="userName" value="{{v.userName}}"><br>
+            Email:<br> <input type="text" name="email" value="{{v.email}}"><br>
+            Password: <br><input type="password" name="pass1" value="{{v.pass1}}"><br>
+            Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
+            Enter Your address: <br>
+            <!--Street#:<br> <input type="number" name="streetNo" value=""><br>-->
+            Street:<br><input type="text" name="street" value="{{v.street}}"><br>
+            Apartment#: <br><input type="number" name="apartmentNo" value="{{v.appartmentNo}}"><br>
+            Postal Code:<br><input type="text" name="postalCode" value="{{v.postalCode}}"><br>
+            City: <br><input type="text" name="city" value="{{v.city}}"><br>
+            Province: <br><input type="text" name="province" value="{{v.province}}"><br>
+            Phone: <br><input type="text" name"phone" value="{{v.phone}}"><br>
+            <input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
+        </form>
+
+ 
+     {% endblock content%}
