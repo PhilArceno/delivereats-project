@@ -1,5 +1,8 @@
     {% extends "master.html.twig"%}
 
+    {% block title %}Registeration
+    {% endblock %}
+
     {% block content%}
 
     {% if errorList %}
@@ -12,6 +15,7 @@
     
     
         <form class="" method="post" enctype="multipart/form-data">
+            <h1>Registeration</h1>
             User Name:<br> <input type="text" name="userName" value="{{v.userName}}"><br>
             Email:<br> <input type="text" name="email" value="{{v.email}}"><br>
             Password: <br><input type="password" name="pass1" value="{{v.pass1}}"><br>
@@ -23,7 +27,24 @@
             Postal Code:<br><input type="text" name="postalCode" value="{{v.postalCode}}"><br>
             City: <br><input type="text" name="city" value="{{v.city}}"><br>
             Province: <br><input type="text" name="province" value="{{v.province}}"><br>
-            Phone: <br><input type="text" name"phone" value="{{v.phone}}"><br>
+            Province: 
+            <select name="province"><option value="None" selected>None</option>
+            <option value="AB">AB</option>
+            <option value="BC">BC</option>
+            <option value="MB">MB</option>
+            <option value="NB">NB</option>
+            <option value="NL">NL</option>
+            <option value="NT">NT</option>
+            <option value="NS">NS</option>
+            <option value="NU">NU</option>
+            <option value="ON">ON</option>
+            <option value="PE">PE</option>
+            <option value="QC">QC</option>
+            <option value="SK">SK</option>
+            <option value="YT">YT</option>
+            </select>
+            <label for="phone">Phone: </label><br>
+            <input type="text" name"phone" value="{{v.phone}}"><br>
             <input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
         </form>
 

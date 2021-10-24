@@ -4,12 +4,6 @@ require_once 'vendor/autoload.php';
 
 require_once 'init.php';
 
-
-// **************** REGISTER USER ********************
-
-// $app->get('/register', function() {
-
-
 // ******************** LOGIN USER ***********************
 
 // $app->get('/login', function() {
@@ -29,7 +23,7 @@ require_once 'init.php';
 // });
 
 
-// ================================================== Registeration: ================================================
+// ************************************************ REGISTER USER ****************************************************
 $app->get('/register', function($request,$response,$args) {
     return $this->view->render($response, "register.html.twig");
 });
@@ -47,7 +41,7 @@ $app->post('/register', function($request,$response,$args) {
     $province = $request->getParam('province');
     $phone = $request->getParam('phone');
 
-//========================= validation: =========================
+//***************************** VALIDATIOM: *****************************
 $errorList = [];
 
 // username validation
@@ -89,18 +83,21 @@ if ($result !== TRUE) {
      $errorList[] = $result;
 };
 
+
+
 if($errorList){
     $valuesList = ['userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
     'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province'=> $province];
     return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
 }else{
+//  ************************ REGISTERATION DONE **********************
 
    return $this->view->render($response, "register_success.html.twig");
 }
 
 });
 
-// =========================Functions to check verification:=========================
+// *****************************Functions to check verification:*****************************
 
 function verifyUserName($name) {
     if (preg_match('/^\d+\s+\w+\s+\w+$/', $name) != 1) { // no match
