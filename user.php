@@ -7,9 +7,10 @@ require_once 'init.php';
 
 // **************** REGISTER USER ********************
 
-// $app->get('/register', function() {
-
-// });
+$app->get('/register', function($request, $response, $args) {
+    $apiKey = $_ENV['gMapsAPIKey'];
+    return $this->view->render($response, 'register.html.twig', ['apiKey' => $apiKey]);
+});
 
 // ******************** LOGIN USER ***********************
 
