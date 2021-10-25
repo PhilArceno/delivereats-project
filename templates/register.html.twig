@@ -1,25 +1,12 @@
 {% extends "master.html.twig"%}
-
 {% block title %}Registration
 {% endblock %}
 
 {% block addHead %}
-	<script>
-		let autocomplete;
-        function initAutocomplete() {
-        autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), {
-        types: ['establishment'],
-        componentRestrictions: {
-        'country': ['CA']
-        },
-        fields: ['place_id', 'geometry', 'name']
-        });
-        }
-	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?key={{apiKey}}&libraries=places&callback=initAutocomplete" async defer></script>
+{% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
 {% endblock %}
 
-{% block content%}
+{% block content %}
 
 {% if errorList %}
 	<ul>
@@ -39,7 +26,8 @@
 		Password:
 		<br><input type="password" name="pass1" value="{{v.pass1}}"><br>
 		Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
-		<input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
+        {% include "address-form.html.twig" %}
+		{# <input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
 	Enter Your address:
 	<br>
 	<!--Street#:<br> <input type="number" name="streetNo" value=""><br>-->
@@ -67,9 +55,10 @@
 		<option value="QC">QC</option>
 		<option value="SK">SK</option>
 		<option value="YT">YT</option>
-	</select>
+	</select> #}
 	<label for="phone">Phone:
 	</label><br>
 	<input type="text" name"phone" value="{{v.phone}}"><br>
 	<input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
-</form>{% endblock content%}
+</form>
+{% endblock content%}
