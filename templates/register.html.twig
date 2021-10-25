@@ -1,46 +1,75 @@
-{% extends "master.html.twig" %}
+{% extends "master.html.twig"%}
 
-{% block title %}Login
+{% block title %}Registration
 {% endblock %}
 
 {% block addHead %}
-<script>
-    let autocomplete;
-    function initAutocomplete() {
-        autocomplete = new google.maps.places.Autocomplete(
-            document.getElementById('autocomplete'),
-            {
-                types: ['establishment'],
-                componentRestrictions: {
-                    'country': ['CA']
-                },
-                fields: ['place_id', 'geometry', 'name']
-            });
-    }
-</script>
-<script
-    src="https://maps.googleapis.com/maps/api/js?key={{apiKey}}&libraries=places&callback=initAutocomplete"
-    async defer>
-</script>
+	<script>
+		let autocomplete;
+        function initAutocomplete() {
+        autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), {
+        types: ['establishment'],
+        componentRestrictions: {
+        'country': ['CA']
+        },
+        fields: ['place_id', 'geometry', 'name']
+        });
+        }
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?key={{apiKey}}&libraries=places&callback=initAutocomplete" async defer></script>
 {% endblock %}
 
-{% block content %}
+{% block content%}
+
 {% if errorList %}
-    <p>ERROR:</p>
-    <ul>
-        {% for error in errorList %}
-        <li>{{error}}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
-	<div>
-		<form method="POST">
-        <div>
-            <label>Address: </label>
-            <input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
-        </div>
-            <input type="submit" value="Login"></input>
-        </form>
-	</div>
+	<ul>
+		{% for error in errorList %}
+			<li>{{error}}
+			{% endfor %}
+		</ul>
+	{% endif %}
 
-{% endblock %}
+
+	<form class="" method="post" enctype="multipart/form-data">
+		<h1>Registration</h1>
+		User Name:<br>
+		<input type="text" name="userName" value="{{v.userName}}"><br>
+		Email:<br>
+		<input type="text" name="email" value="{{v.email}}"><br>
+		Password:
+		<br><input type="password" name="pass1" value="{{v.pass1}}"><br>
+		Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
+		<input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
+	Enter Your address:
+	<br>
+	<!--Street#:<br> <input type="number" name="streetNo" value=""><br>-->
+	Street:<br><input type="text" name="street" value="{{v.street}}"><br>
+	Apartment#:
+	<br><input type="number" name="apartmentNo" value="{{v.appartmentNo}}"><br>
+	Postal Code:<br><input type="text" name="postalCode" value="{{v.postalCode}}"><br>
+	City:
+	<br><input type="text" name="city" value="{{v.city}}"><br>
+	Province:
+	<br><input type="text" name="province" value="{{v.province}}"><br>
+	Province:
+	<select name="province">
+		<option value="None" selected>None</option>
+		<option value="AB">AB</option>
+		<option value="BC">BC</option>
+		<option value="MB">MB</option>
+		<option value="NB">NB</option>
+		<option value="NL">NL</option>
+		<option value="NT">NT</option>
+		<option value="NS">NS</option>
+		<option value="NU">NU</option>
+		<option value="ON">ON</option>
+		<option value="PE">PE</option>
+		<option value="QC">QC</option>
+		<option value="SK">SK</option>
+		<option value="YT">YT</option>
+	</select>
+	<label for="phone">Phone:
+	</label><br>
+	<input type="text" name"phone" value="{{v.phone}}"><br>
+	<input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
+</form>{% endblock content%}

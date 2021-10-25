@@ -8,6 +8,7 @@
 	<script>
 		tinymce.init({selector: 'textarea[name=description]'});
 	</script>
+	<script</script async <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCQnQVZzw00ZAgig1y5gBRpcvrdjEXW-M&libraries=places"></script>
 {% endblock %}
 
 {% block content %}
@@ -22,14 +23,14 @@
 
 	<form method="post" enctype="multipart/form-data">
 		<h1>Add your restaurant:</h1>
-        <h2>Submit your business info</h2>
+		<h2>Submit your business info</h2>
 		<div>
 			<label for="name">Store name:</label>
 			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
 		</div>
 		<div>
 			Store description:
-			<textarea name="description">{{ v.itemDescription}}</textarea><br>
+			<textarea name="description">{{ v.description}}</textarea><br>
 		</div>
 		<div>
 			Image:
@@ -40,26 +41,32 @@
 			<input type="number" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
 		</div>
 		<div>
+			Address:
+			<input type="text" placeholder="Enter your address" id="autocomplete"/>
+		</div>
+
+		<div>
 			<label for="streetAddress">Address</label>
-			<input type="text" id="streetAddress" size="30" maxlength="30"/><span>
-			</span>
+			<input type="text" id="streetAddress" size="30" maxlength="30"/><span></span>
 		</div>
 		<div>
 			<label for="city">City</label>
-			<input type="text" id="city" size="30" maxlength="15"/><span>
-			</span>
+			<input type="text" id="city" size="30" maxlength="15"/><span></span>
 		</div>
 		<div>
 			<label for="province">Province:</label>
-			<input type="text" id="province" size="2" maxlength="2"/><span>
-			</span>
+			<input type="text" id="province" size="2" maxlength="2"/><span></span>
 		</div>
 		<div>
 			<label for="postalCode">Postal code:</label>
-			<input type="text" id="postalCode" size="6" maxlength="6"/><span>
-			</span>
+			<input type="text" id="postalCode" size="6" maxlength="6"/><span></span>
 		</div>
 		<button type="submit">Add restaurant</button>
 
 	</form>
+	<script>
+		new google.maps.places.Autocomplete(document.getElementById("autocomplete"), {
+bounds: new google.maps.LatLngBounds(45.4215296, -75.6971931)
+})
+	</script>
 {% endblock content %}

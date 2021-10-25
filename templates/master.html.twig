@@ -22,7 +22,11 @@
 		<!-- Body -->
 			<main id="main">{% block content %}{% endblock %}
 			<!-- Footer -->
-			<footer id="footer"> {% block footer %}{% endblock %}
+			<footer id="footer">
+				{% block footer %}
+					&copy; Copyright 2021 by
+					<a href="http://continuingeducation.johnabbott.qc.ca/">FSD01 Team 4</a>.
+				{% endblock %}
 				<footer></main>
 			</body>
 		</html>
