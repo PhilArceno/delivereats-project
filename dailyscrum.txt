@@ -18,3 +18,10 @@ Dmitri
 1. N/A
 2. create add-restaurant template
 3. Brush up on libraries (slim and twig) and practice
+
+DeliverEats Scrum 10/25/2021
+
+Phil
+1.  Google maps places Api implementation
+2.  More Api/template implementation
+3.  Google maps api tutorials. Read documentation.
