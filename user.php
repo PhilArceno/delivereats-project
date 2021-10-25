@@ -79,6 +79,7 @@ if ($result !== TRUE) {
 
 // verify phone number
 $result = verifyPhone($phone);
+
 if ($result !== TRUE) {
      $errorList[] = $result;
 };
@@ -87,33 +88,43 @@ if ($result !== TRUE) {
 
 if($errorList){
     $valuesList = ['userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
-    'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province'=> $province];
+    'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province'=> $province, 'phone'=> $phone];
     return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
 }else{
 //  ************************ REGISTERATION DONE **********************
-
-   return $this->view->render($response, "register_success.html.twig");
+    $password = password_hash($pass1, PASSWORD_DEFAULT);
+    DB::insert('users', ['userName' => $userName, 'email' => $email, 'password' => $password, 'street' => $street, 'appartmentNo' => $appartmentNo,
+                'postalCode'=> $postalCode, 'city' => $city, 'province' => $province, 'phone' => $phone]);
+    return $this->view->render($response, "register_success.html.twig");
 }
 
 });
 
 // *****************************Functions to check verification:*****************************
 
-function verifyUserName($name) {
-    if (preg_match('/^\d+\s+\w+\s+\w+$/', $name) != 1) { // no match
-        return "The format of the street is not correct. It should be in this format \"1223 Jerry Street\"";
+function verifyUserName($name) { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
+    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $name) != 1) { // no match
+        return "The name must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
     }
     return TRUE;
 }
+// different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
 function verifyStreet($street) {
-    if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $street) != 1) { // no match
-        return "City name is not valid! please try again! it should just consist of leeters, space or minus sign";
+    if (preg_match('/[0-9A-Z]* [0-9A-Z]*$/', $street) != 1) { // no match
+        return "Street name is not valid! please try again! it should just made up of letters, digits";
     }
     return TRUE;
 }
 function verifyCityName($city) {
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
+    }
+    return TRUE;
+}
+
+function verifyPhone($phone) {
+    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/', $phone) != 1) { // no match
+        return "Phone number must be at least 10 digits long, including the area code.";
     }
     return TRUE;
 }
@@ -125,12 +136,17 @@ function verifyPostalCode($postalCode) {
     return TRUE;
 }
 
-function verifyPhone($phone) {
-    if(preg_match('/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/', $phone) !== 1) { // no match
-        return "Phone number must be at least 10 digits long, including the area code.";
+// used via AJAX
+$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
+    $email = isset($args['email']) ? $args['email'] : "";
+    $record = DB::queryFirstRow("SELECT userId FROM users WHERE email=%s", $email);
+    if ($record) {
+        return $response->write("Email already in use");
+    } else {
+        return $response->write("");
     }
-    return TRUE;
-}
+});
+
 
 
 
