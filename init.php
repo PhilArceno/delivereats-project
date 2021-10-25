@@ -1,10 +1,15 @@
 <?php
 
+//require server
+require_once 'vendor/autoload.php';
+
 session_start();
 use Slim\Http\UploadedFile;
 
-//require server
-require_once 'vendor/autoload.php';
+//use .env file and load it to environment
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;

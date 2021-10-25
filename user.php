@@ -6,9 +6,9 @@ require_once 'init.php';
 
 // ******************** LOGIN USER ***********************
 
-// $app->get('/login', function() {
-
-// });
+$app->get('/login', function($request, $response, $args) {
+    return $this->view->render($response, 'login.html.twig');
+});
 
 // ************** LOGOUT USER ********************
 
@@ -25,7 +25,8 @@ require_once 'init.php';
 
 // ************************************************ REGISTER USER ****************************************************
 $app->get('/register', function($request,$response,$args) {
-    return $this->view->render($response, "register.html.twig");
+    $apiKey = $_ENV['gMapsAPIKey'];
+    return $this->view->render($response, "register.html.twig", ['apiKey' => $apiKey]);
 });
 
 $app->post('/register', function($request,$response,$args) {
