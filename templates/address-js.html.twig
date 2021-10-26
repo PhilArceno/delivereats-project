@@ -3,10 +3,11 @@
     <script>
     function initMap() {
       const componentForm = [
+        'street_number',
+        'route',
         'location',
         'locality',
         'administrative_area_level_1',
-        'country',
         'postal_code',
       ];
       const map = new google.maps.Map(document.getElementById("map"), {
@@ -45,7 +46,6 @@
           'route': 'long_name',
           'locality': 'long_name',
           'administrative_area_level_1': 'short_name',
-          'country': 'long_name',
           'postal_code': 'short_name',
         };
         const getAddressComp = function (type) {
