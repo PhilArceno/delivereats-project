@@ -22,7 +22,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT password FROM users WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if ($record['password'] == $password) {
