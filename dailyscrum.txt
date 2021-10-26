@@ -42,3 +42,13 @@ Phil
 1.  User/Restuarant Database Tables
 2.  Finish up Database Tables
 3.  Hiding/restricting apikeys
+
+Bahar
+1. 
+2. 
+3. 
+
+Dmitri
+1. add-restaurant php logic (with validation)
+2. add-food php logic (with validation)
+3. how to add a flash message for "user logged out"
