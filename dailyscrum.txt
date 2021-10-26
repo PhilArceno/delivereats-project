@@ -35,3 +35,10 @@ Dmitri
 1. login and logout php logic (with validation) are done
 2. add-restaurant php logic (with validation)
 3. need help with testing implemented code
+
+DeliverEats Scrum 10/26/2021
+
+Phil
+1.  User/Restuarant Database Tables
+2.  Finish up Database Tables
+3.  Hiding/restricting apikeys
