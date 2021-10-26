@@ -25,7 +25,7 @@ $app->post(
         $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
-        if ($record['password'] == $password) {
+        if (password_verify($password, $record['password'])) {
             $loginSuccess = true;
         } else {
             $errorList[] = "Wrong username or password";
