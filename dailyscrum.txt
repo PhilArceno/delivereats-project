@@ -25,3 +25,13 @@ Phil
 1.  Google maps places Api implementation
 2.  More Api/template implementation
 3.  Google maps api tutorials. Read documentation.
+
+Bahar
+1. 
+2. 
+3. 
+
+Dmitri
+1. login and logout php logic (with validation) are done
+2. add-restaurant php logic (with validation)
+3. need help with testing implemented code
