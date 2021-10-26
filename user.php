@@ -79,6 +79,7 @@ $app->post('/register', function ($request, $response, $args) {
     $province = $request->getParam('province');
     $phone = $request->getParam('phone');
     $acountType = $request->getParam('accountType');
+    //$account_type = $request->getPara
 
 
     //***************************** VALIDATION: *****************************
