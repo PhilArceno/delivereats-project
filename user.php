@@ -22,7 +22,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT password FROM users WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if ($record['password'] == $password) {
@@ -152,7 +152,7 @@ $app->post('/register', function ($request, $response, $args) {
             'name'=> $name, 'userName' => $userName, 'password'=> $password, 'email' => $email, 
             'account_type'=>'customer'
         ];
-        DB::insert('users', $valuesList);
+        DB::insert('user', $valuesList);
         return $this->view->render($response, "register_success.html.twig");
     }
 });
@@ -203,7 +203,7 @@ function verifyPostalCode($postalCode) {
 // used via AJAX
 //$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
   //  $email = isset($args['email']) ? $args['email'] : "";
-    //$record = DB::queryFirstRow("SELECT userId FROM users WHERE email=%s", $email);
+    //$record = DB::queryFirstRow("SELECT userId FROM user WHERE email=%s", $email);
     //if ($record) {
       //  return $response->write("Email already in use");
     //} else {
