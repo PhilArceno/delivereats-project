@@ -4,6 +4,12 @@ require_once 'vendor/autoload.php';
 
 require_once 'init.php';
 
+
+$app->get('/', function ($request, $response, $args) {
+    return $this->view->render($response, 'index.html.twig');
+});
+
+
 // ******************** LOGIN USER ***********************
 
 $app->get('/login', function ($request, $response, $args) {
@@ -32,11 +38,10 @@ $app->post(
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
             $log->debug(sprintf("Login successful for username %s", $userName));
-            return $this->view->render($response, 'add-restaurant.html.twig', ['userSession' => $_SESSION['user']]);
+            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
     }
 );
-
 
 
 // ************** LOGOUT USER ********************
@@ -44,7 +49,7 @@ $app->post(
 $app->get('/logout', function ($request, $response, $args) use ($log) {
     $log->debug(sprintf("Logout successful for uid=%d", @$_SESSION['user']['id']));
     unset($_SESSION['user']);
-    return $this->view->render($response, 'logout.html.twig', ['userSession' => null]);
+    return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
 });
 
 // ************************ PROFILE USER *********************
@@ -253,7 +258,6 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
     if ($uploadedImage->getError() != UPLOAD_ERR_NO_FILE) {
         $hasPhoto = true;
         $result = verifyUploadedPhoto($uploadedImage, $mimeType);
-
         if ($result !== TRUE) {
             $errorList[] = $result;
         }
@@ -261,9 +265,8 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing,
-            'userId' => $userId];
-        return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing];
+        return $this->view->render($response, 'add-restaurant.html.twig', ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
         //  ************************ RESTAURANT WAS ADDED*********************
         return $this->view->render($response, 'add-restaurant-success.html.twig');
