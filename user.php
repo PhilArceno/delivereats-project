@@ -75,6 +75,7 @@ $app->post('/register', function ($request, $response, $args) {
     $phone = $request->getParam('phone');
     $acountType = $request->getParam('accountType');
 
+
     //***************************** VALIDATION: *****************************
     $errorList = [];
 
@@ -140,11 +141,11 @@ $app->post('/register', function ($request, $response, $args) {
             'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
             'apt_num' => $appartmentNo, 'postal_code'=> $postalCode
         ];
-        DB::insert('address', $addressValueList);
-        $addressId= DB::insertId();
+        //DB::insert('address', $addressValueList);
+        //$addressId= DB::insertId();
         $valuesList = [
             'name'=> $name, 'userName' => $userName, 'password'=> $password, 'email' => $email, 
-            'account_type'=>'customer', 'address_id'=> $addressId
+            'account_type'=>'customer'
         ];
         DB::insert('users', $valuesList);
         return $this->view->render($response, "register_success.html.twig");
