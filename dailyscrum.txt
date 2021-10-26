@@ -27,9 +27,9 @@ Phil
 3.  Google maps api tutorials. Read documentation.
 
 Bahar
-1. 
-2. 
-3. 
+1. registeration(without validation) is done
+2. troubleshooting registeration
+3. receiving error HTTP ERROR 500 while before adding API I did not receive this error
 
 Dmitri
 1. login and logout php logic (with validation) are done

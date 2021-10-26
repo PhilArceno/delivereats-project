@@ -94,22 +94,22 @@ if($pass1 != $pass2){
     }
 }
 // street format validation
-$result = verifyStreet($street);
-if ($result !== TRUE) { 
-    $errorList[] = $result; 
-};
+//$result = verifyStreet($street);
+//if ($result !== TRUE) { 
+  //  $errorList[] = $result; 
+//};
 //  postal code validation
-$result = verifyPostalCode($postalCode);
-if ($result !== TRUE) { 
-    $errorList[] = $result; 
-};
+//$result = verifyPostalCode($postalCode);
+//if ($result !== TRUE) { 
+  //  $errorList[] = $result; 
+//};
 
 // verify phone number
-$result = verifyPhone($phone);
+//$result = verifyPhone($phone);
 
-if ($result !== TRUE) {
-     $errorList[] = $result;
-};
+//if ($result !== TRUE) {
+  //   $errorList[] = $result;
+//};
 
 
 
@@ -136,12 +136,12 @@ function verifyUserName($name) { // // alternative regular expression: ^\d+\s+\w
     return TRUE;
 }
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
-function verifyStreet($street) {
-    if (preg_match('/[0-9A-Z]* [0-9A-Z]*$/', $street) != 1) { // no match
-        return "Street name is not valid! please try again! it should just made up of letters, digits";
-    }
-    return TRUE;
-}
+//function verifyStreet($street) {
+  //  if (preg_match('/^[0-9A-Za-z ,\.-]{2,100}$/', $street) != 1) { // no match
+    //    return "Street name is not valid! please try again! it should just made up of letters, digits";
+    //}
+   // return TRUE;
+//}
 function verifyCityName($city) {
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
@@ -149,30 +149,30 @@ function verifyCityName($city) {
     return TRUE;
 }
 
-function verifyPhone($phone) {
-    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/', $phone) != 1) { // no match
-        return "Phone number must be at least 10 digits long, including the area code.";
-    }
-    return TRUE;
-}
+//function verifyPhone($phone) {
+  //  if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/', $phone) != 1) { // no match
+    //    return "Phone number must be at least 10 digits long, including the area code.";
+    //}
+    //return TRUE;
+//}
 
-function verifyPostalCode($postalCode) {
-    if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
-        return "Postal code must be formatted like so: A1B 2C3";
-    }
-    return TRUE;
-}
+//function verifyPostalCode($postalCode) {
+   // if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
+     //   return "Postal code must be formatted like so: A1B 2C3";
+    //}
+    //return TRUE;
+//}
 
 // used via AJAX
-$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
-    $email = isset($args['email']) ? $args['email'] : "";
-    $record = DB::queryFirstRow("SELECT userId FROM users WHERE email=%s", $email);
-    if ($record) {
-        return $response->write("Email already in use");
-    } else {
-        return $response->write("");
-    }
-});
+//$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
+  //  $email = isset($args['email']) ? $args['email'] : "";
+    //$record = DB::queryFirstRow("SELECT userId FROM users WHERE email=%s", $email);
+    //if ($record) {
+      //  return $response->write("Email already in use");
+    //} else {
+      //  return $response->write("");
+    //}
+//});
 
 
 
