@@ -111,10 +111,10 @@ $app->post('/register', function ($request, $response, $args) {
     //};
 
     // verify phone number
-    //$result = verifyPhone($phone);
-    //if ($result !== TRUE) {
-      //  $errorList[] = $result;
-    //};
+    $result = verifyPhone($phone);
+    if ($result !== TRUE) {
+    $errorList[] = $result;
+    };
 
 
 
@@ -153,12 +153,12 @@ function verifyCityName($city) {
     return TRUE;
 }
 
-//function verifyPhone($phone) {
-  //  if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/', $phone) != 1) { // no match
-    //    return "Phone number must be at least 10 digits long, including the area code.";
-    //}
-    //return TRUE;
-//}
+function verifyPhone($phone) {
+    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/', $phone) != 1) { // no match
+        return "Phone number must be at least 10 digits long, including the area code.";
+    }
+    return TRUE;
+}
 
 //function verifyPostalCode($postalCode) {
    // if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
