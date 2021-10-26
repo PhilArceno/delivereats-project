@@ -10,24 +10,29 @@ $app->get('/login', function ($request, $response, $args) {
     return $this->view->render($response, 'login.html.twig');
 });
 
-$app->post('/login', function ($request, $response, $args) use ($log) {
-    $userName = $request->getParam('username');
-    $password = $request->getParam('password');
+$app->post(
+    '/login',
+    function ($request, $response, $args) use ($log) {
+        $userName = $request->getParam('username');
+        $password = $request->getParam('password');
 
-    $record = DB::queryFirstRow("SELECT password FROM users WHERE username=%s", $userName);
-    $loginSuccess = false;
- if ($record['password'] == $password) {
+        $record = DB::queryFirstRow("SELECT password FROM users WHERE username=%s", $userName);
+        $loginSuccess = false;
+        $errorList = [];
+        if ($record['password'] == $password) {
             $loginSuccess = true;
+        } else {
+            $errorList[] = "Wrong username or password";
         }
 
-    if (!$loginSuccess) {
-        $log->info(sprintf("Login failed for username %s", $userName));
-        return $this->view->render($response, 'login.html.twig', [ 'error' => true ]);
-    } else {
-        unset($record['password']); // for security reasons remove password from session
-        $_SESSION['user'] = $record; // remember user logged in
-        $log->debug(sprintf("Login successful for username %s", $userName));
-        return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user'] ] );
+        if (!$loginSuccess) {
+            $log->debug(sprintf("Login failed for username %s", $userName));
+            return $this->view->render($response, 'login.html.twig', ['errorList' => $errorList]);
+        } else {
+            unset($record['password']); // for security reasons remove password from session
+            $_SESSION['user'] = $record; // remember user logged in
+            $log->debug(sprintf("Login successful for username %s", $userName));
+            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
     }
 );
@@ -39,7 +44,7 @@ $app->post('/login', function ($request, $response, $args) use ($log) {
 $app->get('/logout', function ($request, $response, $args) use ($log) {
     $log->debug(sprintf("Logout successful for uid=%d", @$_SESSION['user']['id']));
     unset($_SESSION['user']);
-    return $this->view->render($response, 'logout.html.twig', ['userSession' => null ]);
+    return $this->view->render($response, 'logout.html.twig', ['userSession' => null]);
 });
 
 // ************************ PROFILE USER *********************
@@ -50,12 +55,12 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 
 // ************************************************ REGISTER USER ****************************************************
-$app->get('/register', function($request,$response,$args) {
+$app->get('/register', function ($request, $response, $args) {
     $apiKey = $_ENV['gMapsAPIKey'];
     return $this->view->render($response, "register.html.twig", ['apiKey' => $apiKey]);
 });
 
-$app->post('/register', function($request,$response,$args) {
+$app->post('/register', function ($request, $response, $args) {
     $userName = $request->getParam('userName');
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
@@ -68,92 +73,99 @@ $app->post('/register', function($request,$response,$args) {
     $province = $request->getParam('province');
     $phone = $request->getParam('phone');
 
-//***************************** VALIDATIOM: *****************************
-$errorList = [];
+    //***************************** VALIDATIOM: *****************************
+    $errorList = [];
 
-// username validation
-$result = verifyUserName($userName);
-if ($result !== TRUE) {
-     $errorList[] = $result; 
+    // username validation
+    $result = verifyUserName($userName);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
     }
-// password validation    
-if(filter_var($email, FILTER_VALIDATE_EMAIL)=== false){
-    $errorList[] = "Email does not look valid"; 
-    $email ="";
-}
-if($pass1 != $pass2){
-    $errorList[] = "passwords do not match"; 
-} else {
-    if(strlen($pass1) <6 || strlen($pass1)>50
-        || (preg_match("/[A-Z]/", $pass1) !== 1)
-        || (preg_match("/[a-z]/", $pass1) !== 1)
-        || (preg_match("/[0-9]/", $pass1) !== 1)
-    ){
-        $errorList[] = "Password must be 6-50 characters long and contain at least one "
-        . "uppercase letter, one lowercase, and one digit.";
+    // password validation    
+    if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        $errorList[] = "Email does not look valid";
+        $email = "";
     }
-}
-// street format validation
-$result = verifyStreet($street);
-if ($result !== TRUE) { 
-    $errorList[] = $result; 
-};
-//  postal code validation
-$result = verifyPostalCode($postalCode);
-if ($result !== TRUE) { 
-    $errorList[] = $result; 
-};
+    if ($pass1 != $pass2) {
+        $errorList[] = "passwords do not match";
+    } else {
+        if (
+            strlen($pass1) < 6 || strlen($pass1) > 50
+            || (preg_match("/[A-Z]/", $pass1) !== 1)
+            || (preg_match("/[a-z]/", $pass1) !== 1)
+            || (preg_match("/[0-9]/", $pass1) !== 1)
+        ) {
+            $errorList[] = "Password must be 6-50 characters long and contain at least one "
+                . "uppercase letter, one lowercase, and one digit.";
+        }
+    }
+    // street format validation
+    $result = verifyStreet($street);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+    //  postal code validation
+    $result = verifyPostalCode($postalCode);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
 
-// verify phone number
-$result = verifyPhone($phone);
-if ($result !== TRUE) {
-     $errorList[] = $result;
-};
+    // verify phone number
+    $result = verifyPhone($phone);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
 
 
 
-if($errorList){
-    $valuesList = ['userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
-    'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province'=> $province];
-    return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
-}else{
-//  ************************ REGISTERATION DONE **********************
+    if ($errorList) {
+        $valuesList = [
+            'userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
+            'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province' => $province
+        ];
+        return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+    } else {
+        //  ************************ REGISTERATION DONE **********************
 
-   return $this->view->render($response, "register_success.html.twig");
-}
-
+        return $this->view->render($response, "register_success.html.twig");
+    }
 });
 
 // *****************************Functions to check verification:*****************************
 
-function verifyUserName($name) {
+function verifyUserName($name)
+{
     if (preg_match('/^\d+\s+\w+\s+\w+$/', $name) != 1) { // no match
         return "The format of the street is not correct. It should be in this format \"1223 Jerry Street\"";
     }
     return TRUE;
 }
-function verifyStreet($street) {
+function verifyStreet($street)
+{
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $street) != 1) { // no match
         return "City name is not valid! please try again! it should just consist of leeters, space or minus sign";
     }
     return TRUE;
 }
-function verifyCityName($city) {
+function verifyCityName($city)
+{
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
     }
     return TRUE;
 }
 
-function verifyPostalCode($postalCode) {
-    if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
+function verifyPostalCode($postalCode)
+{
+    if (preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
         return "Postal code must be formatted like so: A1B 2C3";
     }
     return TRUE;
 }
 
-function verifyPhone($phone) {
-    if(preg_match('/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/', $phone) !== 1) { // no match
+function verifyPhone($phone)
+{
+    if (preg_match('/^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/', $phone) !== 1) { // no match
         return "Phone number must be at least 10 digits long, including the area code.";
     }
     return TRUE;
@@ -165,7 +177,8 @@ function verifyPhone($phone) {
 
 //  ************************ ADD RESTAURANT *********************
 $app->get('/add-restaurant', function ($request, $response, $args) {
-    return $this->view->render($response, 'add-restaurant.html.twig');
+    $apiKey = $_ENV['gMapsAPIKey'];
+    return $this->view->render($response, "add-restaurant.html.twig", ['apiKey' => $apiKey]);
 });
 
 //  ************************ RESTAURANT WAS ADDED*********************
