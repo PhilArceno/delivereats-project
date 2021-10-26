@@ -32,7 +32,7 @@ $app->post(
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
             $log->debug(sprintf("Login successful for username %s", $userName));
-            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            return $this->view->render($response, 'add-restaurant.html.twig', ['userSession' => $_SESSION['user']]);
         }
     }
 );
