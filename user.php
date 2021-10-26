@@ -65,12 +65,14 @@ $app->get('/register', function ($request, $response, $args) {
     return $this->view->render($response, "register.html.twig", ['apiKey' => $apiKey]);
 });
 
-$app->post('/register', function ($request, $response, $args) {
+$app->post('/register', function ($request, $response, $args) use ($log) {
+    $apiKey = $_ENV['gMapsAPIKey'];
     $name = $request->getParam('name');
     $userName = $request->getParam('userName');
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
     $pass2 = $request->getParam('pass2');
+    $address = $request->getParam('address');
     $streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
@@ -78,17 +80,17 @@ $app->post('/register', function ($request, $response, $args) {
     $city = $request->getParam('city');
     $province = $request->getParam('province');
     $phone = $request->getParam('phone');
-    $acountType = $request->getParam('accountType');
+    $accountType = $request->getParam('accountType');
 
 
     //***************************** VALIDATION: *****************************
     $errorList = [];
 
-        // name validation
-        $result = verifyName($name);
-        if ($result !== TRUE) {
-            $errorList[] = $result;
-        }
+    // name validation
+    $result = verifyName($name);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
 
     // username validation
     $result = verifyUserName($userName);
@@ -114,101 +116,124 @@ $app->post('/register', function ($request, $response, $args) {
         }
     }
     // street format validation
-    //$result = verifyStreet($street);
-    //if ($result !== TRUE) {
-      //  $errorList[] = $result;
-    //};
+    $result = verifyStreet($address);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
     //  postal code validation
-    //$result = verifyPostalCode($postalCode);
-    //if ($result !== TRUE) {
-      //  $errorList[] = $result;
-    //};
+    $result = verifyPostalCode($postalCode);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
 
     // verify phone number
     $result = verifyPhone($phone);
     if ($result !== TRUE) {
-    $errorList[] = $result;
+        $errorList[] = $result;
     };
+
+    // verify account type
+    $result = verifyAccountType($accountType);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+
 
 
 
     if ($errorList) {
         $valuesList = [
-            'name'=> $name, 'userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
-            'street' => $street, 'appartmentNo' => $appartmentNo, 'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 'phone'=>$phone, 
-            'accountType'=>$acountType
+            'name' => $name, 'userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
+            'streetNo' => $streetNo, 'street' => $street, 'address' => $address, 'appartmentNo' => $appartmentNo,
+            'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 'phone' => $phone,
+            'accountType' => $accountType
         ];
-        return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+        $log->debug(sprintf("Error with registration: name=%s, streetNo=%s, street=%s, address=%s", $name, $streetNo, $street, $address));
+        return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
-        //  ************************ REGISTERATION DONE **********************
+        //  ************************ REGISTRATION DONE **********************
         $password = password_hash($pass1, PASSWORD_DEFAULT);
         $addressValueList = [
             'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
-            'apt_num' => $appartmentNo, 'postal_code'=> $postalCode
+            'apt_num' => $appartmentNo, 'postal_code' => $postalCode
         ];
-        //DB::insert('address', $addressValueList);
-        //$addressId= DB::insertId();
+        DB::insert('address', $addressValueList);
+        $addressId = DB::insertId();
         $valuesList = [
-            'name'=> $name, 'userName' => $userName, 'password'=> $password, 'email' => $email, 
-            'account_type'=>'customer'
+            'name' => $name, 'userName' => $userName, 'password' => $password, 'email' => $email,
+            'account_type' => $accountType, 'address_id' => $addressId
         ];
-        DB::insert('users', $valuesList);
+        DB::insert('user', $valuesList);
         return $this->view->render($response, "register_success.html.twig");
     }
 });
 
 // *****************************Functions to check verification:*****************************
 
-function verifyName($name) { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
+function verifyName($name)
+{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
     if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $name) != 1) { // no match
         return "The name must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
     }
     return TRUE;
 }
 
-function verifyUserName($userName) { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
+function verifyUserName($userName)
+{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
     if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $userName) != 1) { // no match
         return "The username must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
     }
     return TRUE;
 }
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
-//function verifyStreet($street) {
-  //  if (preg_match('/^[0-9A-Za-z ,\.-]{2,100}$/', $street) != 1) { // no match
-    //    return "Street name is not valid! please try again! it should just made up of letters, digits";
-    //}
-   // return TRUE;
-//}
-function verifyCityName($city) {
+function verifyStreet($street)
+{
+    if (preg_match('/^[0-9A-Za-z ,\.-]{2,100}$/', $street) != 1) { // no match
+        return "Street name is not valid! please try again! it should just made up of letters, digits";
+    }
+    return TRUE;
+}
+function verifyCityName($city)
+{
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
     }
     return TRUE;
 }
 
-function verifyPhone($phone) {
-    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/', $phone) != 1) { // no match
+function verifyPhone($phone)
+{
+    if (preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/', $phone) != 1) { // no match
         return "Phone number must be at least 10 digits long, including the area code.";
     }
     return TRUE;
 }
 
-function verifyPostalCode($postalCode) {
-    if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
+function verifyPostalCode($postalCode)
+{
+    if (preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
         return "Postal code must be formatted like so: A1B 2C3";
+    }
+    return TRUE;
+}
+
+function verifyAccountType($accountType)
+{
+    if (!($accountType == 'customer' || $accountType == 'business')) { //no match
+        return "Invalid Account Type. Please select Y/N";
     }
     return TRUE;
 }
 
 // used via AJAX
 //$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
-  //  $email = isset($args['email']) ? $args['email'] : "";
-    //$record = DB::queryFirstRow("SELECT userId FROM users WHERE email=%s", $email);
-    //if ($record) {
-      //  return $response->write("Email already in use");
-    //} else {
-      //  return $response->write("");
-    //}
+//  $email = isset($args['email']) ? $args['email'] : "";
+//$record = DB::queryFirstRow("SELECT userId FROM user WHERE email=%s", $email);
+//if ($record) {
+//  return $response->write("Email already in use");
+//} else {
+//  return $response->write("");
+//}
 //});
 
 
@@ -237,12 +262,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
         $errorList[] = $result;
     }
 
-    function verifyDescription($description) {
+    function verifyDescription($description)
+    {
         if (preg_match('/^[a-zA-Z0-9\ \._\'"!?%*,-]{4,250}$/', $description) != 1) { // no match
             return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,).";
         }
         return TRUE;
-        }
+    }
 
     $result = verifyDescription($description);
     if ($result !== TRUE) {
@@ -252,8 +278,8 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
     $hasPhoto = false;
     $mimeType = "";
 
-    $uploadedFiles = $request->getUploadedFiles(); 
-    $uploadedImage = $uploadedFiles['image']; 
+    $uploadedFiles = $request->getUploadedFiles();
+    $uploadedImage = $uploadedFiles['image'];
 
     if ($uploadedImage->getError() != UPLOAD_ERR_NO_FILE) {
         $hasPhoto = true;
@@ -265,7 +291,8 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing];
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing
+        ];
         return $this->view->render($response, 'add-restaurant.html.twig', ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
         //  ************************ RESTAURANT WAS ADDED*********************
