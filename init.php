@@ -4,6 +4,7 @@
 require_once 'vendor/autoload.php';
 
 session_start();
+
 use Slim\Http\UploadedFile;
 
 //use .env file and load it to environment
@@ -25,15 +26,23 @@ $log->pushProcessor(function ($record) {
     return $record;
 });
 
-DB::$dbName = 'delivereats';
-DB::$user = 'delivereats';
-DB::$password = ')!sNqREdhs6EIlGx';
-DB::$host = 'localhost';
+if (strpos($_SERVER['HTTP_HOST'], "fsd01.ca") !== false) {
+    //hosting config
+    DB::$dbName = 'cp5016_delivereats';
+    DB::$user = 'cp5016_delivereats';
+    DB::$password = '^wvA1)p]~*_c';
+} else {
+    DB::$dbName = 'delivereats';
+    DB::$user = 'delivereats';
+    DB::$password = ')!sNqREdhs6EIlGx';
+    DB::$host = 'localhost';
+}
 
 DB::$error_handler = 'db_error_handler'; // runs on mysql query errors
 DB::$nonsql_error_handler = 'db_error_handler'; // runs on library errors (bad syntax, etc)
 
-function db_error_handler($params) {
+function db_error_handler($params)
+{
     global $log, $container;
     $log->error("Database error: " . $params['error']);
     if (isset($params['query'])) {
@@ -65,7 +74,7 @@ $container['view'] = function ($c) {
         'debug' => true, // This line should enable debug mode
     ]);
     //
-    $view->getEnvironment()->addGlobal('test1','VALUE');
+    $view->getEnvironment()->addGlobal('test1', 'VALUE');
     $view->getEnvironment()->addGlobal('clientIP', $_SERVER['REMOTE_ADDR']);
     $view->getEnvironment()->addGlobal('authUser', @$_SESSION['authUser']);
     // Instantiate and add Slim specific extension
@@ -74,4 +83,3 @@ $container['view'] = function ($c) {
     $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
     return $view;
 };
-

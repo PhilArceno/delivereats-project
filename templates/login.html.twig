@@ -4,26 +4,24 @@
 {% endblock %}
 
 {% block content %}
-{% if errorList %}
-    <p>ERROR:</p>
-    <ul>
-        {% for error in errorList %}
-        <li>{{error}}</li>
-        {% endfor %}
-    </ul>
-{% endif %}
+	{% if errorList %}
+		<p>ERROR:</p>
+		<ul>
+			{% for error in errorList %}
+				<li>{{error}}</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
 	<div>
 		<form method="POST">
-        <div>
-            <label>Username: </label>
-            <input type="text" name="username" placeholder="Enter your username"></input>
-        </div>
-        <div>
-            <label>Password: </label>
-            <input type="text" name="password" placeholder="Enter your password"></input>
-        </div>
-            <input type="submit" value="Login"></input>
-        </form>
+			<div>
+				<label>Username:
+				</label>
+				<input type="text" name="username" placeholder="Enter your username"></input>
+		</div>
+		<div>
+			<label>Password:
+			</label>
+			<input type="text" name="password" placeholder="Enter your password"></input>
 	</div>
-
-{% endblock %}
+	<input type="submit" value="Login"></input></form></div>{% endblock %}

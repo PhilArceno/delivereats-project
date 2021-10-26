@@ -6,15 +6,41 @@ require_once 'init.php';
 
 // ******************** LOGIN USER ***********************
 
-$app->get('/login', function($request, $response, $args) {
+$app->get('/login', function ($request, $response, $args) {
     return $this->view->render($response, 'login.html.twig');
 });
 
+$app->post('/login', function ($request, $response, $args) use ($log) {
+    $userName = $request->getParam('username');
+    $password = $request->getParam('password');
+
+    $record = DB::queryFirstRow("SELECT password FROM users WHERE username=%s", $userName);
+    $loginSuccess = false;
+ if ($record['password'] == $password) {
+            $loginSuccess = true;
+        }
+
+    if (!$loginSuccess) {
+        $log->info(sprintf("Login failed for username %s", $userName));
+        return $this->view->render($response, 'login.html.twig', [ 'error' => true ]);
+    } else {
+        unset($record['password']); // for security reasons remove password from session
+        $_SESSION['user'] = $record; // remember user logged in
+        $log->debug(sprintf("Login successful for username %s", $userName));
+        return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user'] ] );
+        }
+    }
+);
+
+
+
 // ************** LOGOUT USER ********************
 
-// $app->get('/logout', function() {
-
-// });
+$app->get('/logout', function ($request, $response, $args) use ($log) {
+    $log->debug(sprintf("Logout successful for uid=%d", @$_SESSION['user']['id']));
+    unset($_SESSION['user']);
+    return $this->view->render($response, 'logout.html.twig', ['userSession' => null ]);
+});
 
 // ************************ PROFILE USER *********************
 

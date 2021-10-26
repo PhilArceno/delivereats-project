@@ -26,7 +26,7 @@
 		Password:
 		<br><input type="password" name="pass1" value="{{v.pass1}}"><br>
 		Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
-        {% include "address-form.html.twig" %}
+        {% include "address-form.html.twig" with {v} %}
 		{# <input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
 	Enter Your address:
 	<br>
