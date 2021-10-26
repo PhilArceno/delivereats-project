@@ -32,7 +32,7 @@ $app->post(
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
             $log->debug(sprintf("Login successful for username %s", $userName));
-            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            return $this->view->render($response, 'add-restaurant.html.twig', ['userSession' => $_SESSION['user']]);
         }
     }
 );
@@ -66,7 +66,7 @@ $app->post('/register', function ($request, $response, $args) {
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
     $pass2 = $request->getParam('pass2');
-    //$streetNo = $request->getParam('streetNo');
+    $streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -121,7 +121,7 @@ $app->post('/register', function ($request, $response, $args) {
     // verify phone number
     $result = verifyPhone($phone);
     if ($result !== TRUE) {
-        $errorList[] = $result;
+    $errorList[] = $result;
     };
 
 
@@ -136,11 +136,17 @@ $app->post('/register', function ($request, $response, $args) {
     } else {
         //  ************************ REGISTERATION DONE **********************
         $password = password_hash($pass1, PASSWORD_DEFAULT);
+        $addressValueList = [
+            'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
+            'apt_num' => $appartmentNo, 'postal_code'=> $postalCode
+        ];
+        DB::insert('address', $addressValueList);
+        $addressId= DB::insertId();
         $valuesList = [
             'name'=> $name, 'userName' => $userName, 'password'=> $password, 'email' => $email, 
-            'accountType'=>$acountType
+            'account_type'=>'customer', 'address_id'=> $addressId
         ];
-        DB::insert('auctionsss', $valuesList);
+        DB::insert('users', $valuesList);
         return $this->view->render($response, "register_success.html.twig");
     }
 });
@@ -175,18 +181,18 @@ function verifyCityName($city) {
 }
 
 function verifyPhone($phone) {
-    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]\d{3}[\s.-]\d{4}$/', $phone) != 1) { // no match
-       return "Phone number must be at least 10 digits long, including the area code.";
+    if(preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/', $phone) != 1) { // no match
+        return "Phone number must be at least 10 digits long, including the area code.";
     }
     return TRUE;
 }
 
-//function verifyPostalCode($postalCode) {
-   // if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
-     //   return "Postal code must be formatted like so: A1B 2C3";
-    //}
-    //return TRUE;
-//}
+function verifyPostalCode($postalCode) {
+    if(preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
+        return "Postal code must be formatted like so: A1B 2C3";
+    }
+    return TRUE;
+}
 
 // used via AJAX
 //$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {

@@ -36,6 +36,7 @@ if (strpos($_SERVER['HTTP_HOST'], "fsd01.ca") !== false) {
     DB::$user = 'delivereats';
     DB::$password = ')!sNqREdhs6EIlGx';
     DB::$host = 'localhost';
+    //DB::$port = 80;
 }
 
 DB::$error_handler = 'db_error_handler'; // runs on mysql query errors

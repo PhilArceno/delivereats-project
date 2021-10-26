@@ -30,10 +30,10 @@
 		Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
         {% include "address-form.html.twig" with {v} %}
         Business Owner:
-        <select required>
+        <select required name="accountType">
             <option value="" disabled selected hidden> Choose an option</option>  
-            <option value="NO">NO</option>  
-            <option value="YES">YES</option>  
+            <option name="accountType" value="customer"{% if accountType == 'customer' %} selected="selected"{% endif %}>NO</option>
+            <option name="accountType" value="business"{% if accountType == 'business' %} selected="selected"{% endif %}>YES</option> 
         </select>
         
 		{# <input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
@@ -67,7 +67,7 @@
 	</select> #}
 	<label for="phone">Phone:
 	</label><br>
-	<input type="text" name"phone" value="{{v.phone}}"><br>
+	<input type="text" name = "phone" value="{{v.phone}}"><br>
 	<input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
 </form>
 {% endblock content%}
