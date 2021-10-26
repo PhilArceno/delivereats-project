@@ -35,6 +35,10 @@
             <option name="accountType" value="customer"{% if accountType == 'customer' %} selected="selected"{% endif %}>NO</option>
             <option name="accountType" value="business"{% if accountType == 'business' %} selected="selected"{% endif %}>YES</option> 
         </select>
+        Your account type:<br>
+        customer<input type="radio" value="{customer}" name="account_type"><br>
+        businees_owner<input type="radio" value="{businees_owner}" name="account_type"><br>
+
         
 		{# <input id="autocomplete" type="text" name="address" placeholder="Enter a place"></input>
 	Enter Your address:
