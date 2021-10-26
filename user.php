@@ -100,21 +100,21 @@ $app->post('/register', function ($request, $response, $args) {
         }
     }
     // street format validation
-    $result = verifyStreet($street);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    };
+    //$result = verifyStreet($street);
+    //if ($result !== TRUE) {
+      //  $errorList[] = $result;
+    //};
     //  postal code validation
-    $result = verifyPostalCode($postalCode);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    };
+    //$result = verifyPostalCode($postalCode);
+    //if ($result !== TRUE) {
+      //  $errorList[] = $result;
+    //};
 
     // verify phone number
-    $result = verifyPhone($phone);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    };
+    //$result = verifyPhone($phone);
+    //if ($result !== TRUE) {
+      //  $errorList[] = $result;
+    //};
 
 
 
