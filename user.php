@@ -73,7 +73,7 @@ $app->post('/register', function ($request, $response, $args) {
     $province = $request->getParam('province');
     $phone = $request->getParam('phone');
 
-    //***************************** VALIDATIOM: *****************************
+    //***************************** VALIDATION: *****************************
     $errorList = [];
 
     // username validation
@@ -189,7 +189,55 @@ $app->get('/add-restaurant', function ($request, $response, $args) {
     return $this->view->render($response, "add-restaurant.html.twig", ['apiKey' => $apiKey]);
 });
 
-//  ************************ RESTAURANT WAS ADDED*********************
-$app->get('/add-restaurant-success', function ($request, $response, $args) {
-    return $this->view->render($response, 'add-restaurant-success.html.twig');
+$app->post('/add-restaurant', function ($request, $response, $args) {
+    $name = $request->getParam('name');
+    $description = $request->getParam('description');
+    $image = $request->getParam('image');
+    $pricing = $request->getParam('pricing');
+    $userId = $_SESSION['user']['userId'];
+    //TODO: check verification address as in 'register'
+
+    $errorList = [];
+
+    $result = verifyUserName($name);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+    function verifyDescription($description) {
+        if (preg_match('/^[a-zA-Z0-9\ \._\'"!?%*,-]{4,250}$/', $description) != 1) { // no match
+            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,).";
+        }
+        return TRUE;
+        }
+
+    $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+    $hasPhoto = false;
+    $mimeType = "";
+
+    $uploadedFiles = $request->getUploadedFiles(); 
+    $uploadedImage = $uploadedFiles['image']; 
+
+    if ($uploadedImage->getError() != UPLOAD_ERR_NO_FILE) {
+        $hasPhoto = true;
+        $result = verifyUploadedPhoto($uploadedImage, $mimeType);
+
+        if ($result !== TRUE) {
+            $errorList[] = $result;
+        }
+    }
+
+    if ($errorList) {
+        $valuesList = [
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing,
+            'userId' => $userId];
+        return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+    } else {
+        //  ************************ RESTAURANT WAS ADDED*********************
+        return $this->view->render($response, 'add-restaurant-success.html.twig');
+    }
 });
