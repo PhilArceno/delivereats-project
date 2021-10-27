@@ -22,7 +22,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if (password_verify($password, $record['password'])) {
@@ -288,7 +288,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $postalCode = $request->getParam('postalCode');
     $city = $request->getParam('city');
     $province = $request->getParam('province');
-    $owner_id = $_SESSION['user']['id'];
+    $owner_id = 8;
 
     $errorList = [];
 
@@ -349,13 +349,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         ];
         DB::insert('address', $addressValueList);
         $addressId = DB::insertId();
-        $valuesList = [
-            'name' => $name, 'description' => $description, 'pricing' => $pricing,
+        $directory = "uploads";
+        $uploadedImage->moveTo($directory . DIRECTORY_SEPARATOR .$destImageFilePath);
+        $restaurantValuesList = [
+            'name' => $name, 'description' => $description, 'imageFilePath' => ($directory . DIRECTORY_SEPARATOR .$destImageFilePath), 'pricing' => $pricing,
             'owner_id' => $owner_id, 'address_id' => $addressId
         ];
-        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
-        $valuesList['itemImagePath'] = $destImageFilePath;
-        DB::insert('restaurant', $valuesList);
+        DB::insert('restaurant', $restaurantValuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
     }
