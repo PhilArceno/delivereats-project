@@ -97,11 +97,22 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-    // password validation    
+    $result = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
+    if($result != null){
+        $errorList[] = "This username is already registered! Please try another one";
+    }
+
+    // email validation    
     if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
         $errorList[] = "Email does not look valid";
         $email = "";
     }
+    $result = DB::queryFirstRow("SELECT * FROM user WHERE email=%s", $email);
+    if($result != null){
+        $errorList[] = "Email is already registered";
+    }
+
+     // password validation 
     if ($pass1 != $pass2) {
         $errorList[] = "passwords do not match";
     } else {
@@ -113,6 +124,8 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         ) {
             $errorList[] = "Password must be 6-50 characters long and contain at least one "
                 . "uppercase letter, one lowercase, and one digit.";
+            $pass1 = "";
+            $pass2 = "";
         }
     }
     // street format validation
@@ -120,6 +133,13 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
+
+     // verify province
+     $result = verifyProvince($province);
+     if ($result !== TRUE) {
+         $errorList[] = $result;
+    };
+
     //  postal code validation
     $result = verifyPostalCode($postalCode);
     if ($result !== TRUE) {
@@ -148,7 +168,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
             'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 'phone' => $phone,
             'accountType' => $accountType
         ];
-        $log->debug(sprintf("Error with registration: name=%s, streetNo=%s, street=%s, address=%s", $name, $streetNo, $street, $address));
+        $log->debug(sprintf("Error with registration: name=%s, streetNo=%s, street=%s, province=%s, address=%s", $name, $streetNo, $street, $province, $address));
         return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         //  ************************ REGISTRATION DONE **********************
@@ -223,6 +243,14 @@ function verifyAccountType($accountType)
         return "Invalid Account Type. Please select Y/N";
     }
     return TRUE;
+}
+
+function verifyProvince($province)
+{ //   '/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/'
+    if (preg_match('/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/', $province) != 1) { //no match
+        return "Province should be exactly one of the following:\n \"AB\", \"BC\", \"MB\", \"NB\", \"NL\", \"NT\", \"NS\", \"NU\", \"ON\", \"PE\", \"QC\", \"SK\", \"YT\""; 
+    }
+    return TRUE; 
 }
 
 // used via AJAX
