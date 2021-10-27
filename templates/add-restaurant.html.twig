@@ -24,23 +24,31 @@
 		<h1>Add your restaurant:</h1>
 		<h2>Submit your business info</h2>
 		<div>
-			<label for="name">Store name:</label>
+			Restaurant name:
 			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
 		</div>
 		<div>
-			Store description:
+			Restaurant description:
 			<textarea name="description">{{ v.description}}</textarea><br>
 		</div>
 		<div>
-			Image:
+			Restaurant image or logo:
 			<input type="file" name="image"/><br>
 		</div>
 		<div>
-			Pricing:
+			Pricing range:
 			<input type="number" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
 		</div>
 		<div>
-			{% include "address-form.html.twig" with {v} %}
-			<button type="submit">Add restaurant</button>
+			{% include "address-form.html.twig" with {
+			address: v.address,
+			streetNo: v.streetNo,
+			street: v.street, 
+			appartmentNo: v.appartmentNo, 
+			postalCode: v.postalCode, 
+			city: v.city, 
+			province: v.province
+			} %}
+			<input class="center btn brand z-depth-0" type="submit" name="next" value="Add">
 		</form>
 	{% endblock content %}
