@@ -4,6 +4,9 @@
 {% endblock %}
 
 {% block content %}
+	{% if userSession %}
+	<h1>Already Logged in!</h1>
+	{% else %}
 	{% if errorList %}
 		<p>ERROR:</p>
 		<ul>
@@ -24,4 +27,6 @@
 			</label>
 			<input type="password" name="password" placeholder="Enter your password"></input>
 	</div>
-	<input type="submit" value="Login"></input></form></div>{% endblock %}
+	<input type="submit" value="Login"></input></form></div>
+	{% endif %}
+	{% endblock %}

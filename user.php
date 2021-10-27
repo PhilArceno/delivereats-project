@@ -13,7 +13,7 @@ $app->get('/', function ($request, $response, $args) {
 // ******************** LOGIN USER ***********************
 
 $app->get('/login', function ($request, $response, $args) {
-    return $this->view->render($response, 'login.html.twig');
+    return $this->view->render($response, 'login.html.twig',  ['userSession' => $_SESSION['user']]);
 });
 
 $app->post(
