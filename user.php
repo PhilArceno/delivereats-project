@@ -6,18 +6,14 @@ require_once 'init.php';
 
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION ? $_SESSION['user'] : null]);
+    return $this->view->render($response, 'index.html.twig');
 });
 
 
 // ******************** LOGIN USER ***********************
 
 $app->get('/login', function ($request, $response, $args) {
-    $user = false;
-    if($_SESSION) {
-        $user = $_SESSION['user'];
-    }
-    return $this->view->render($response, 'login.html.twig',  ['userSession' => $user]);
+    return $this->view->render($response, 'login.html.twig');
 });
 
 $app->post(
@@ -26,7 +22,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if (password_verify($password, $record['password'])) {
@@ -41,7 +37,6 @@ $app->post(
         } else {
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
-            print_r($_SESSION['user']); // for test purpose
             $log->debug(sprintf("Login successful for username %s", $userName));
             return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
@@ -57,11 +52,11 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
     return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
 });
 
-// ************************ USER ACCOUNT *********************
+// ************************ PROFILE USER *********************
 
-$app->get('/account', function($request, $response, $args) {
-    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
-});
+// $app->get('/profile', function() {
+
+// });
 
 
 // ************************************************ REGISTER USER ****************************************************
@@ -354,37 +349,36 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         ];
         DB::insert('address', $addressValueList);
         $addressId = DB::insertId();
-        $directory = "uploads";
-        $uploadedImage->moveTo($directory . DIRECTORY_SEPARATOR .$destImageFilePath);
-        $restaurantValuesList = [
-            'name' => $name, 'description' => $description, 'imageFilePath' => ($directory . DIRECTORY_SEPARATOR .$destImageFilePath), 'pricing' => $pricing,
+        $valuesList = [
+            'name' => $name, 'description' => $description, 'pricing' => $pricing,
             'owner_id' => $owner_id, 'address_id' => $addressId
         ];
-        DB::insert('restaurant', $restaurantValuesList);
+        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
+        $valuesList['itemImagePath'] = $destImageFilePath;
+        DB::insert('restaurant', $valuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
     }
 });
 //********************************** ADD FOOD *************************************************/
 $app->get('/add-food', function ($request, $response, $args) {
-    $apiKey = $_ENV['gMapsAPIKey'];
     return $this->view->render($response, "add-food.html.twig");
 });
+
 $app->post('/add-food', function ($request, $response, $args) use ($log) {
-    //$apiKey = $_ENV['gMapsAPIKey'];
     $name = $request->getParam('name');
     $price = $request->getParam('price');
     $description = $request->getParam('description');
     $image = $request->getParam('image');
-    $owner_id = $_SESSION['user']['id'];
-
+    //$owner_id = $_SESSION['user']['id'];
+    $owner_id = 8;
+    $restaurant_id =1;
     $errorList = [];
-    //validate name of the food
+
     $result = verifyName($name);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-    //validate food description
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
     function verifyFoodDescription($description)
     {
@@ -393,36 +387,41 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         }
         return TRUE;
     }
+
     $result = verifyFoodDescription($description);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-    // image validation
+
     $hasPhoto = false;
     $mimeType = "";
-    $uploadedFiles = $request->getUploadedFiles();
 
+    $uploadedFiles = $request->getUploadedFiles();
     $uploadedImage = $uploadedFiles['image'];
+
+    // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
-    //$result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
-    //if ($result !== TRUE) {
-      //  $errorList []= $result;
-    //}
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
+    if ($result !== TRUE) {
+        $errorList []= $result;
+    }
+
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'price' => $price, 'description' => $description
+            'name' => $name, 'price' => $price, 'description' => $description, 'image' => $image
         ];
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
-        return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+        return $this->view->render($response, "add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
-        $restaurant_id = DB::queryFirstRow("SELECT id FROM restaurant WHERE owner_id=%i", $owner_id);
         $valuesList = [
-            'name' => $name,  'price' => $price, 'description' => $description, 'image' => $image,
-            'owner_id' => $owner_id];
+            'name' => $name, 'price' => $price, 'description' => $description, 'image' => $image,
+            'restaurant_id' => $restaurant_id,
+        ];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['itemImagePath'] = $destImageFilePath;
         DB::insert('food', $valuesList);
+
         return $this->view->render($response, "add-food-success.html.twig");
     }
 });
