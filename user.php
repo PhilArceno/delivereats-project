@@ -41,6 +41,7 @@ $app->post(
         } else {
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
+            print_r($_SESSION['user']); // for test purpose
             $log->debug(sprintf("Login successful for username %s", $userName));
             return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
@@ -292,7 +293,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $postalCode = $request->getParam('postalCode');
     $city = $request->getParam('city');
     $province = $request->getParam('province');
-    $owner_id = 8;
+    $owner_id = $_SESSION['user']['id'];
 
     $errorList = [];
 
