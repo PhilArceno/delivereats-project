@@ -44,9 +44,9 @@ Phil
 3.  Hiding/restricting apikeys
 
 Bahar
-1. 
-2. 
-3. 
+1. errors are fixed and some validations are added to regiteration
+2. adding JQuery to registeration
+3. registeration confirmation email
 
 Dmitri
 1. add-restaurant php logic (with validation)
