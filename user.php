@@ -6,7 +6,7 @@ require_once 'init.php';
 
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'index.html.twig');
+    return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION ? $_SESSION['user'] : null]);
 });
 
 
@@ -56,11 +56,11 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
     return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
 });
 
-// ************************ PROFILE USER *********************
+// ************************ USER ACCOUNT *********************
 
-// $app->get('/profile', function() {
-
-// });
+$app->get('/account', function($request, $response, $args) {
+    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
+});
 
 
 // ************************************************ REGISTER USER ****************************************************

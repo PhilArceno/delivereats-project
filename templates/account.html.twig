@@ -1,0 +1,13 @@
+{% extends "master.html.twig" %}
+
+{% block title %}My Account
+{% endblock %}
+
+{% block content %}
+	<ul>
+		<li><a href="/profile">My Profile</a></li>
+        {% if userSession.account_type == 'business' %}
+		<li><a href="/manage-restaurants">Manage Restaurants</a></li>
+        {% endif %}
+	</ul>
+{% endblock %}
