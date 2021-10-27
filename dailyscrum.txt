@@ -16,7 +16,7 @@ Bahar
 
 Dmitri
 1. N/A
-2. create add-restaurant template
+2. Create add-restaurant template
 3. Brush up on libraries (slim and twig) and practice
 
 DeliverEats Scrum 10/25/2021
@@ -32,9 +32,9 @@ Bahar
 3. receiving error HTTP ERROR 500 while before adding API I did not receive this error
 
 Dmitri
-1. login and logout php logic (with validation) are done
-2. add-restaurant php logic (with validation)
-3. need help with testing implemented code
+1. Login and logout php logic (with validation) are done
+2. Add-restaurant php logic (with validation)
+3. Need help with testing implemented code
 
 DeliverEats Scrum 10/26/2021
 
@@ -49,9 +49,9 @@ Bahar
 3. registeration confirmation email
 
 Dmitri
-1. add-restaurant php logic (with validation)
-2. add-food php logic (with validation)
-3. how to add a flash message for "user logged out"
+1. Add-restaurant php logic (with validation)
+2. Add-food php logic (with validation)
+3. How to add a flash message for "user logged out"
 
 DeliverEats Scrum 10/27/2021
 
@@ -59,3 +59,8 @@ Phil
 1.  Registration review and fixes
 2.  Feed implementation
 3.  display feed only if logged in
+
+Dmitri
+1. Recovering the code from the previous version
+2. Depending on class topic, may be working on database hosting. Otherwise, more research and work on profile page.
+3. As needed
