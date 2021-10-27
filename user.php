@@ -6,14 +6,18 @@ require_once 'init.php';
 
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'index.html.twig');
+    return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION ? $_SESSION['user'] : null]);
 });
 
 
 // ******************** LOGIN USER ***********************
 
 $app->get('/login', function ($request, $response, $args) {
-    return $this->view->render($response, 'login.html.twig');
+    $user = false;
+    if($_SESSION) {
+        $user = $_SESSION['user'];
+    }
+    return $this->view->render($response, 'login.html.twig',  ['userSession' => $user]);
 });
 
 $app->post(
@@ -22,7 +26,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if (password_verify($password, $record['password'])) {
@@ -37,6 +41,7 @@ $app->post(
         } else {
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
+            print_r($_SESSION['user']); // for test purpose
             $log->debug(sprintf("Login successful for username %s", $userName));
             return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
@@ -52,11 +57,11 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
     return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
 });
 
-// ************************ PROFILE USER *********************
+// ************************ USER ACCOUNT *********************
 
-// $app->get('/profile', function() {
-
-// });
+$app->get('/account', function($request, $response, $args) {
+    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
+});
 
 
 // ************************************************ REGISTER USER ****************************************************
@@ -349,13 +354,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         ];
         DB::insert('address', $addressValueList);
         $addressId = DB::insertId();
-        $valuesList = [
-            'name' => $name, 'description' => $description, 'pricing' => $pricing,
+        $directory = "uploads";
+        $uploadedImage->moveTo($directory . DIRECTORY_SEPARATOR .$destImageFilePath);
+        $restaurantValuesList = [
+            'name' => $name, 'description' => $description, 'imageFilePath' => ($directory . DIRECTORY_SEPARATOR .$destImageFilePath), 'pricing' => $pricing,
             'owner_id' => $owner_id, 'address_id' => $addressId
         ];
-        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
-        $valuesList['itemImagePath'] = $destImageFilePath;
-        DB::insert('restaurant', $valuesList);
+        DB::insert('restaurant', $restaurantValuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
     }

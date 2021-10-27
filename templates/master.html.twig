@@ -12,15 +12,23 @@
 		<!-- Custom Styles -->
 		<link rel="stylesheet" href="/styles.css"/> <title>
 			{% block title %}{% endblock %}
-			 - DeliverEats</title>
+			- DeliverEats</title>
 		{% block addHead %}{% endblock %}
 	</head>
 	<body>
 		<!-- Logo -->
 		<!-- Search Bar -->
 		<!-- Menu Items -->
+		{% if userSession %}
+			<nav>
+				<a href="/"> Home</a>
+				<a href="/browse">Browse</a>
+				<a href="/orders">Orders</a>
+				<a href="/account">Account</a>
+			</nav>
+		{% endif %}
 		<!-- Body -->
-			<main id="main">{% block content %}{% endblock %}
+		<main id="main"> {% block content %}{% endblock %}
 			<!-- Footer -->
 			<footer id="footer">
 				{% block footer %}

@@ -1,15 +1,19 @@
 {% extends "master.html.twig" %}
 {% block title %}Home page
 {% endblock %}
-{%
-block content %}
+{% block content %}
 
+	{% if userSession %}
+    <h1>Feed</h1>
+    
+		<h2>Do you want to logout?</h2>
+		<a href="/logout">Sign Off</a>
+	{% else %}
+		<h1>Food's Ninja is Here!</h1>
+		<h2>Life is better when you're a member</h2>
+		<a href="/register">Get Started</a>
+		<a href="/login">Sign In</a>
+	{% endif %}
 
-<h1>Food's Ninja is Here!</h1>
- <h2>Life is better when you're a member</h2>
- <a href="/login">Sign In</a>
-
- <h2>Do you want to logout?</h2>
-  <a href="/logout">Sign Off</a>
 
 {% endblock %}
