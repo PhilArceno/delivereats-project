@@ -72,8 +72,8 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
     $pass2 = $request->getParam('pass2');
-    $address = $request->getParam('address');
-    $streetNo = $request->getParam('streetNo');
+    //$address = $request->getParam('address');
+    //$streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -129,7 +129,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         }
     }
     // street format validation
-    $result = verifyStreet($address);
+    $result = verifyStreet($street);
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
@@ -164,17 +164,17 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($errorList) {
         $valuesList = [
             'name' => $name, 'userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
-            'streetNo' => $streetNo, 'street' => $street, 'address' => $address, 'appartmentNo' => $appartmentNo,
+            'street' => $street, 'appartmentNo' => $appartmentNo,
             'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 'phone' => $phone,
             'accountType' => $accountType
         ];
-        $log->debug(sprintf("Error with registration: name=%s, streetNo=%s, street=%s, province=%s, address=%s", $name, $streetNo, $street, $province, $address));
+        $log->debug(sprintf("Error with registration: name=%s, street=%s, province=%s, address=%s", $name, $street, $province));
         return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         //  ************************ REGISTRATION DONE **********************
         $password = password_hash($pass1, PASSWORD_DEFAULT);
         $addressValueList = [
-            'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
+            'province' => $province, 'city' => $city, 'street' => $street,
             'apt_num' => $appartmentNo, 'postal_code' => $postalCode
         ];
         DB::insert('address', $addressValueList);
@@ -254,15 +254,15 @@ function verifyProvince($province)
 }
 
 // used via AJAX
-//$app->get('/isemailtaken/[{email}]', function ($request, $response, $args) {
-//  $email = isset($args['email']) ? $args['email'] : "";
-//$record = DB::queryFirstRow("SELECT userId FROM user WHERE email=%s", $email);
-//if ($record) {
-//  return $response->write("Email already in use");
-//} else {
-//  return $response->write("");
-//}
-//});
+$app->get('/isemailtaken/[{newEmail}]', function ($request, $response, $args) {
+    $email = isset($args['email']) ? $args['email'] : "";
+    $record = DB::queryFirstRow("SELECT id FROM user WHERE email=%s", $email);
+    if ($record) {
+    return $response->write("Email already in use");
+    } else {
+    return $response->write("");
+    }
+});
 
 
 
@@ -300,7 +300,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     function verifyDescription($description)
     {
         if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
-            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,).";
+            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
         }
         return TRUE;
     }
@@ -358,5 +358,66 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         DB::insert('restaurant', $valuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
+    }
+});
+//********************************** ADD FOOD *************************************************/
+$app->get('/add-food', function ($request, $response, $args) {
+    $apiKey = $_ENV['gMapsAPIKey'];
+    return $this->view->render($response, "add-food.html.twig");
+});
+$app->post('/add-food', function ($request, $response, $args) use ($log) {
+    //$apiKey = $_ENV['gMapsAPIKey'];
+    $name = $request->getParam('name');
+    $price = $request->getParam('price');
+    $description = $request->getParam('description');
+    $image = $request->getParam('image');
+    $owner_id = $_SESSION['user']['id'];
+
+    $errorList = [];
+    //validate name of the food
+    $result = verifyName($name);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+    //validate food description
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
+    function verifyFoodDescription($description)
+    {
+        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
+            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
+        }
+        return TRUE;
+    }
+    $result = verifyFoodDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+    // image validation
+    $hasPhoto = false;
+    $mimeType = "";
+    $uploadedFiles = $request->getUploadedFiles();
+
+    $uploadedImage = $uploadedFiles['image'];
+    $uploadedImage = $request->getUploadedFiles()['image'];
+    $destImageFilePath = null;
+    //$result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
+    //if ($result !== TRUE) {
+      //  $errorList []= $result;
+    //}
+    if ($errorList) {
+        $valuesList = [
+            'name' => $name, 'price' => $price, 'description' => $description
+        ];
+        $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
+        return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+    } else {
+        $restaurant_id = DB::queryFirstRow("SELECT id FROM restaurant WHERE owner_id=%i", $owner_id);
+        $valuesList = [
+            'name' => $name,  'price' => $price, 'description' => $description, 'image' => $image,
+            'owner_id' => $owner_id];
+        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
+        $valuesList['itemImagePath'] = $destImageFilePath;
+        DB::insert('food', $valuesList);
+        return $this->view->render($response, "add-food-success.html.twig");
     }
 });
