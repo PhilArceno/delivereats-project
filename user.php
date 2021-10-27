@@ -296,10 +296,10 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
     function verifyDescription($description)
     {
-        if (preg_match('/^[a-zA-Z0-9\ \._\'"!?%*,-]{4,250}$/', $description) != 1) { // no match
+        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
             return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,).";
         }
         return TRUE;
