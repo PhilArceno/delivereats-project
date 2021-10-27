@@ -25,7 +25,7 @@ $app->post(
         $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
-        if ($record['password'] == $password) {
+        if (password_verify($password, $record['password'])) {
             $loginSuccess = true;
         } else {
             $errorList[] = "Wrong username or password";
@@ -275,17 +275,24 @@ $app->get('/add-restaurant', function ($request, $response, $args) {
     return $this->view->render($response, "add-restaurant.html.twig", ['apiKey' => $apiKey]);
 });
 
-$app->post('/add-restaurant', function ($request, $response, $args) {
+$app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
+    $apiKey = $_ENV['gMapsAPIKey'];
     $name = $request->getParam('name');
     $description = $request->getParam('description');
     $image = $request->getParam('image');
     $pricing = $request->getParam('pricing');
-    $userId = $_SESSION['user']['userId'];
-    //TODO: check verification address as in 'register'
+    $address = $request->getParam('address');
+    $streetNo = $request->getParam('streetNo');
+    $street = $request->getParam('street');
+    $appartmentNo = $request->getParam('appartmentNo');
+    $postalCode = $request->getParam('postalCode');
+    $city = $request->getParam('city');
+    $province = $request->getParam('province');
+    $owner_id = $_SESSION['user']['id'];
 
     $errorList = [];
 
-    $result = verifyUserName($name);
+    $result = verifyName($name);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -309,21 +316,47 @@ $app->post('/add-restaurant', function ($request, $response, $args) {
     $uploadedFiles = $request->getUploadedFiles();
     $uploadedImage = $uploadedFiles['image'];
 
-    if ($uploadedImage->getError() != UPLOAD_ERR_NO_FILE) {
-        $hasPhoto = true;
-        $result = verifyUploadedPhoto($uploadedImage, $mimeType);
-        if ($result !== TRUE) {
-            $errorList[] = $result;
-        }
+    // image validation
+    $uploadedImage = $request->getUploadedFiles()['image'];
+    $destImageFilePath = null;
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
+    if ($result !== TRUE) {
+        $errorList []= $result;
     }
+
+    // street format validation
+    $result = verifyStreet($address);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+    //  postal code validation
+    $result = verifyPostalCode($postalCode);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'streetNo' => $streetNo, 'street' => $street, 'address' => $address, 'appartmentNo' => $appartmentNo,
+            'postalCode' => $postalCode, 'city' => $city, 'province' => $province
         ];
-        return $this->view->render($response, 'add-restaurant.html.twig', ['errorList' => $errorList, 'v' => $valuesList]);
+        $log->debug(sprintf("Error with adding: name=%s, streetNo=%s, street=%s, address=%s", $name, $streetNo, $street, $address));
+        return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
-        //  ************************ RESTAURANT WAS ADDED*********************
-        return $this->view->render($response, 'add-restaurant-success.html.twig');
+        $addressValueList = [
+            'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
+            'apt_num' => $appartmentNo, 'postal_code' => $postalCode
+        ];
+        DB::insert('address', $addressValueList);
+        $addressId = DB::insertId();
+        $valuesList = [
+            'name' => $name, 'description' => $description, 'pricing' => $pricing,
+            'owner_id' => $owner_id, 'address_id' => $addressId
+        ];
+        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
+        $valuesList['itemImagePath'] = $destImageFilePath;
+        DB::insert('restaurant', $valuesList);
+
+        return $this->view->render($response, "add-restaurant-success.html.twig");
     }
 });
