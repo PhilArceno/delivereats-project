@@ -334,3 +334,11 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         return $this->view->render($response, "add-food-success.html.twig");
     }
 });
+
+// ****************** Browse *********************
+
+$app->get('/browse', function ($request, $response, $args) {
+    $records = DB::query("SELECT r.name, c.category_id FROM restaurant as r, restaurant_category as c WHERE r.id = c.restaurant_id");
+    return $this->view->render($response, 'browse.html.twig', ['restaurant' => $records]);
+});
+
