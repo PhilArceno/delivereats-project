@@ -370,9 +370,9 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     $price = $request->getParam('price');
     $description = $request->getParam('description');
     $image = $request->getParam('image');
-    //$owner_id = $_SESSION['user']['id'];
-    $owner_id = 8;
-    $restaurant_id =1;
+    $owner_id = $_SESSION['user']['id'];
+    //$owner_id = 8;
+    //$restaurant_id =1;
     $errorList = [];
 
     $result = verifyName($name);
@@ -393,40 +393,10 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     }
 
-    function verifyUploadedFoodPhoto($photo, &$fileName) {
-
-        if ($photo->getError() !== UPLOAD_ERR_OK) {
-            return "Error uploading photo " . $photo->getError();
-        }
-        if ($photo->getSize() > 1024*1024) { // 1MB max
-            return "File too big. 1MB max is allowed";
-        }
-        $info = getimagesize($photo->file);
-        if (!$info) {
-            return "File is not an image";
-        }
-        if ($info[0] < 200 || $info[0] > 1000 || $info[1] < 200 || $info[1] > 1000) {
-            return "Width and height must be within 200-1000 pixels range";
-        }
-        $ext = "";
-        switch ($info['mime']) {
-            case 'image/jpeg': $ext = "jpg"; break;
-            case 'image/gif': $ext = "gif"; break;
-            case 'image/png': $ext = "png"; break;
-            default:
-                return "Only JPG, GIF and PNG file types are allowed";
-        }
-        $filenameWithoutExtension = pathinfo($photo->getClientFilename(), PATHINFO_FILENAME);
-        // Note: keeping the original extension is dangerious and would allow for code injection - very dangerous
-        $sanitizedFileName = mb_ereg_replace('([^A-Za-z0-9_-])', '_', $filenameWithoutExtension);
-        $fileName = 'uploads/' . $sanitizedFileName . "." . $ext;
-        return TRUE;
-}
-
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
-    $result = verifyUploadedFoodPhoto($uploadedImage, $destImageFilePath);
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
         $errorList []= $result;
     }
@@ -453,9 +423,10 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
         return $this->view->render($response, "add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
+        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE owner_id=%i", 8);
         $valuesList = [
             'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
-            'restaurant_id' => $restaurant_id,
+            'restaurant_id' => $restaurant_id
         ];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['imageFilePath'] = $destImageFilePath;
