@@ -5,7 +5,12 @@ require_once 'vendor/autoload.php';
 require_once 'init.php';
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION ? $_SESSION['user'] : null]);
+    $user = null;
+    if ($_SESSION) {
+        $user = $_SESSION['user'];
+        $restaurants = DB::query("SELECT * FROM restaurant");
+    }
+    return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants]);
 });
 
 // ******************** LOGIN USER ***********************
