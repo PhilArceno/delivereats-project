@@ -409,13 +409,13 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'price' => $price, 'description' => $description, 'image' => $image
+            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image
         ];
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
         return $this->view->render($response, "add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
         $valuesList = [
-            'name' => $name, 'price' => $price, 'description' => $description, 'image' => $image,
+            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
             'restaurant_id' => $restaurant_id,
         ];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
