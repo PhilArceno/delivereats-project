@@ -56,7 +56,7 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 // });
 
-$app->get('/account', function($request, $response, $args) {
+$app->get('/account', function ($request, $response, $args) {
     return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
 });
 
@@ -210,8 +210,6 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $description = $request->getParam('description');
     $image = $request->getParam('image');
     $pricing = $request->getParam('pricing');
-    $address = $request->getParam('address');
-    $streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -227,16 +225,11 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
+    // description validation
     $result = verifyDescription($description);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-
-    $hasPhoto = false;
-    $mimeType = "";
-
-    $uploadedFiles = $request->getUploadedFiles();
-    $uploadedImage = $uploadedFiles['image'];
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
@@ -247,10 +240,17 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     }
 
     // street format validation
-    $result = verifyStreet($address);
+    $result = verifyStreet($street);
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
+
+    // verify province
+    $result = verifyProvince($province);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+
     //  postal code validation
     $result = verifyPostalCode($postalCode);
     if ($result !== TRUE) {
@@ -259,14 +259,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'streetNo' => $streetNo, 'street' => $street, 'address' => $address, 'appartmentNo' => $appartmentNo,
-            'postalCode' => $postalCode, 'city' => $city, 'province' => $province
-        ];
-        $log->debug(sprintf("Error with adding: name=%s, streetNo=%s, street=%s, address=%s", $name, $streetNo, $street, $address));
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'street' => $street, 'appartmentNo' => $appartmentNo,
+            'postalCode' => $postalCode, 'city' => $city, 'province' => $province];
+        $log->debug(sprintf("Error with adding: name=%s, street=%s", $name, $street));
         return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         $addressValueList = [
-            'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
+            'province' => $province, 'city' => $city, 'street' => $street,
             'apt_num' => $appartmentNo, 'postal_code' => $postalCode
         ];
         DB::insert('address', $addressValueList);
@@ -276,7 +275,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
             'owner_id' => $owner_id, 'address_id' => $addressId
         ];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
-        $valuesList['itemImagePath'] = $destImageFilePath;
+        $valuesList['imageFilePath'] = $destImageFilePath;
         DB::insert('restaurant', $valuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
@@ -303,11 +302,11 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
-     // description validation
-     $result = verifyDescription($description);
-     if ($result !== TRUE) {
-         $errorList[] = $result;
-     }
+    // description validation
+    $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
