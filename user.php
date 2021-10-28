@@ -302,6 +302,12 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
+     // description validation
+     $result = verifyFoodDescription($description);
+     if ($result !== TRUE) {
+         $errorList[] = $result;
+     }
+
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;

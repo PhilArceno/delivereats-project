@@ -85,11 +85,7 @@ function verifyDescription($description)
         }
         return TRUE;
     }
-    // description validation
-    $result = verifyFoodDescription($description);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    }
+
 
     function verifyUploadedFoodPhoto($photo, &$fileName)
     {
