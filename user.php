@@ -95,7 +95,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     }
 
     // username validation
-    $result = verifyUserName($userName);
+    $result = verifyName($userName);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -159,9 +159,6 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
-
-
-
 
     if ($errorList) {
         $valuesList = [
@@ -307,7 +304,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
      // description validation
-     $result = verifyFoodDescription($description);
+     $result = verifyDescription($description);
      if ($result !== TRUE) {
          $errorList[] = $result;
      }
@@ -315,7 +312,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
-    $result = verifyUploadedFoodPhoto($uploadedImage, $destImageFilePath);
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
