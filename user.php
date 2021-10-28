@@ -295,9 +295,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     $price = $request->getParam('price');
     $description = $request->getParam('description');
     $image = $request->getParam('image');
-    //$owner_id = $_SESSION['user']['id'];
-    $owner_id = 8;
-    $restaurant_id = 1;
+    $owner_id = $_SESSION['user']['id'];
     $errorList = [];
 
     $result = verifyName($name);
@@ -315,7 +313,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
-    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
+    $result = verifyUploadedFoodPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -327,7 +325,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
         return $this->view->render($response, "add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
-        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE owner_id=%i", 8);
+        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE owner_id=%i", $owner_id);
         $valuesList = [
             'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
             'restaurant_id' => $restaurant_id
