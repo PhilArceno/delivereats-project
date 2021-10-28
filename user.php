@@ -4,11 +4,9 @@ require_once 'vendor/autoload.php';
 
 require_once 'init.php';
 
-
 $app->get('/', function ($request, $response, $args) {
     return $this->view->render($response, 'index.html.twig');
 });
-
 
 // ******************** LOGIN USER ***********************
 
@@ -22,7 +20,7 @@ $app->post(
         $userName = $request->getParam('username');
         $password = $request->getParam('password');
 
-        $record = DB::queryFirstRow("SELECT password FROM user WHERE username=%s", $userName);
+        $record = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
         if (password_verify($password, $record['password'])) {
@@ -98,7 +96,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     }
     $result = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
-    if($result != null){
+    if ($result != null) {
         $errorList[] = "This username is already registered! Please try another one";
     }
 
@@ -108,11 +106,11 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         $email = "";
     }
     $result = DB::queryFirstRow("SELECT * FROM user WHERE email=%s", $email);
-    if($result != null){
+    if ($result != null) {
         $errorList[] = "Email is already registered";
     }
 
-     // password validation 
+    // password validation 
     if ($pass1 != $pass2) {
         $errorList[] = "passwords do not match";
     } else {
@@ -134,10 +132,10 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     };
 
-     // verify province
-     $result = verifyProvince($province);
-     if ($result !== TRUE) {
-         $errorList[] = $result;
+    // verify province
+    $result = verifyProvince($province);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
     };
 
     //  postal code validation
@@ -188,86 +186,16 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     }
 });
 
-// *****************************Functions to check verification:*****************************
-
-function verifyName($name)
-{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $name) != 1) { // no match
-        return "The name must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
-    }
-    return TRUE;
-}
-
-function verifyUserName($userName)
-{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $userName) != 1) { // no match
-        return "The username must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
-    }
-    return TRUE;
-}
-// different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
-function verifyStreet($street)
-{
-    if (preg_match('/^[0-9A-Za-z ,\.-]{2,100}$/', $street) != 1) { // no match
-        return "Street name is not valid! please try again! it should just made up of letters, digits";
-    }
-    return TRUE;
-}
-function verifyCityName($city)
-{
-    if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
-        return "City name is not valid! please try again";
-    }
-    return TRUE;
-}
-
-function verifyPhone($phone)
-{
-    if (preg_match('/^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/', $phone) != 1) { // no match
-        return "Phone number must be at least 10 digits long, including the area code.";
-    }
-    return TRUE;
-}
-
-function verifyPostalCode($postalCode)
-{
-    if (preg_match('/^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i', $postalCode) != 1) { //no match
-        return "Postal code must be formatted like so: A1B 2C3";
-    }
-    return TRUE;
-}
-
-function verifyAccountType($accountType)
-{
-    if (!($accountType == 'customer' || $accountType == 'business')) { //no match
-        return "Invalid Account Type. Please select Y/N";
-    }
-    return TRUE;
-}
-
-function verifyProvince($province)
-{ //   '/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/'
-    if (preg_match('/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/', $province) != 1) { //no match
-        return "Province should be exactly one of the following:\n \"AB\", \"BC\", \"MB\", \"NB\", \"NL\", \"NT\", \"NS\", \"NU\", \"ON\", \"PE\", \"QC\", \"SK\", \"YT\""; 
-    }
-    return TRUE; 
-}
-
 // used via AJAX
 $app->get('/isemailtaken/[{newEmail}]', function ($request, $response, $args) {
     $email = isset($args['email']) ? $args['email'] : "";
     $record = DB::queryFirstRow("SELECT id FROM user WHERE email=%s", $email);
     if ($record) {
-    return $response->write("Email already in use");
+        return $response->write("Email already in use");
     } else {
-    return $response->write("");
+        return $response->write("");
     }
 });
-
-
-
-
-
 
 //  ************************ ADD RESTAURANT *********************
 $app->get('/add-restaurant', function ($request, $response, $args) {
@@ -297,13 +225,6 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
-    function verifyDescription($description)
-    {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
-            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
-        }
-        return TRUE;
-    }
 
     $result = verifyDescription($description);
     if ($result !== TRUE) {
@@ -321,7 +242,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $destImageFilePath = null;
     $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
-        $errorList []= $result;
+        $errorList[] = $result;
     }
 
     // street format validation
@@ -372,7 +293,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
     $image = $request->getParam('image');
     //$owner_id = $_SESSION['user']['id'];
     $owner_id = 8;
-    $restaurant_id =1;
+    $restaurant_id = 1;
     $errorList = [];
 
     $result = verifyName($name);
@@ -380,71 +301,14 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
-    function verifyFoodDescription($description)
-    {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
-            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
-        }
-        return TRUE;
-    }
-    // description validation
-    $result = verifyFoodDescription($description);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    }
-
-    function verifyUploadedFoodPhoto($photo, &$fileName) {
-
-        if ($photo->getError() !== UPLOAD_ERR_OK) {
-            return "Error uploading photo " . $photo->getError();
-        }
-        if ($photo->getSize() > 1024*1024) { // 1MB max
-            return "File too big. 1MB max is allowed";
-        }
-        $info = getimagesize($photo->file);
-        if (!$info) {
-            return "File is not an image";
-        }
-        if ($info[0] < 200 || $info[0] > 1000 || $info[1] < 200 || $info[1] > 1000) {
-            return "Width and height must be within 200-1000 pixels range";
-        }
-        $ext = "";
-        switch ($info['mime']) {
-            case 'image/jpeg': $ext = "jpg"; break;
-            case 'image/gif': $ext = "gif"; break;
-            case 'image/png': $ext = "png"; break;
-            default:
-                return "Only JPG, GIF and PNG file types are allowed";
-        }
-        $filenameWithoutExtension = pathinfo($photo->getClientFilename(), PATHINFO_FILENAME);
-        // Note: keeping the original extension is dangerious and would allow for code injection - very dangerous
-        $sanitizedFileName = mb_ereg_replace('([^A-Za-z0-9_-])', '_', $filenameWithoutExtension);
-        $fileName = 'uploads/' . $sanitizedFileName . "." . $ext;
-        return TRUE;
-}
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
     $result = verifyUploadedFoodPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
-        $errorList []= $result;
+        $errorList[] = $result;
     }
-
-
-    //$hasPhoto = false;
-    //$mimeType = "";
-
-    //$uploadedFiles = $request->getUploadedFiles();
-    //$uploadedImage = $uploadedFiles['image'];
-
-    // image validation
-    //$uploadedImage = $request->getUploadedFiles()['image'];
-    //$destImageFilePath = null;
-    //$result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
-    //if ($result !== TRUE) {
-    //    $errorList []= $result;
-    //}
 
     if ($errorList) {
         $valuesList = [
@@ -460,7 +324,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['imageFilePath'] = $destImageFilePath;
         DB::insert('food', $valuesList);
- 
+
         return $this->view->render($response, "add-food-success.html.twig");
     }
 });
