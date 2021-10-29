@@ -12,12 +12,23 @@
 			{% endfor %}
 		</ul>
 	{% endif %}
+	<h1>Categories</h1>
 	<div class="container">
-		<h1>Categories</h1>
-		<div class="row">
-			<div class="col">
-				<div
-					class="vertical-tab" role="tabpanel">
+		{% for key, c in categories %}
+			{% if (key + 1) is not divisible by(2) %}
+				{# Max # of elements in a row is two. if first col in row, start a new row. #}
+				<div class="row">
+			{% endif %}
+				<div class="col">
+					{{c.name}}
+				</div>
+			{% if (key + 1) is divisible by(2) or loop.last %}
+					{# need to close row div, if max cols reached#}
+				</div>
+			{% endif %}
+		 {% endfor %}
+		{# <divclass="col">
+			<div class="vertical-tab" role="tabpanel">
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist">
 						<li role="presentation" class="active">
@@ -47,9 +58,9 @@
 										<h6 class="card-text">All Benefits of Fast Foods</h6>
 									</div>
 								</div>
-                                <div class="container">
-                                    <div class="row mt-2">
-                                      
+				                <div class="container">
+				                    <div class="row mt-2">
+				                      
 										{% for resto in restaurant %}
 										{% if resto.category_id == 'fastFood' %}
 										<div class="col">
@@ -63,9 +74,9 @@
 										</div>
 										{% endif %}
 										{% endfor %}
-                                      
-                                    </div>
-                                </div>
+				                      
+				                    </div>
+				                </div>
 							</p>
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="Section2">
@@ -78,8 +89,8 @@
 									</div>
 								</div>
 								<div class="container">
-                                    <div class="row mt-2">
-                                      
+				                    <div class="row mt-2">
+				                      
 										{% for resto in restaurant %}
 										{% if resto.category_id == 'burgers' %}
 										<div class="col">
@@ -93,9 +104,9 @@
 										</div>
 										{% endif %}
 										{% endfor %}
-                                      
-                                    </div>
-                                </div>
+				                      
+				                    </div>
+				                </div>
 							</p>
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="Section3">
@@ -108,8 +119,8 @@
 									</div>
 								</div>
 								<div class="container">
-                                    <div class="row mt-2">
-                                      
+				                    <div class="row mt-2">
+				                      
 										{% for resto in restaurant %}
 										{% if resto.category_id == 'desserts' %}
 										<div class="col">
@@ -123,9 +134,9 @@
 										</div>
 										{% endif %}
 										{% endfor %}
-                                      
-                                    </div>
-                                </div>
+				                      
+				                    </div>
+				                </div>
 							</p>
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="Section4">
@@ -138,8 +149,8 @@
 									</div>
 								</div>
 								<div class="container">
-                                    <div class="row mt-2">
-                                      
+				                    <div class="row mt-2">
+				                      
 										{% for resto in restaurant %}
 										{% if resto.category_id == 'middleEastern' %}
 										<div class="col">
@@ -153,9 +164,9 @@
 										</div>
 										{% endif %}
 										{% endfor %}
-                                      
-                                    </div>
-                                </div>
+				                      
+				                    </div>
+				                </div>
 							</p>
 						</div>
 						<div role="tabpanel" class="tab-pane fade" id="Section5">
@@ -168,8 +179,8 @@
 									</div>
 								</div>
 								<div class="container">
-                                    <div class="row mt-2">
-                                      
+				                    <div class="row mt-2">
+				                      
 										{% for resto in restaurant %}
 										{% if resto.category_id == 'healthy' %}
 										<div class="col">
@@ -183,16 +194,14 @@
 										</div>
 										{% endif %}
 										{% endfor %}
-                                      
-                                    </div>
-                                </div>
+				                      
+				                    </div>
+				                </div>
 							</p>
 						</div>
 					</div>
 				</div>
-			</div>
-		</div>
-
+		</div> #}
 	</div>
 
-{% endblock content %}
+</div>{% endblock content %}
