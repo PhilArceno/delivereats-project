@@ -348,3 +348,11 @@ $app->get('/browse', function ($request, $response, $args) {
     return $this->view->render($response, 'browse.html.twig', ['restaurant' => $records]);
 });
 
+
+$app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
+
+    $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
+    return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+});

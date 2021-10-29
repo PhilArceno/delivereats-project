@@ -1,0 +1,39 @@
+{% extends "master.html.twig" %}
+{% block title %}Add your Items!
+{% endblock %}
+{% block content %}
+
+	<div>
+		<img src="" alt="Restuarant Image"/>
+		<div>
+			{# flex here #}
+			<div>
+				<h2>{{restaurant.name}}</h2>
+				<p>
+					{{restaurant.pricing}}
+				</p>
+			</div>
+			<div>
+				Rating
+			</div>
+		</div>
+	</div>
+	<div>
+		{% for f in food %}
+			<section>
+				{# flex here #}
+				<img src="{{f.imageFilePath}}" alt="food-image"/>
+				<div>
+					<div>
+						{# flex here #}
+						<h3>{{f.name}}</h3>
+						<div>{{f.price}}</div>
+					</div>
+					<p>{{f.description}}</p>
+					<button>add item</button>
+				</div>
+			</section>
+		{% endfor %}
+	</div>
+
+{% endblock %}

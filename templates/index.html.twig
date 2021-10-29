@@ -23,10 +23,12 @@
 		</div>
 		<div class="restaurants-list">
 			{% for r in restaurants %}
-				<section>
-          <h3>{{r.name}}</h3>
-          <p>{{r.description}}</p>
-        </section>
+				<a href="/restaurant/{{r.id}}">
+					<section>
+						<h3>{{r.name}}</h3>
+						<p>{{r.description}}</p>
+					</section>
+				</a>
 			{% endfor %}
 		</div>
 		<h2>Do you want to logout?</h2>
