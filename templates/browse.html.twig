@@ -23,7 +23,7 @@
 					{{c.name}}
 				</div>
 			{% if (key + 1) is divisible by(2) or loop.last %}
-					{# need to close row div, if max cols reached#}
+					{# need to close row div, if max cols reached, or if last element (may be an odd number)#}
 				</div>
 			{% endif %}
 		 {% endfor %}
