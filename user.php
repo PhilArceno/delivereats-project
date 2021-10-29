@@ -354,8 +354,8 @@ $app->get('/manage-restaurant', function ($request, $response, $args) use ($log)
 // ****************** Browse *********************
 
 $app->get('/browse', function ($request, $response, $args) {
-    $records = DB::query("SELECT r.name, c.category_id FROM restaurant as r, restaurant_category as c WHERE r.id = c.restaurant_id");
-    return $this->view->render($response, 'browse.html.twig', ['restaurant' => $records]);
+    $records = DB::query("SELECT * FROM category as c");
+    return $this->view->render($response, 'browse.html.twig', ['categories' => $records, 'userSession' => $_SESSION['user']]);
 });
 
 
