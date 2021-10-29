@@ -14,13 +14,6 @@ function verifyName($name)
     return TRUE;
 }
 
-function verifyUserName($userName)
-{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $userName) != 1) { // no match
-        return "The username must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
-    }
-    return TRUE;
-}
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
 function verifyStreet($street)
 {
@@ -69,8 +62,7 @@ function verifyProvince($province)
     return TRUE;
 }
 
-
-function verifyDescription($description)
+    function verifyDescription($description)
     {
         if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
             return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
@@ -78,16 +70,7 @@ function verifyDescription($description)
         return TRUE;
     }
 
-    function verifyFoodDescription($description)
-    {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
-            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
-        }
-        return TRUE;
-    }
-
-
-    function verifyUploadedFoodPhoto($photo, &$fileName)
+    function verifyUploadedPhoto($photo, &$fileName)
     {
 
         if ($photo->getError() !== UPLOAD_ERR_OK) {
@@ -124,30 +107,3 @@ function verifyDescription($description)
         return TRUE;
     }
 
-
-function verifyUploadedPhoto($photo, &$fileName) {
-    if ($photo->getError() !== UPLOAD_ERR_OK) {
-        return "Error uploading photo " . $photo->getError();
-    }
-    if ($photo->getSize() > 5*1024*1024) {
-        return "File too big. 5MB max is allowed.";
-    }
-    $info = getimagesize($photo->file);
-    if ($info[0] < 200 || $info[0] > 1000 || $info[1] < 200 || $info[1] > 1000) {
-        return "Width and height must be within 200-1000 pixels range";
-    }
-    $ext = "";
-    switch ($info['mime']) {
-        case 'image/jpeg' : $ext = "jpg"; break;
-        case 'image/gif' : $ext = "gif";break;
-        case 'image/png' : $ext = "png";break;
-        case 'image/bmp' : $ext = "bmp";break;
-        default:
-            return "Only JPG, GIF, PNG, and BMP file types are allowed";
-    }
-    //Keeping the extension is dangerous and can allow for code injection.
-    $filenameWithoutExtension = pathinfo($photo->getClientFilename(), PATHINFO_FILENAME);
-    $sanitizedFileName = mb_ereg_replace('([^A-Za-z0-9_-])','_',$filenameWithoutExtension);
-    $fileName = $sanitizedFileName . "." . $ext;
-    return true;
-}
