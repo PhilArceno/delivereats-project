@@ -10,8 +10,7 @@
 		<meta name='date' content='November 01, 2021'>
 		<!-- Bootstrap or Tailwind styles -->
 		<!-- Custom Styles -->
-		<link rel="stylesheet" href="/styles.css"/> 
-		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+		<link rel="stylesheet" href="/styles.css"/> <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 		<title>
 			{% block title %}{% endblock %}
 			- DeliverEats
@@ -22,12 +21,37 @@
 		<!-- Logo -->
 		<!-- Search Bar -->
 		<!-- Menu Items -->
-		{% if userSession %}
-			<nav>
-				<a href="/"> Home</a>
-				<a href="/browse">Browse</a>
-				<a href="/orders">Orders</a>
-				<a href="/account">Account</a>
+			{% if userSession %}
+				<nav class="container-fluid fixed-bottom d-flex justify-content-between shadow-lg p-2"> <div class="flex-row">
+					<a href="/">
+						<img src="" alt="home icon"/>
+						<div class="text-center">Home</div>
+					</a>
+				</div>
+				<div class="flex-row">
+					<a href="/browse">
+						<img src="" alt="magnifying glass icon"/>
+						<div class="text-center">
+							Browse
+						</div>
+					</a>
+				</div>
+				<div class="flex-row">
+					<a href="/orders">
+						<img src="" alt="receipt icon"/>
+						<div class="text-center">
+							Orders
+						</div>
+					</a>
+				</div>
+				<div class="flex-row">
+					<a href="/account">
+						<img src="" alt="person icon"/>
+						<div class="text-center">
+							Account
+						</div>
+					</a>
+				</div>
 			</nav>
 		{% endif %}
 		<!-- Body -->
