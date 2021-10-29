@@ -1,0 +1,37 @@
+{% extends "master.html.twig" %}
+{% block title %}Add your Items!
+{% endblock %}
+{% block content %}
+
+	<div>
+		<img src="" alt="Restuarant Image"/>
+		<div class="d-flex container-fluid justify-content-between">
+			<div>
+				<h2>{{restaurant.name}}</h2>
+				<p>
+					{{restaurant.pricing}}
+				</p>
+			</div>
+			<div>
+				Rating
+			</div>
+		</div>
+	</div>
+	<div>
+		{% for f in food %}
+			<section class="d-flex">
+				<img src="{{f.imageFilePath}}" alt="food-image"/>
+				<div class="flex-grow-1">
+					<div class="d-flex justify-content-between">
+						{# flex here #}
+						<h3>{{f.name}}</h3>
+						<div>{{f.price}}</div>
+					</div>
+					<p>{{f.description}}</p>
+					<button class="btn btn-danger">add item</button>
+				</div>
+			</section>
+		{% endfor %}
+	</div>
+
+{% endblock %}
