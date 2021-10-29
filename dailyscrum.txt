@@ -60,6 +60,11 @@ Phil
 2.  Feed implementation
 3.  display feed only if logged in
 
+Bahar
+1. manage restaurant added
+2. testing maanage restaurant, viewing previously added food to the owner
+3. adding Jquery to registeration was not successful, reading more about it
+
 Dmitri
 1. Recovering the code from the previous version
 2. Depending on class topic, may be working on database hosting. Otherwise, more research and work on profile page.
