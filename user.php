@@ -5,7 +5,13 @@ require_once 'vendor/autoload.php';
 require_once 'init.php';
 
 $app->get('/', function ($request, $response, $args) {
-    return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION ? $_SESSION['user'] : null]);
+    $user = null;
+    if ($_SESSION) {
+        $user = $_SESSION['user'];
+        $restaurants = DB::query("SELECT * FROM restaurant");
+        $categories = DB::query("SELECT * FROM category");
+    }
+    return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories]);
 });
 
 // ******************** LOGIN USER ***********************
@@ -56,7 +62,7 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 // });
 
-$app->get('/account', function($request, $response, $args) {
+$app->get('/account', function ($request, $response, $args) {
     return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
 });
 
@@ -95,7 +101,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     }
 
     // username validation
-    $result = verifyUserName($userName);
+    $result = verifyName($userName);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -160,9 +166,6 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     };
 
-
-
-
     if ($errorList) {
         $valuesList = [
             'name' => $name, 'userName' => $userName, 'email' => $email, 'pass1' => $pass1, 'pass2' => $pass2,
@@ -213,8 +216,6 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $description = $request->getParam('description');
     $image = $request->getParam('image');
     $pricing = $request->getParam('pricing');
-    $address = $request->getParam('address');
-    $streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -230,16 +231,11 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
+    // description validation
     $result = verifyDescription($description);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-
-    $hasPhoto = false;
-    $mimeType = "";
-
-    $uploadedFiles = $request->getUploadedFiles();
-    $uploadedImage = $uploadedFiles['image'];
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
@@ -250,10 +246,17 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     }
 
     // street format validation
-    $result = verifyStreet($address);
+    $result = verifyStreet($street);
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
+
+    // verify province
+    $result = verifyProvince($province);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+
     //  postal code validation
     $result = verifyPostalCode($postalCode);
     if ($result !== TRUE) {
@@ -262,14 +265,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
 
     if ($errorList) {
         $valuesList = [
-            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'streetNo' => $streetNo, 'street' => $street, 'address' => $address, 'appartmentNo' => $appartmentNo,
-            'postalCode' => $postalCode, 'city' => $city, 'province' => $province
-        ];
-        $log->debug(sprintf("Error with adding: name=%s, streetNo=%s, street=%s, address=%s", $name, $streetNo, $street, $address));
+            'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'street' => $street, 'appartmentNo' => $appartmentNo,
+            'postalCode' => $postalCode, 'city' => $city, 'province' => $province];
+        $log->debug(sprintf("Error with adding: name=%s, street=%s", $name, $street));
         return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         $addressValueList = [
-            'province' => $province, 'city' => $city, 'street_num' => $streetNo, 'street_name' => $street,
+            'province' => $province, 'city' => $city, 'street' => $street,
             'apt_num' => $appartmentNo, 'postal_code' => $postalCode
         ];
         DB::insert('address', $addressValueList);
@@ -279,7 +281,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
             'owner_id' => $owner_id, 'address_id' => $addressId
         ];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
-        $valuesList['itemImagePath'] = $destImageFilePath;
+        $valuesList['imageFilePath'] = $destImageFilePath;
         DB::insert('restaurant', $valuesList);
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
@@ -304,16 +306,16 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
     }
     $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
-     // description validation
-     $result = verifyFoodDescription($description);
-     if ($result !== TRUE) {
-         $errorList[] = $result;
-     }
+    // description validation
+    $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
-    $result = verifyUploadedFoodPhoto($uploadedImage, $destImageFilePath);
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -348,4 +350,19 @@ $app->get('/manage-restaurant', function ($request, $response, $args) use ($log)
         $restaurant['description'] = $preview;
     }
     return $this->view->render($response, 'manage-restaurant.html.twig', ['list' => $restaurantList]);
+});
+// ****************** Browse *********************
+
+$app->get('/browse', function ($request, $response, $args) {
+    $records = DB::query("SELECT r.name, c.category_id FROM restaurant as r, restaurant_category as c WHERE r.id = c.restaurant_id");
+    return $this->view->render($response, 'browse.html.twig', ['restaurant' => $records]);
+});
+
+
+$app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
+
+    $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
+    return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
 });
