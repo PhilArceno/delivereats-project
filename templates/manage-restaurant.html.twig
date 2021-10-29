@@ -1,0 +1,22 @@
+{% extends "master.html.twig" %}
+
+{% block title %}List of Your Restaurant(s){% endblock %} 
+
+{% block content %}
+
+<h4> List of your restaurant(s) </h4>
+<table>
+    <tr><th>Name</th><th>Description</th><th>Image</th><th>Pricing</th><th>**Manage your menu**</th></tr>
+    {% for a in list %}
+        <tr>
+            <td>{{a.name}}</td>
+            <td>{{a.description}}</td>
+            <td><img src="{{a.imageFilePath}}" width="150"></td>
+            <td>{{a.pricing}}</td>
+            <td><a href="/add-food/{{a.id}}">ADD FOOD</a></td>
+        </tr>
+
+    {% endfor %}
+</table>
+
+{% endblock content %}

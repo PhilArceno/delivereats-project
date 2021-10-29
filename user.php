@@ -286,11 +286,11 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     }
 });
 //********************************** ADD FOOD *************************************************/
-$app->get('/add-food', function ($request, $response, $args) {
+$app->get('/add-food/{id:[0-9]+}', function ($request, $response, $args) {
     return $this->view->render($response, "add-food.html.twig");
 });
 
-$app->post('/add-food', function ($request, $response, $args) use ($log) {
+$app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
     $name = $request->getParam('name');
     $price = $request->getParam('price');
     $description = $request->getParam('description');
@@ -325,7 +325,7 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
         return $this->view->render($response, "add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
-        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE owner_id=%i", $owner_id);
+        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE id=%i", $args['id']);
         $valuesList = [
             'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
             'restaurant_id' => $restaurant_id
@@ -336,4 +336,16 @@ $app->post('/add-food', function ($request, $response, $args) use ($log) {
 
         return $this->view->render($response, "add-food-success.html.twig");
     }
+});
+
+//********************************** Manage Restaurant *************************************************/
+
+$app->get('/manage-restaurant', function ($request, $response, $args) use ($log)  {
+    $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
+    foreach ($restaurantList as &$restaurant) {
+        $fullBodyNoTags = strip_tags($restaurant['description']);
+        $preview = mb_strimwidth($fullBodyNoTags, 0, 60, "...");
+        $restaurant['description'] = $preview;
+    }
+    return $this->view->render($response, 'manage-restaurant.html.twig', ['list' => $restaurantList]);
 });
