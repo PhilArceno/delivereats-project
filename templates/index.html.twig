@@ -4,24 +4,23 @@
 {% block content %}
 
 	{% if userSession %}
-		<h1>Feed</h1>
-		<div>
-			<div>Info</div>
+		<div class="d-flex container-fluid p-1 justify-content-between">
+			<img src="" alt="Info Icon"/>
 			<div>DeliverEats</div>
-			<div>Location</div>
+			<img src="" alt="Location Icon"/>
 		</div>
 		<div>
-			<div>
+			<div class="d-flex">
 				{% for c in categories %}
-					<div>{{c.name}}</div>
+					<div class="p-1">{{c.name}}</div>
 				{% endfor %}
 			</div>
-			<div>
-				<div>Price</div>
-				<div>Rating</div>
+			<div class="d-flex">
+				<div class="p-1">Price</div>
+				<div class="p-1">Rating</div>
 			</div>
 		</div>
-		<div class="restaurants-list">
+		<div>
 			{% for r in restaurants %}
 				<a href="/restaurant/{{r.id}}">
 					<section>
