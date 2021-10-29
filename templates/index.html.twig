@@ -4,26 +4,31 @@
 {% block content %}
 
 	{% if userSession %}
-    <h1>Feed</h1>
-    <div>
-      {# <div>Info</div>
-      <div>Logo</div>
-      <div>Location</div> #}
-    </div>
-    <div>
-      <div>
-        {# <div>Category Item</div> #}
-      </div>
-      <div>
-        {# <div>Price</div>
-        <div>Rating</div> #}
-      </div>
-    </div>
-    <div class="restaurants-list">
-      {% for r in restaurants %}
-      <div>{{r.name}}</div>
-      {% endfor %}
-    </div>
+		<h1>Feed</h1>
+		<div>
+			<div>Info</div>
+			<div>DeliverEats</div>
+			<div>Location</div>
+		</div>
+		<div>
+			<div>
+				{% for c in categories %}
+					<div>{{c.name}}</div>
+				{% endfor %}
+			</div>
+			<div>
+				<div>Price</div>
+				<div>Rating</div>
+			</div>
+		</div>
+		<div class="restaurants-list">
+			{% for r in restaurants %}
+				<section>
+          <h3>{{r.name}}</h3>
+          <p>{{r.description}}</p>
+        </section>
+			{% endfor %}
+		</div>
 		<h2>Do you want to logout?</h2>
 		<a href="/logout">Sign Off</a>
 	{% else %}

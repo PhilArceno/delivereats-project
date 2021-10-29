@@ -65,7 +65,7 @@ Dmitri
 2. Depending on class topic, may be working on database hosting. Otherwise, more research and work on profile page.
 3. As needed
 
-DeliverEats Scrum 10/27/2021
+DeliverEats Scrum 10/28/2021
 
 Phil
 1.  Feed set-up
