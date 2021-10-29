@@ -6,14 +6,12 @@
 
 <h4> List of your restaurant(s) </h4>
 <table>
-    <tr><th>Name</th><th>Description</th><th>Image</th><th>Pricing</th><th>**Manage your menu**</th></tr>
+    <tr><th>Name</th><th>Image</th><th>**Manage your menu**</th></tr>
     {% for restaurant in list %}
         <tr>
             <td>{{restaurant.name}}</td>
-            <td>{{restaurant.description}}</td>
-            <td><img src="{{restaurant.imageFilePath}}" width="150"></td>
-            <td>{{restaurant.pricing}}</td>
-            <td><a href="/add-food/{{restaurant.id}}">ADD FOOD</a></td>
+            <td><img src="{{restaurant.imageFilePath}}" width="150" alt="Restaurant image"></td>
+            <td><a class="btn btn-danger" href="/add-food/{{restaurant.id}}">ADD FOOD</a></td>
         </tr>
 
     {% endfor %}

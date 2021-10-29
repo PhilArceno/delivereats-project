@@ -101,7 +101,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     }
 
     // username validation
-    $result = verifyName($userName);
+    $result = verifyUsername($userName);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -136,6 +136,12 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
             $pass2 = "";
         }
     }
+
+    // appartmentNo format validation
+    $result = verifyAptNo($appartmentNo);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
     // street format validation
     $result = verifyStreet($street);
     if ($result !== TRUE) {
@@ -304,13 +310,20 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
     // description validation
     $result = verifyDescription($description);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
+    
+
+    // price validation
+    if (!is_numeric($price) || $price <= 0 || $price > 999.99) {
+        $errorList[] = "price must be a number greater than 0 and less than 999.99";
+    }
+
 
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
@@ -346,7 +359,7 @@ $app->get('/manage-restaurant', function ($request, $response, $args) use ($log)
     $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
     foreach ($restaurantList as &$restaurant) {
         $fullBodyNoTags = strip_tags($restaurant['description']);
-        $preview = mb_strimwidth($fullBodyNoTags, 0, 60, "...");
+        $preview = mb_strimwidth($fullBodyNoTags, 0, 30, "...");
         $restaurant['description'] = $preview;
     }
     return $this->view->render($response, 'manage-restaurant.html.twig', ['list' => $restaurantList]);
