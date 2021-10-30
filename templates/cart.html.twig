@@ -1,0 +1,65 @@
+//Copy-paste from Gregory's file
+
+
+{% extends "master.html.twig" %}
+
+{% block head %}
+    <script>
+        function increment(ID) {
+            var value = $("input[name=quantity" + ID + "]").val();
+            value++;
+            $("input[name=quantity" + ID + "]").val(value);
+            $("#update" + ID).show();
+        }
+        function decrement(ID) {
+            var value = $("input[name=quantity" + ID + "]").val();
+            if (value > 0) {
+                value--;
+            }
+            $("input[name=quantity" + ID + "]").val(value);
+            $("#update" + ID).show();
+        }
+        function update(e,ID) {
+            e.preventDefault();
+            var quantity = $("input[name=quantity" + ID + "]").val();
+            $.get("/cart/update/" + ID + "/" + quantity, function() {
+                console.log("quantity updated");
+                $("#update" + ID).hide();
+            });
+            if (quantity == 0) {
+                $("#itemrow" + ID).hide();
+            }
+        }
+        $(document).ready(function () {
+            $(".updateLink").hide();
+            $('.cartQuantity').bind('propertychange change input paste', function () {
+                var ID = $(this).attr('cartID');
+                $("#update" + ID).show();
+            });
+        });
+    </script>
+{% endblock %}
+
+{% block title %}Cart{% endblock %}
+
+{% block content %}
+    <table border="1">
+        {% for ci in cartitemList %}
+            <tr id="itemrow{{ci.ID}}">
+                <td>{{ci.name}}</td>
+                <td>{{ci.price}}</td>
+                <td><button onclick="decrement({{ci.ID}})">-</button>
+                    <input class="cartQuantity" cartID="{{ci.ID}}" type="number" name="quantity{{ci.ID}}"
+                           value="{{ci.quantity}}" style="width:30px;">
+                    <button onclick="increment({{ci.ID}})">+</button>
+                    <a href="" class="updateLink" id="update{{ci.ID}}"
+                          onclick="update(event,{{ci.ID}})">update</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+ 
+   <a href="/order">Place order</a>
+        
+        
+{% endblock %}
