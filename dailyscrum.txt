@@ -104,3 +104,20 @@ Dmitri
 1. error-access-denied.html.twig, error-page-not-found.html.twig, login-register-required.html.twig
 2. cart.html.twig, order.html.twig
 3. bootstrap 5
+
+DeliverEats Scrum 10/31/2021
+
+Phil
+1. 
+2. 
+3. 
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. 
+2. 
+3. 
