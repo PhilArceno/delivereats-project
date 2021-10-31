@@ -13,12 +13,12 @@
 		</ul>
 	{% endif %}
 	<h1>Categories</h1>
-	<div class="container">
-		{% for key, c in categories %}
-			{% if (key + 1) is not divisible by(2) %}
-				{# Max # of elements in a row is two. if first col in row, start a new row. #}
-				<div class="row">
+	{% for key, c in categories %}
+		{% if (key + 1) is not divisible by(2) %}
+			{# Max # of elements in a row is two. if first col in row, start a new row. #}
+			<div class="row">
 			{% endif %}
+<<<<<<< HEAD
 				<div class="col bg-primary container-fluid m-3 p-3 text-center rounded">
 					{{c.name}}
 				</div>
@@ -56,152 +56,189 @@
 									<img class="card-img" src="/images/image.jpg" alt="Card image">
 									<div class="card-img-overlay">
 										<h6 class="card-text">All Benefits of Fast Foods</h6>
-									</div>
-								</div>
-				                <div class="container">
-				                    <div class="row mt-2">
-				                      
-										{% for resto in restaurant %}
-										{% if resto.category_id == 'fastFood' %}
-										<div class="col">
-										  <div class="card my-4" style="width: 10rem; height: 25rem">
-											<img src="/uploads/{{ resto.id }}" />
-											<div class="card-body">
-											  <h5 class="card-title">{{ resto.name }}</h5>
-											  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
-											</div>
-										  </div>
+=======
+			<div class="col">
+				{{c.name}}
+			</div>
+			{% if (key + 1) is divisible by(2) or loop.last %}
+				{# need to close row div, if max cols reached#}
+			</div>
+		{% endif %}
+	{% endfor %}
+	{# <divclass="col">
+				<div class="vertical-tab" role="tabpanel">
+						<!-- Nav tabs -->
+						<ul class="nav nav-tabs" role="tablist">
+							<li role="presentation" class="active">
+								<a href="#Section1" role="tab" data-toggle="tab">Fast Food</a>
+							</li>
+							<li role="presentation">
+								<a href="#Section2" role="tab" data-toggle="tab">Burgers</a>
+							</li>
+							<li role="presentation">
+								<a href="#Section3" role="tab" data-toggle="tab">Desserts</a>
+							</li>
+							<li role="presentation">
+								<a href="#Section4" role="tab" data-toggle="tab">Middle Eastern</a>
+							</li>
+							<li role="presentation">
+								<a href="#Section5" role="tab" data-toggle="tab">Healthy</a>
+							</li>
+						</ul>
+						<!-- Tab panes -->
+						<div class="tab-content tabs">
+							<div role="tabpanel" class="tab-pane fade in active" id="Section1">
+								<h3>Fast Food</h3>
+								<p>
+									<div class="card bg-dark text-white">
+										<img class="card-img" src="/images/image.jpg" alt="Card image">
+										<div class="card-img-overlay">
+											<h6 class="card-text">All Benefits of Fast Foods</h6>
 										</div>
-										{% endif %}
-										{% endfor %}
-				                      
-				                    </div>
-				                </div>
-							</p>
-						</div>
-						<div role="tabpanel" class="tab-pane fade" id="Section2">
-							<h3>Burgers</h3>
-							<p>
-								<div class="card bg-dark text-white">
-									<img class="card-img" src="/images/image.jpg" alt="Card image">
-									<div class="card-img-overlay">
-										<h6 class="card-text">The Best Burgers in Montreal</h6>
+>>>>>>> 18cf44c9ffc8d4e92dadcf262b6bb04a8f450bba
 									</div>
-								</div>
-								<div class="container">
-				                    <div class="row mt-2">
-				                      
-										{% for resto in restaurant %}
-										{% if resto.category_id == 'burgers' %}
-										<div class="col">
-										  <div class="card my-4" style="width: 10rem; height: 25rem">
-											<img src="/uploads/{{ resto.id }}" />
-											<div class="card-body">
-											  <h5 class="card-title">{{ resto.name }}</h5>
-											  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+					                <div class="container">
+					                    <div class="row mt-2">
+					                      
+											{% for resto in restaurant %}
+											{% if resto.category_id == 'fastFood' %}
+											<div class="col">
+											  <div class="card my-4" style="width: 10rem; height: 25rem">
+												<img src="/uploads/{{ resto.id }}" />
+												<div class="card-body">
+												  <h5 class="card-title">{{ resto.name }}</h5>
+												  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+												</div>
+											  </div>
 											</div>
-										  </div>
+											{% endif %}
+											{% endfor %}
+					                      
+					                    </div>
+					                </div>
+								</p>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="Section2">
+								<h3>Burgers</h3>
+								<p>
+									<div class="card bg-dark text-white">
+										<img class="card-img" src="/images/image.jpg" alt="Card image">
+										<div class="card-img-overlay">
+											<h6 class="card-text">The Best Burgers in Montreal</h6>
 										</div>
-										{% endif %}
-										{% endfor %}
-				                      
-				                    </div>
-				                </div>
-							</p>
-						</div>
-						<div role="tabpanel" class="tab-pane fade" id="Section3">
-							<h3>Desserts</h3>
-							<p>
-								<div class="card bg-dark text-white">
-									<img class="card-img" src="/images/image.jpg" alt="Card image">
-									<div class="card-img-overlay">
-										<h6 class="card-text">87 Best Desserts</h6>
 									</div>
-								</div>
-								<div class="container">
-				                    <div class="row mt-2">
-				                      
-										{% for resto in restaurant %}
-										{% if resto.category_id == 'desserts' %}
-										<div class="col">
-										  <div class="card my-4" style="width: 10rem; height: 25rem">
-											<img src="/uploads/{{ resto.id }}" />
-											<div class="card-body">
-											  <h5 class="card-title">{{ resto.name }}</h5>
-											  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+									<div class="container">
+					                    <div class="row mt-2">
+					                      
+											{% for resto in restaurant %}
+											{% if resto.category_id == 'burgers' %}
+											<div class="col">
+											  <div class="card my-4" style="width: 10rem; height: 25rem">
+												<img src="/uploads/{{ resto.id }}" />
+												<div class="card-body">
+												  <h5 class="card-title">{{ resto.name }}</h5>
+												  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+												</div>
+											  </div>
 											</div>
-										  </div>
+											{% endif %}
+											{% endfor %}
+					                      
+					                    </div>
+					                </div>
+								</p>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="Section3">
+								<h3>Desserts</h3>
+								<p>
+									<div class="card bg-dark text-white">
+										<img class="card-img" src="/images/image.jpg" alt="Card image">
+										<div class="card-img-overlay">
+											<h6 class="card-text">87 Best Desserts</h6>
 										</div>
-										{% endif %}
-										{% endfor %}
-				                      
-				                    </div>
-				                </div>
-							</p>
-						</div>
-						<div role="tabpanel" class="tab-pane fade" id="Section4">
-							<h3>Middle Eastern</h3>
-							<p>
-								<div class="card bg-dark text-white">
-									<img class="card-img" src="/images/image.jpg" alt="Card image">
-									<div class="card-img-overlay">
-										<h6 class="card-text">Top Most Popular Middle Eastern Foods</h6>
 									</div>
-								</div>
-								<div class="container">
-				                    <div class="row mt-2">
-				                      
-										{% for resto in restaurant %}
-										{% if resto.category_id == 'middleEastern' %}
-										<div class="col">
-										  <div class="card my-4" style="width: 10rem; height: 25rem">
-											<img src="/uploads/{{ resto.id }}" />
-											<div class="card-body">
-											  <h5 class="card-title">{{ resto.name }}</h5>
-											  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+									<div class="container">
+					                    <div class="row mt-2">
+					                      
+											{% for resto in restaurant %}
+											{% if resto.category_id == 'desserts' %}
+											<div class="col">
+											  <div class="card my-4" style="width: 10rem; height: 25rem">
+												<img src="/uploads/{{ resto.id }}" />
+												<div class="card-body">
+												  <h5 class="card-title">{{ resto.name }}</h5>
+												  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+												</div>
+											  </div>
 											</div>
-										  </div>
+											{% endif %}
+											{% endfor %}
+					                      
+					                    </div>
+					                </div>
+								</p>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="Section4">
+								<h3>Middle Eastern</h3>
+								<p>
+									<div class="card bg-dark text-white">
+										<img class="card-img" src="/images/image.jpg" alt="Card image">
+										<div class="card-img-overlay">
+											<h6 class="card-text">Top Most Popular Middle Eastern Foods</h6>
 										</div>
-										{% endif %}
-										{% endfor %}
-				                      
-				                    </div>
-				                </div>
-							</p>
-						</div>
-						<div role="tabpanel" class="tab-pane fade" id="Section5">
-							<h3>Healthy</h3>
-							<p>
-								<div class="card bg-dark text-white">
-									<img class="card-img" src="/images/image.jpg" alt="Card image">
-									<div class="card-img-overlay">
-										<h6 class="card-text">Healthy food choices</h6>
 									</div>
-								</div>
-								<div class="container">
-				                    <div class="row mt-2">
-				                      
-										{% for resto in restaurant %}
-										{% if resto.category_id == 'healthy' %}
-										<div class="col">
-										  <div class="card my-4" style="width: 10rem; height: 25rem">
-											<img src="/uploads/{{ resto.id }}" />
-											<div class="card-body">
-											  <h5 class="card-title">{{ resto.name }}</h5>
-											  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+									<div class="container">
+					                    <div class="row mt-2">
+					                      
+											{% for resto in restaurant %}
+											{% if resto.category_id == 'middleEastern' %}
+											<div class="col">
+											  <div class="card my-4" style="width: 10rem; height: 25rem">
+												<img src="/uploads/{{ resto.id }}" />
+												<div class="card-body">
+												  <h5 class="card-title">{{ resto.name }}</h5>
+												  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+												</div>
+											  </div>
 											</div>
-										  </div>
+											{% endif %}
+											{% endfor %}
+					                      
+					                    </div>
+					                </div>
+								</p>
+							</div>
+							<div role="tabpanel" class="tab-pane fade" id="Section5">
+								<h3>Healthy</h3>
+								<p>
+									<div class="card bg-dark text-white">
+										<img class="card-img" src="/images/image.jpg" alt="Card image">
+										<div class="card-img-overlay">
+											<h6 class="card-text">Healthy food choices</h6>
 										</div>
-										{% endif %}
-										{% endfor %}
-				                      
-				                    </div>
-				                </div>
-							</p>
+									</div>
+									<div class="container">
+					                    <div class="row mt-2">
+					                      
+											{% for resto in restaurant %}
+											{% if resto.category_id == 'healthy' %}
+											<div class="col">
+											  <div class="card my-4" style="width: 10rem; height: 25rem">
+												<img src="/uploads/{{ resto.id }}" />
+												<div class="card-body">
+												  <h5 class="card-title">{{ resto.name }}</h5>
+												  <a href="/restaurant/{{ resto.id }}" class="btn btn-success-olive viewdetaild">Check menu</a>
+												</div>
+											  </div>
+											</div>
+											{% endif %}
+											{% endfor %}
+					                      
+					                    </div>
+					                </div>
+								</p>
+							</div>
 						</div>
 					</div>
-				</div>
-		</div> #}
-	</div>
-
-</div>{% endblock content %}
+			</div> #}
+{% endblock content %}

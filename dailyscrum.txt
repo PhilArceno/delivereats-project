@@ -91,9 +91,9 @@ Dmitri
 DeliverEats Scrum 10/29/2021
 
 Phil
-1.  
-2.  
-3.  
+1. Basic bootstrap styling for restaurant and index pages, set up html for restaurants
+2. Work more on styling, set-up pages, fix browse
+3. Look up modal information
 
 Bahar
 1.

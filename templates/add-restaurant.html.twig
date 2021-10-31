@@ -3,7 +3,7 @@
 {% block title %}Add your restaurant
 {% endblock %}
 
-{% block addHead %}
+{% block head %}
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		tinymce.init({selector: 'textarea[name=description]'});
@@ -19,27 +19,27 @@
 			{% endfor %}
 		</ul>
 	{% endif %}
+	<div class="container mt-3">
+		<h2>Add your restaurant</h2>
+		<p>Submit your business info:</p>
+		<form method="post" enctype="multipart/form-data">
 
-	<form method="post" enctype="multipart/form-data">
-		<h1>Add your restaurant:</h1>
-		<h2>Submit your business info</h2>
-		<div>
-			Restaurant name:
-			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
-		</div>
-		<div>
-			Restaurant description:
-			<textarea name="description">{{v.description}}</textarea><br>
-		</div>
-		<div>
-			Restaurant image or logo:
-			<input type="file" name="image"/><br>
-		</div>
-		<div>
-			Pricing range:
-			<input type="number" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
-		</div>
-		<div>
+			<div class="mb-3 mt-3">
+				<label for="name" class="form-label">Restaurant name:</label>
+				<input type="text" class="form-control" name="name" placeholder="Enter name of your restaurant" id="name" value="{{ v.name }}"><br>
+			</div>
+			<div class="mb-3">
+				<label for="description" class="form-label">Restaurant description:</label>
+				<textarea class="form-control" name="description">{{v.description}}</textarea><br>
+			</div>
+			<div class="mb-3">
+				<label for="image" class="form-label">Restaurant image or logo:</label>
+				<input type="file" class="form-control" name="image"/><br>
+			</div>
+			<div class="mb-3">
+				<label for="pricing" class="form-label">Pricing range:</label>
+				<input type="number" class="form-control" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
+			</div>
 			{% include "address-form.html.twig" with {
 			address: v.address,
 			streetNo: v.streetNo,
@@ -49,6 +49,7 @@
 			city: v.city, 
 			province: v.province
 			} %}
-			<input class="center btn brand z-depth-0" type="submit" name="next" value="Add">
+			<button type="submit" class="btn btn-primary">Add</button>
 		</form>
-	{% endblock content %}
+	</div>
+{% endblock content %}
