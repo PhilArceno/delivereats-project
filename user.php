@@ -14,6 +14,12 @@ $app->get('/', function ($request, $response, $args) {
     return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories]);
 });
 
+
+$app->get('/change-address', function ($request, $response, $args) {
+    return $this->view->render($response, 'address-form.html.twig', []);
+});
+
+
 // ******************** LOGIN USER ***********************
 
 $app->get('/login', function ($request, $response, $args) {

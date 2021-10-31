@@ -1,40 +1,73 @@
 {% extends "master.html.twig" %}
 {% block title %}Home page
 {% endblock %}
+{% block addHead %}
+{% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+  $(document).ready(function() {
+      $('#location-icon').on('click', function() {
+    let id = $(this).data('id');
+    return $.ajax({
+        type: 'GET',
+        url: '/change-address',
+        dataType: 'html',
+        success: function(response) { 
+            $('#modal-content').html(response);
+        }
+    });
+});
+  });
+</script>
+{% endblock %}
 {% block content %}
-
 	{% if userSession %}
-		<div class="d-flex container-fluid p-1 justify-content-between">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewbox="0 0 16 16">
-				<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-				<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
-			</svg>
-			<div>DeliverEats</div>
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewbox="0 0 16 16">
-				<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
-				<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
-			</svg>
-		</div>
-		<div>
-			<div class="d-flex">
-				{% for c in categories %}
-					<div class="p-1">{{c.name}}</div>
+		<div class="m-4">
+			<div class="d-flex container-fluid p-1 justify-content-between">
+				<svg transform="scale(1.5)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewbox="0 0 16 16">
+					<path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+					<path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+				</svg>
+				<div>
+					<b>
+						<span style="color:#ff8400">Deliver</span><span style="color:#ff0001">Eats</span>
+					</b>
+				</div>
+				<svg id='location-icon'onclick="showModal()" transform="scale(1.5)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewbox="0 0 16 16">
+					<path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A31.493 31.493 0 0 1 8 14.58a31.481 31.481 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94zM8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10z"/>
+					<path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+				</svg>
+			</div>
+			<div class="mt-3 mb-3">
+				<div class="d-flex">
+					{% for c in categories %}
+						<div class="me-2 text-center">
+              <img src="https://img.icons8.com/cotton/64/000000/sushi.png"/>
+              <div>{{c.name}}</div>
+            </div>
+					{% endfor %}
+				</div>
+				<div class="d-flex">
+					<div class="p-1">Price</div>
+					<div class="p-1">Rating</div>
+				</div>
+			</div>
+			<div>
+				{% for r in restaurants %}
+					<a href="/restaurant/{{r.id}}">
+						<section class="rounded shadow">
+							<div class="w-100" style="height:150px">
+								<img class="img-fluid rounded-top h-100 w-100" style="object-fit:cover;" src="{{r.imageFilePath}}"/>
+							</div>
+							<div class="p-3">
+								<h3>{{r.name}}</h3>
+								<p>{{r.pricing}}
+									- Categories</p>
+							</div>
+						</section>
+					</a>
 				{% endfor %}
 			</div>
-			<div class="d-flex">
-				<div class="p-1">Price</div>
-				<div class="p-1">Rating</div>
-			</div>
-		</div>
-		<div>
-			{% for r in restaurants %}
-				<a href="/restaurant/{{r.id}}">
-					<section>
-						<h3>{{r.name}}</h3>
-						<p>{{r.description}}</p>
-					</section>
-				</a>
-			{% endfor %}
 		</div>
 	{% else %}
 		<h1>Food's Ninja is Here!</h1>

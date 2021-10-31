@@ -19,7 +19,7 @@
 				{# Max # of elements in a row is two. if first col in row, start a new row. #}
 				<div class="row">
 			{% endif %}
-				<div class="col">
+				<div class="col bg-primary container-fluid m-3 p-3 text-center rounded">
 					{{c.name}}
 				</div>
 			{% if (key + 1) is divisible by(2) or loop.last %}
