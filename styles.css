@@ -53,7 +53,9 @@ input[type=submit]:hover {
 }
 
 /* google maps */
-
+.pac-container {
+  z-index: 10000 !important;
+}
 .sb-title {
   position: relative;
   top: -12px;

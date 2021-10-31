@@ -10,8 +10,9 @@ $app->get('/', function ($request, $response, $args) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
+        return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
-    return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories]);
+    return $this->view->render($response, 'index.html.twig', []);
 });
 
 

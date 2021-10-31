@@ -2,14 +2,14 @@
 {% block title %}Registration
 {% endblock %}
 
-{% block head %}
+{% block addHead %}
 {% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
             $('input[name=email]').keyup(function() {
                 var newemail = $(this).val();
-                newemail e= encodeURIComponent(newemail);
+                newemail = encodeURIComponent(newemail);
                 $("#emailIsTaken").load('/isemailtaken/{{newemail}}' + newemail);
             });
         });
