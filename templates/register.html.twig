@@ -9,7 +9,7 @@
         $(document).ready(function () {
             $('input[name=email]').keyup(function() {
                 var newemail = $(this).val();
-                newemail e= encodeURIComponent(newemail);
+                newemail = encodeURIComponent(newemail);
                 $("#emailIsTaken").load('/isemailtaken/{{newemail}}' + newemail);
             });
         });

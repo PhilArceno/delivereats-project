@@ -4,8 +4,6 @@
           <img class="sb-title-icon" src="https://fonts.gstatic.com/s/i/googlematerialicons/location_pin/v5/24px.svg" alt="">
           <span class="sb-title">Address Selection</span>
         </div>
-        <!--<input type="hidden" id='street_number' name='streetNo' />-->
-        <!--<input type="hidden" id='route' name='street' />-->
         <input type="text" placeholder="Street" name="street" id="location" value="{{street}}"/>
         <input type="text" placeholder="Apt, Suite, etc (optional)" name="appartmentNo" value="{{appartmentNo}}"/>
         <input type="text" placeholder="City" id="locality" name='city' value="{{city}}" />
@@ -13,7 +11,6 @@
           <input type="text" class="half-input" placeholder="State/Province" id="administrative_area_level_1" name="province" value="{{province}}"/>
           <input type="text" class="half-input" placeholder="Zip/Postal code" id="postal_code" name="postalCode" value="{{postalCode}}"/>
         </div>
-        {# <button class="button-cta">Select Address</button> #}
       </div>
       <div class="map" id="map"></div>
     </div>

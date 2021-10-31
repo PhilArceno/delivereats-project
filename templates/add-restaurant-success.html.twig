@@ -2,10 +2,20 @@
 
 {% block title %}Restaurant added successfully{% endblock %}
 
+{%block head %}
+<script>
+var secsLeft = 5;
+setInterval(() => {
+    document.getElementById("countdown").innerHTML = secsLeft + "";
+    secsLeft--;
+    if (secsLeft < 0) {
+    window.location.href = "/";
+    }
+}, 1000);
+</script>
+{% endblock %}
+
 {%block content %}
-
 <h1>Restaurant was added successfully</h1>
-
-<p>We are glad that you have become a member of our family.</p>
-
+<p>We are glad that you have become a member of our family. You will be automatically redirected in <span id="countdown">5</span> seconds.</p>
 {% endblock %}

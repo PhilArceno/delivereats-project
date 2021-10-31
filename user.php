@@ -10,9 +10,16 @@ $app->get('/', function ($request, $response, $args) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
+        return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
-    return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories]);
+    return $this->view->render($response, 'index.html.twig', []);
 });
+
+
+$app->get('/change-address', function ($request, $response, $args) {
+    return $this->view->render($response, 'address-form.html.twig', []);
+});
+
 
 // ******************** LOGIN USER ***********************
 
@@ -36,12 +43,12 @@ $app->post(
         }
 
         if (!$loginSuccess) {
-            $log->debug(sprintf("Login failed for username %s", $userName));
+            $log->debug(sprintf("Login failed for username %s from %s", $userName, $_SERVER['REMOTE_ADDR']));
             return $this->view->render($response, 'login.html.twig', ['errorList' => $errorList]);
         } else {
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
-            $log->debug(sprintf("Login successful for username %s", $userName));
+            $log->debug(sprintf("Login successful for username %s, uid=%d, from %s", $userName, $record['id'], $_SERVER['REMOTE_ADDR']));
             return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
         }
     }
@@ -51,7 +58,7 @@ $app->post(
 // ************** LOGOUT USER ********************
 
 $app->get('/logout', function ($request, $response, $args) use ($log) {
-    $log->debug(sprintf("Logout successful for uid=%d", @$_SESSION['user']['id']));
+    $log->debug(sprintf("Logout successful for uid=%d, from %s", @$_SESSION['user']['id'], $_SERVER['REMOTE_ADDR']));
     unset($_SESSION['user']);
     return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
 });
@@ -378,4 +385,17 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
 
     $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
     return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+});
+
+
+// ****************** Order *********************
+
+$app->get('/order', function ($request, $response, $args) {
+    return $this->view->render($response, 'order.html.twig');
+});
+
+// ****************** Cart *********************
+
+$app->get('/cart', function ($request, $response, $args) {
+    return $this->view->render($response, 'cart.html.twig');
 });

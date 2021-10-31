@@ -77,7 +77,30 @@ Phil
 2.  Bootstrap implementation
 3.  Bootstrap tutorials
 
+Bahar
+1.
+2.
+3.
+
 Dmitri
 1. /browse php logic and template
 2. work on /account page and around
 3. As needed
+
+
+DeliverEats Scrum 10/29/2021
+
+Phil
+1. Basic bootstrap styling for restaurant and index pages, set up html for restaurants
+2. Work more on styling, set-up pages, fix browse
+3. Look up modal information
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. error-access-denied.html.twig, error-page-not-found.html.twig, login-register-required.html.twig
+2. cart.html.twig, order.html.twig
+3. bootstrap 5
