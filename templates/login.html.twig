@@ -5,28 +5,29 @@
 
 {% block content %}
 	{% if userSession %}
-	<h1>Already Logged in!</h1>
+		<h1>Already Logged in!</h1>
 	{% else %}
-	{% if errorList %}
-		<p>ERROR:</p>
-		<ul>
-			{% for error in errorList %}
-				<li>{{error}}</li>
-			{% endfor %}
-		</ul>
-	{% endif %}
-	<div>
-		<form method="POST">
-			<div>
-				<label>Username:
-				</label>
-				<input type="text" name="username" placeholder="Enter your username"></input>
-		</div>
-		<div>
-			<label>Password:
-			</label>
-			<input type="password" name="password" placeholder="Enter your password"></input>
-	</div>
-	<input type="submit" value="Login"></input></form></div>
-	{% endif %}
+		{% if errorList %}
+			<p>ERROR:</p>
+			<ul>
+				{% for error in errorList %}
+					<li>{{error}}</li>
+				{% endfor %}
+			</ul>
+		{% endif %}
+		<div class="container mt-3">
+			<h2>Login</h2>
+			<p>Please enter your username and password:</p>
+			<form method="POST">
+				<div class="form-floating mb-3 mt-3">
+					<input type="text" class="form-control" id="username" placeholder="Enter your username" name="username">
+					<label for="username">Username</label>
+				</div>
+				<div class="form-floating mt-3 mb-3">
+					<input type="text" class="form-control" id="password" placeholder="Enter password" name="password">
+					<label for="password">Password</label>
+				</div>
+				<button type="submit" class="btn btn-primary">Login</button>
+			</form>
+		{% endif %}
 	{% endblock %}
