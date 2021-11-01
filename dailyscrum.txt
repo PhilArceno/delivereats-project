@@ -118,6 +118,6 @@ Bahar
 3. 
 
 Dmitri
-1. 
-2. 
-3. 
+1. sign up and login as mockups
+2. restuarant/{id} 
+3. cart.html.twig, order.html.twig
