@@ -377,7 +377,7 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
 
 // ****************** Order *********************
 
-$app->get('/order', function ($request, $response, $args) {
+$app->get('/orders', function ($request, $response, $args) {
     return $this->view->render($response, 'order.html.twig');
 });
 

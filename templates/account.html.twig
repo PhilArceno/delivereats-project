@@ -4,11 +4,19 @@
 {% endblock %}
 
 {% block content %}
-	<ul>
-		<li><a href="/profile">My Profile</a></li>
-        {% if userSession.account_type == 'business' %}
-		<li><a href="/manage-restaurants">Manage Restaurants</a></li>
-        {% endif %}
-        <li><a href="/logout">Log out</a></li>
-	</ul>
+	<div class="container mt-3">
+		<ul class="list-group list-group-flush">
+			<li class="list-group-item">
+				<a href="/profile">My Profile</a>
+			</li>
+			{% if userSession.account_type == 'business' %}
+				<li class="list-group-item">
+					<a href="/manage-restaurants">Manage Restaurants</a>
+				</li>
+			{% endif %}
+			<li class="list-group-item">
+				<a href="/logout">Log out</a>
+			</li>
+		</ul>
+	</div>
 {% endblock %}

@@ -19,25 +19,27 @@
 			{% endfor %}
 		</ul>
 	{% endif %}
+	<div class="container mt-3">
+		<h2>Add Food to your restaurant</h2>
+		<form method="post" enctype="multipart/form-data">
 
-	<form method="post" enctype="multipart/form-data">
-		<h1>Add Food to your restaurant:</h1>
-		<div>
-			Food Name:
-			<input type="text" name="name" id="name" value="{{ v.name }}"><br>
-		</div>
-        		<div>
-			Price:
-			<input type="number" name="price" id="price" value="{{ v.price }}"><br>
-		</div>
-		<div>
-			Description:
-			<textarea name="description">{{v.description}}</textarea><br>
-		</div>
-		<div>
-			Image:
-			<input type="file" name="image"/><br>
-		</div>
-		    <input class="center btn brand z-depth-0" type="submit" name="submit" value="Add">
+			<div class="mb-3 mt-3">
+				<label for="name" class="form-label">Food Name</label>
+				<input type="text" class="form-control" name="name" id="name" value="{{ v.name }}"><br>
+			</div>
+			<div class="mb-3">
+				<label for="price" class="form-label">Price</label>
+				<input type="number" class="form-control" name="price" id="price" value="{{ v.price }}"><br>
+			</div>
+			<div class="mb-3">
+				<label for="description" class="form-label">Description</label>
+				<textarea class="form-control" name="description">{{v.description}}</textarea><br>
+			</div>
+			<div class="mb-3">
+				<label for="image" class="form-label">Image</label>
+				<input type="file" class="form-control" name="image"/><br>
+			</div>
+			<button type="submit" class="btn btn-primary" name="submit">Add</button>
 		</form>
-	{% endblock content %}
+	</div>
+{% endblock content %}
