@@ -55,7 +55,7 @@ Dmitri
 
 DeliverEats Scrum 10/27/2021
 
-Phil
+Phil 
 1.  Registration review and fixes
 2.  Feed implementation
 3.  display feed only if logged in
@@ -78,9 +78,9 @@ Phil
 3.  Bootstrap tutorials
 
 Bahar
-1.
-2.
-3.
+1. Basic bootstrap styling add food page
+2. Adding style to registeration page 
+3. Fiquring out how to add confirmation email 
 
 Dmitri
 1. /browse php logic and template
@@ -96,9 +96,9 @@ Phil
 3. Look up modal information
 
 Bahar
-1.
-2.
-3.
+1. Basic bootstrap styling registeration page
+2. work on send confirmation email
+3. continue figuring out how to add confirmation email
 
 Dmitri
 1. error-access-denied.html.twig, error-page-not-found.html.twig, login-register-required.html.twig

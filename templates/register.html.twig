@@ -26,19 +26,29 @@
 		</ul>
 	{% endif %}
 
-
+<div class="container mt-3">
 	<form class="" method="post" enctype="multipart/form-data">
 		<h1>Registration</h1>
-        Name:<br>
-		<input type="text" name="name" value="{{v.name}}"><br>
-		User Name:<br>
-		<input type="text" name="userName" value="{{v.userName}}"><br>
-		Email:<br>
-		<input type="text" name="email" value="{{v.email}}"><br>
-		<span id="emailIsTaken" class="errorMessage"></span><br>
-		Password:
-		<br><input type="password" name="pass1" value="{{v.pass1}}"><br>
-		Password (repeated):<br><input type="password" name="pass2" value="{{v.pass2}}"><br><br>
+		<div class="mb-3 mt-3">
+        <label for="name" class="form-label">Name:</label>
+		<input type="text" class="form-control" name="name" placeholder="Enter your name " id="name" value="{{ v.name }}"><br>
+		</div>
+		<div class="mb-3">
+		<label for="username" class="form-label">Username:</label>
+		<input type="text" class="form-control" name="userName" placeholder="Enter your username" value="{{v.userName}}"><br>
+		</div>
+		<div class="mb-3">
+		<label for="email" class="form-label">Email:</label>
+		<input type="text" class="form-control" name="email" placeholder="Enter your email" value="{{v.email}}"><br>
+		<span id="emailIsTaken" class="errorMessage"></span>
+		</div>
+		<div class="mb-3">
+		<label for="password" class="form-label">Password:</label>
+		<br><input type="password" class="form-control" name="pass1" placeholder="Enter your password" value="{{v.pass1}}"><br>
+		</div>
+		<div class="mb-3">
+		<label for="password" class="form-label">Password (repeated):</label>
+		<input type="password" class="form-control" name="pass2"  placeholder="Enter your password again" value="{{v.pass2}}"><br><br>
         {% include "address-form.html.twig" with {
 			address: v.street, 
 			appartmentNo: v.appartmentNo, 
@@ -52,9 +62,12 @@
             <option name="accountType" value="customer"{% if accountType == 'customer' %} selected="selected"{% endif %}>NO</option>
             <option name="accountType" value="business"{% if accountType == 'business' %} selected="selected"{% endif %}>YES</option> 
         </select>
-	<label for="phone">Phone:
-	</label><br>
-	<input type="text" name = "phone" value="{{v.phone}}"><br>
-	<input class="center btn brand z-depth-0" type="submit" name="next" value="Continue">
-</form>
+
+		<div class="mb-3">
+			<label for="phone" class="form-label">Phone: </label>
+			<input type="text" class="form-control" name="phone" value="{{ v.phone }}">
+		</div>
+		<input class="btn btn-danger"  type="submit" name="submit" value="Register">
+	</form>
+</div>
 {% endblock content%}
