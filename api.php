@@ -79,6 +79,7 @@ $app->group('/api', function (App $app) use ($log) {
             $response->getBody()->write(json_encode("404 - not found"));
             return $response;
         }
+        $address['postal_code'] = str_replace(' ', '', $address['postal_code']);
         DB::update('address', $address, "id=%i", $id);
         $log->debug("Record address updated, id=" . $id);
         $count = DB::affectedRows();
