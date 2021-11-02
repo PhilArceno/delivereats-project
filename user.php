@@ -87,8 +87,6 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
     $pass2 = $request->getParam('pass2');
-    //$address = $request->getParam('address');
-    //$streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -185,6 +183,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     } else {
         //  ************************ REGISTRATION DONE **********************
         $password = password_hash($pass1, PASSWORD_DEFAULT);
+        $postalCode = str_replace(' ', '', $postalCode);
         $addressValueList = [
             'province' => $province, 'city' => $city, 'street' => $street,
             'apt_num' => $appartmentNo, 'postal_code' => $postalCode
