@@ -128,3 +128,10 @@ Phil
 1.  created get-address api which fills in the inputs in modal
 2.  allow the user to update their address through an api.
 3.  read up on PUT/PATCH api's
+
+DeliverEats Scrum 10/2/2021
+
+Phil
+1.  created/implemented api for the user to update their location
+2.  Put together the manage/adding of restaurants
+3.  read up more on api's
