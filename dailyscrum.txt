@@ -121,3 +121,10 @@ Dmitri
 1. sign up and login as mockups
 2. restuarant/{id} 
 3. cart.html.twig, order.html.twig
+
+DeliverEats Scrum 11/02/2021
+
+Dmitri
+1. /account 
+2. /orders
+3. cart.html.twig, order.html.twig
