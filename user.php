@@ -65,12 +65,10 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 // ************************ PROFILE USER *********************
 
-// $app->get('/profile', function() {
-
-// });
-
 $app->get('/account', function ($request, $response, $args) {
-    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
+    $user = $_SESSION['user'];
+    $profileAddress = DB::query("SELECT * FROM address WHERE id =%d", $user ['address_id']);
+    return $this->view->render($response, 'account.html.twig', ['list' => $profileAddress, 'userSession' => $_SESSION['user']]);
 });
 
 
