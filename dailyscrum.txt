@@ -121,3 +121,10 @@ Dmitri
 1. sign up and login as mockups
 2. restuarant/{id} 
 3. cart.html.twig, order.html.twig
+
+DeliverEats Scrum 10/1/2021
+
+Phil
+1.  created get-address api which fills in the inputs in modal
+2.  allow the user to update their address through an api.
+3.  read up on PUT/PATCH api's
