@@ -4,12 +4,13 @@ require_once 'vendor/autoload.php';
 
 require_once 'init.php';
 
-$app->get('/', function ($request, $response, $args) {
+$app->get('/', function ($request, $response, $args) use ($log) {
     $user = null;
     if ($_SESSION) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
+        $log->debug(sprintf("apiKey %s", $_ENV['gMapsAPIKey']));
         return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
     return $this->view->render($response, 'index.html.twig', []);
@@ -65,9 +66,9 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 // ************************ PROFILE USER *********************
 
-$app->get('/account', function ($request, $response, $args) {
+$app->get('/account', function ($request, $response, $args) use ($log) {
     $user = $_SESSION['user'];
-    $profileAddress = DB::query("SELECT * FROM address WHERE id =%d", $user ['address_id']);
+    $profileAddress = DB::queryFirstRow("SELECT * FROM address WHERE id=%i", $user['address_id']);
     return $this->view->render($response, 'account.html.twig', ['list' => $profileAddress, 'userSession' => $_SESSION['user']]);
 });
 
