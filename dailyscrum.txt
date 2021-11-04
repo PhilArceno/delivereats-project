@@ -124,7 +124,29 @@ Dmitri
 
 DeliverEats Scrum 11/02/2021
 
+Phil
+1. Code review review /account
+2. Learn/practice apis more.
+3. Watch videos/do tutorials
+
 Dmitri
 1. /account 
 2. /orders
 3. cart.html.twig, order.html.twig
+
+DeliverEats Scrum 11/04/2021
+
+Phil
+1. Not done much, worked on web service apis.
+2. Review Cart
+3. potentialy watch cart videos.
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. 
+2. 
+3. 

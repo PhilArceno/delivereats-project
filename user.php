@@ -360,14 +360,14 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 
 //********************************** Manage Restaurant *************************************************/
 
-$app->get('/manage-restaurant', function ($request, $response, $args) use ($log)  {
+$app->get('/manage-restaurants', function ($request, $response, $args) use ($log)  {
     $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
     foreach ($restaurantList as &$restaurant) {
         $fullBodyNoTags = strip_tags($restaurant['description']);
         $preview = mb_strimwidth($fullBodyNoTags, 0, 30, "...");
         $restaurant['description'] = $preview;
     }
-    return $this->view->render($response, 'manage-restaurant.html.twig', ['list' => $restaurantList]);
+    return $this->view->render($response, 'manage-restaurants.html.twig', ['list' => $restaurantList]);
 });
 // ****************** Browse *********************
 
