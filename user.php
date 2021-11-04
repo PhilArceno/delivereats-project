@@ -354,7 +354,7 @@ $app->get('/manage-restaurant', function ($request, $response, $args) use ($log)
         $preview = mb_strimwidth($fullBodyNoTags, 0, 60, "...");
         $restaurant['description'] = $preview;
     }
-    return $this->view->render($response, 'manage-restaurant.html.twig', ['list' => $restaurantList]);
+    return $this->view->render($response, 'manage-restaurants.html.twig', ['list' => $restaurantList]);
 });
 // ****************** Browse *********************
 
