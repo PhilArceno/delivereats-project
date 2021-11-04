@@ -113,9 +113,9 @@ Phil
 3. Watch videos in the onedrive
 
 Bahar
-1. 
-2. 
-3. 
+1. simple booststap added
+2. start working on user profile
+3. continue working on boorstarp
 
 Dmitri
 1. sign up and login as mockups
