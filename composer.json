@@ -6,6 +6,7 @@
         "slim/twig-view": "^2.5",
         "sergeytsalkov/meekrodb": "v2.3.1",
         "monolog/monolog": "^2.3",
-        "vlucas/phpdotenv": "^5.3"
+        "vlucas/phpdotenv": "^5.3",
+        "nette/mail": "^2.4"
     }
 }
