@@ -1,65 +1,46 @@
-//Copy-paste from Gregory's file
-
-
 {% extends "master.html.twig" %}
-
-{% block head %}
-    <script>
-        function increment(ID) {
-            var value = $("input[name=quantity" + ID + "]").val();
-            value++;
-            $("input[name=quantity" + ID + "]").val(value);
-            $("#update" + ID).show();
-        }
-        function decrement(ID) {
-            var value = $("input[name=quantity" + ID + "]").val();
-            if (value > 0) {
-                value--;
-            }
-            $("input[name=quantity" + ID + "]").val(value);
-            $("#update" + ID).show();
-        }
-        function update(e,ID) {
-            e.preventDefault();
-            var quantity = $("input[name=quantity" + ID + "]").val();
-            $.get("/cart/update/" + ID + "/" + quantity, function() {
-                console.log("quantity updated");
-                $("#update" + ID).hide();
-            });
-            if (quantity == 0) {
-                $("#itemrow" + ID).hide();
-            }
-        }
-        $(document).ready(function () {
-            $(".updateLink").hide();
-            $('.cartQuantity').bind('propertychange change input paste', function () {
-                var ID = $(this).attr('cartID');
-                $("#update" + ID).show();
-            });
-        });
-    </script>
+{% block title %}Cart
 {% endblock %}
 
-{% block title %}Cart{% endblock %}
-
+{% block addHead %}
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+ <script>
+	$(document).ajaxError(function () {
+	alert("AJAX error");
+	});
+	
+	$(document).ready(function () {
+	refreshList();
+	
+	function refreshList() {
+	$ajax({url: '/cart',
+	type: 'GET',
+	dataType: 'json'}
+	).done(function (list) {
+	var tbody = '<tr><<th>Name</th><th>Description</th><th>Quantity</th><th>Price</th></tr>';
+	for (var i = 0; i < list.length; i++) {
+	var item = list[i];
+	tbody += '<tr onclick="selectItem(' + item.name + ')">';
+	tbody += '<td>' + item.name + '</td>';
+	tbody += '<td>' + item.description + '</td>';
+	tbody += '<td>' + item.quantity + '</td>';
+	tbody += '<td>' + item.price + '</td>';
+	tbody += '</tr>;
+	}
+	$("#cartItems").html(tbody);
+	});
+	}
+ </script>
+{% endblock %}
+	
 {% block content %}
-    <table border="1">
-        {% for ci in cartitemList %}
-            <tr id="itemrow{{ci.ID}}">
-                <td>{{ci.name}}</td>
-                <td>{{ci.price}}</td>
-                <td><button onclick="decrement({{ci.ID}})">-</button>
-                    <input class="cartQuantity" cartID="{{ci.ID}}" type="number" name="quantity{{ci.ID}}"
-                           value="{{ci.quantity}}" style="width:30px;">
-                    <button onclick="increment({{ci.ID}})">+</button>
-                    <a href="" class="updateLink" id="update{{ci.ID}}"
-                          onclick="update(event,{{ci.ID}})">update</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
- 
-   <a href="/order">Place order</a>
-        
-        
+	<div class="container">
+	   <h2>Shopping Cart</h2>
+	  <div class="container mt-3">
+	    <table id="cartItems"></table>
+	   </div>
+	   <div class="container mt-3">
+	      <a class="btn btn-primary" href="/order" role="button">Place order</a>
+	    </div>
+	</div>
 {% endblock %}

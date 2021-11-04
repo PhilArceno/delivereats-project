@@ -16,8 +16,8 @@
 			</ul>
 		{% endif %}
 		<div class="container mt-3">
-			<h2>Login</h2>
-			<p>Please enter your username and password:</p>
+			<h2>Sign In</h2>
+			<p>Hi there! Nice to see you again.</p>
 			<form method="POST">
 				<div class="form-floating mb-3 mt-3">
 					<input type="text" class="form-control" id="username" placeholder="Enter your username" name="username">
@@ -27,7 +27,10 @@
 					<input type="text" class="form-control" id="password" placeholder="Enter password" name="password">
 					<label for="password">Password</label>
 				</div>
-				<button type="submit" class="btn btn-primary">Login</button>
+				<button type="submit" class="btn btn-primary">Sign In</button>
 			</form>
-		{% endif %}
-	{% endblock %}
+							<br>
+			<p><a href="/forgot-password">Forgot Password?</a>&nbsp;&nbsp;&nbsp;<a href="/register">Sign Up</a></p>
+		</div>
+	{% endif %}
+{% endblock %}

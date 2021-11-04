@@ -104,3 +104,27 @@ Dmitri
 1. error-access-denied.html.twig, error-page-not-found.html.twig, login-register-required.html.twig
 2. cart.html.twig, order.html.twig
 3. bootstrap 5
+
+DeliverEats Scrum 10/31/2021
+
+Phil
+1. Modal implementation, fixed address form, styling
+2. Address modal api, organize trello for the week
+3. Watch videos in the onedrive
+
+Bahar
+1. 
+2. 
+3. 
+
+Dmitri
+1. sign up and login as mockups
+2. restuarant/{id} 
+3. cart.html.twig, order.html.twig
+
+DeliverEats Scrum 11/02/2021
+
+Dmitri
+1. /account 
+2. /orders
+3. cart.html.twig, order.html.twig

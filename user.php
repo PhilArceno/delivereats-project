@@ -4,12 +4,13 @@ require_once 'vendor/autoload.php';
 
 require_once 'init.php';
 
-$app->get('/', function ($request, $response, $args) {
+$app->get('/', function ($request, $response, $args) use ($log) {
     $user = null;
     if ($_SESSION) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
+        $log->debug(sprintf("apiKey %s", $_ENV['gMapsAPIKey']));
         return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
     return $this->view->render($response, 'index.html.twig', []);
@@ -65,12 +66,10 @@ $app->get('/logout', function ($request, $response, $args) use ($log) {
 
 // ************************ PROFILE USER *********************
 
-// $app->get('/profile', function() {
-
-// });
-
-$app->get('/account', function ($request, $response, $args) {
-    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
+$app->get('/account', function ($request, $response, $args) use ($log) {
+    $user = $_SESSION['user'];
+    $profileAddress = DB::queryFirstRow("SELECT * FROM address WHERE id=%i", $user['address_id']);
+    return $this->view->render($response, 'account.html.twig', ['list' => $profileAddress, 'userSession' => $_SESSION['user']]);
 });
 
 
@@ -87,8 +86,6 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     $email = $request->getParam('email');
     $pass1 = $request->getParam('pass1');
     $pass2 = $request->getParam('pass2');
-    //$address = $request->getParam('address');
-    //$streetNo = $request->getParam('streetNo');
     $street = $request->getParam('street');
     $appartmentNo = $request->getParam('appartmentNo');
     $postalCode = $request->getParam('postalCode');
@@ -191,6 +188,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     } else {
         //  ************************ REGISTRATION DONE **********************
         $password = password_hash($pass1, PASSWORD_DEFAULT);
+        $postalCode = str_replace(' ', '', $postalCode);
         $addressValueList = [
             'province' => $province, 'city' => $city, 'street' => $street,
             'apt_num' => $appartmentNo, 'postal_code' => $postalCode
@@ -392,10 +390,4 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
 
 $app->get('/order', function ($request, $response, $args) {
     return $this->view->render($response, 'order.html.twig');
-});
-
-// ****************** Cart *********************
-
-$app->get('/cart', function ($request, $response, $args) {
-    return $this->view->render($response, 'cart.html.twig');
 });

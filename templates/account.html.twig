@@ -4,11 +4,62 @@
 {% endblock %}
 
 {% block content %}
-	<ul>
-		<li><a href="/profile">My Profile</a></li>
-        {% if userSession.account_type == 'business' %}
-		<li><a href="/manage-restaurants">Manage Restaurants</a></li>
-        {% endif %}
-        <li><a href="/logout">Log out</a></li>
-	</ul>
+	<div class="container">
+		<h2>Account</h2>
+		<div class="container mt-3">
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<a href="/profile">My Profile</a>
+				</li>
+				{% if userSession.account_type == 'business' %}
+					<li class="list-group-item">
+						<a href="/manage-restaurants">Manage Restaurants</a>
+					</li>
+				{% endif %}
+				<li class="list-group-item">
+					<a href="/logout">Log out</a>
+				</li>
+			</ul>
+		</div>
+		<div class="container mt-3">
+		<h2>Details</h2>
+<table class="table table-striped">
+        <tr>
+            <td>Your name</td>
+            <td>{{userSession.name}}</td>
+        </tr>
+		<tr>
+            <td>Your username</td>
+            <td>{{userSession.username}}</td>
+        </tr>
+		<tr>
+            <td>Your email</td>
+            <td>{{userSession.email}}</td>
+        </tr>
+		<tr>
+            <td>Account's type</td>
+            <td>{{userSession.account_type}}</td>
+        </tr>
+</table>
+		<h2>Address</h2>
+<table class="table table-striped">
+        <tr>
+            <td>Street address</td>
+            <td>{{list.street}}</td>
+        </tr>
+		<tr>
+            <td>City</td>
+            <td>{{list.city}}</td>
+        </tr>
+		<tr>
+            <td>Province</td>
+            <td>{{list.province}}</td>
+        </tr>
+		<tr>
+            <td>Postal code</td>
+            <td>{{list.postal_code}}</td>
+        </tr>
+</table>
+		</div>
+	</div>
 {% endblock %}
