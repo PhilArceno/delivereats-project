@@ -4,7 +4,7 @@
 {% block content %}
 
 	<div>
-		<img src="" alt="Restuarant Image"/>
+		<img src="../{{restaurant.imageFilePath}}" alt="Restuarant Image"/>
 		<div class="d-flex container-fluid justify-content-between">
 			<div>
 				<h2>{{restaurant.name}}</h2>
@@ -20,7 +20,7 @@
 	<div>
 		{% for f in food %}
 			<section class="d-flex">
-				<img src="{{f.imageFilePath}}" alt="food-image"/>
+				<img src="../{{f.imageFilePath}}" alt="food-image"/>
 				<div class="flex-grow-1">
 					<div class="d-flex justify-content-between">
 						{# flex here #}

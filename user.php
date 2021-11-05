@@ -242,6 +242,13 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     }
 
+    // description validation
+    $result = verifyPricing($pricing);
+        if ($result !== TRUE) {
+            $errorList[] = $result;
+    }
+    
+
     // image validation
     $uploadedImage = $request->getUploadedFiles()['image'];
     $destImageFilePath = null;
@@ -313,6 +320,10 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 
     // description validation
     $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+    $result = verifyPrice($price);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }

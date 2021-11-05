@@ -4,6 +4,7 @@
 {% endblock %}
 
 {% block addHead %}
+	{% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		tinymce.init({selector: 'textarea[name=description]'});
@@ -38,16 +39,22 @@
 			</div>
 			<div class="mb-3">
 				<label for="pricing" class="form-label">Pricing range:</label>
-				<input type="number" class="form-control" name="pricing" min="1" max="5" value="{{ v.pricing }}"><br>
+				<select name="pricing" required>
+					<option value="" disabled selected hidden>Select pricing</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$">$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$">$$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$$">$$$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$$$">$$$$</option>
+				</select>
 			</div>
 			{% include "address-form.html.twig" with {
-			address: v.address,
-			streetNo: v.streetNo,
-			street: v.street, 
-			appartmentNo: v.appartmentNo, 
-			postalCode: v.postalCode, 
-			city: v.city, 
-			province: v.province
+				address: v.address,
+				streetNo: v.streetNo,
+				street: v.street, 
+				appartmentNo: v.appartmentNo, 
+				postalCode: v.postalCode, 
+				city: v.city, 
+				province: v.province
 			} %}
 			<button type="submit" class="btn btn-primary">Add</button>
 		</form>

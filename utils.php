@@ -70,6 +70,23 @@ function verifyProvince($province)
         return TRUE;
     }
 
+    function verifyPricing($pricing)
+    {
+        $expectedFields = ['$', '$$', '$$$', '$$$$'];
+        if (!in_array($pricing, $expectedFields)) {
+            return "Invalid Pricing Submitted. Must be '$', '$$', '$$$', or '$$$$'";
+        }
+        return TRUE;
+    }
+    function verifyPrice($price)
+    {
+        $convertedPrice = number_format($price, 2);
+        if (!($convertedPrice < 1000 && $convertedPrice > 0)) {
+            return "Invalid Price Submitted. Must be greater than 0 and less than 1000.";
+        }
+        return TRUE;
+    }
+
     function verifyUploadedPhoto($photo, &$fileName)
     {
 
