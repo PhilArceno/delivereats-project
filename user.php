@@ -105,7 +105,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     }
 
     // username validation
-    $result = verifyName($userName);
+    $result = verifyUsername($userName);
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
@@ -140,6 +140,12 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
             $pass2 = "";
         }
     }
+
+    // appartmentNo format validation
+    $result = verifyAptNo($appartmentNo);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
     // street format validation
     $result = verifyStreet($street);
     if ($result !== TRUE) {
@@ -316,8 +322,8 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
     if ($result !== TRUE) {
         $errorList[] = $result;
     }
-    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
 
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
     // description validation
     $result = verifyDescription($description);
     if ($result !== TRUE) {
@@ -362,7 +368,7 @@ $app->get('/manage-restaurants', function ($request, $response, $args) use ($log
     $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
     foreach ($restaurantList as &$restaurant) {
         $fullBodyNoTags = strip_tags($restaurant['description']);
-        $preview = mb_strimwidth($fullBodyNoTags, 0, 60, "...");
+        $preview = mb_strimwidth($fullBodyNoTags, 0, 30, "...");
         $restaurant['description'] = $preview;
     }
     return $this->view->render($response, 'manage-restaurants.html.twig', ['list' => $restaurantList]);

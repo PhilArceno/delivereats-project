@@ -8,17 +8,38 @@ require_once 'init.php';
 
 function verifyName($name)
 { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,100}$/', $name) != 1) { // no match
-        return "The name must be 2-100 characters long made up of letters, digits, space, comma, dot, dash!";
+    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,50}$/', $name) != 1) { // no match
+        return "The name must be 2-50 characters long made up of letters, digits, space, comma, dot, dash!";
+    }
+    return TRUE;
+}
+
+function verifyUsername($name)
+{ // // alternative regular expression: ^\d+\s+\w+\s+\w+$
+    if (preg_match('/^[a-zA-Z0-9 ,\.-]{4,30}$/', $name) != 1) { // no match
+        return "The username must be 4-30 characters long made up of letters, digits, space, comma, dot, dash!";
     }
     return TRUE;
 }
 
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
+function verifyAptNo($apt)
+{
+    if($apt==""){
+        return TRUE;
+    }
+    if (!is_numeric($apt) || $apt < 0 || $apt > 99999999999) {
+        return "apartment number should be a number between 0-99999999999";
+    }
+    return TRUE;
+}
+
+
+// different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
 function verifyStreet($street)
 {
-    if (preg_match('/^[0-9A-Za-z ,\.-]{2,100}$/', $street) != 1) { // no match
-        return "Street name is not valid! please try again! it should just made up of letters, digits";
+    if (preg_match('/^[0-9A-Za-z ,\.-]{2,30}$/', $street) != 1) { // no match
+        return "Street name is not valid! it should be 2-30 characters long made up of letters, digits , space, comma, dot, dash!";
     }
     return TRUE;
 }
@@ -64,8 +85,8 @@ function verifyProvince($province)
 
     function verifyDescription($description)
     {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,250}$/', $description) != 1) { // no match
-            return "Description must be 4-250 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
+        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,1000}$/', $description) != 1) { // no match
+            return "Description must be 4-1000 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
         }
         return TRUE;
     }
@@ -80,9 +101,8 @@ function verifyProvince($province)
     }
     function verifyPrice($price)
     {
-        $convertedPrice = number_format($price, 2);
-        if (!($convertedPrice < 1000 && $convertedPrice > 0)) {
-            return "Invalid Price Submitted. Must be greater than 0 and less than 1000.";
+        if (!is_numeric($price) || $price > 0 || $price < 999.99) {
+            return "Price must be a number greater than 0 and less than 1000";
         }
         return TRUE;
     }
