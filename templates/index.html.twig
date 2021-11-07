@@ -83,7 +83,7 @@
 				<div class="d-flex">
 					{% for c in categories %}
 						<div class="me-2 text-center">
-              <img src="https://img.icons8.com/cotton/64/000000/sushi.png"/>
+              <img src="{{c.imageFilePath}}"/>
               <div>{{c.name}}</div>
             </div>
 					{% endfor %}

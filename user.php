@@ -9,7 +9,7 @@ $app->get('/', function ($request, $response, $args) use ($log) {
     if ($_SESSION) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
-        $categories = DB::query("SELECT * FROM category");
+        $categories = DB::query("SELECT name, imageFilePath FROM category");
         $log->debug(sprintf("apiKey %s", $_ENV['gMapsAPIKey']));
         return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 'categories' => $categories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
