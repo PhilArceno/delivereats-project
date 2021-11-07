@@ -56,6 +56,22 @@
 				city: v.city, 
 				province: v.province
 			} %}
+			<label for="categories">Choose categories:</label>
+			<div>
+				{% for key, c in v.categories %}
+					{% if (key + 1) is not divisible by(2) %}
+						{# Max # of elements in a row is two. if first col in row, start a new row. #}
+						<div class="row">
+						{% endif %}
+						<div class="col m-1">
+							    <input type="checkbox" name="categoriesChecked[]" value="{{c.id}}" {% if c.id in v.selectedCategories %} checked {% endif %}> {{c.name}}
+						</div>
+						{% if (key + 1) is divisible by(2) or loop.last %}
+							{# need to close row div, if max cols reached, or if last element (may be an odd number)#}
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
 			<button type="submit" class="btn btn-primary">Add</button>
 		</form>
 	</div>

@@ -107,6 +107,18 @@ function verifyProvince($province)
         return TRUE;
     }
 
+    
+    function verifyCategories($selectedCategories, $expectedCategories)
+    {
+        if (empty($selectedCategories)) {
+            return "You didnt select any categories.";
+        }
+        if (!array_intersect($selectedCategories, $expectedCategories)) {
+            return "Invalid Categories Submitted. Must be one of the input options.";
+        }
+        return TRUE;
+    }
+
     function verifyUploadedPhoto($photo, &$fileName)
     {
 

@@ -218,7 +218,11 @@ $app->get('/isemailtaken/[{newEmail}]', function ($request, $response, $args) {
 //  ************************ ADD RESTAURANT *********************
 $app->get('/add-restaurant', function ($request, $response, $args) {
     $apiKey = $_ENV['gMapsAPIKey'];
-    return $this->view->render($response, "add-restaurant.html.twig", ['apiKey' => $apiKey]);
+    $categories = DB::query("SELECT id, name FROM category");
+    $valuesList = [
+        'categories' => $categories
+    ];
+    return $this->view->render($response, "add-restaurant.html.twig", ['apiKey' => $apiKey, 'v' => $valuesList]);
 });
 
 $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
@@ -233,6 +237,8 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
     $city = $request->getParam('city');
     $province = $request->getParam('province');
     $owner_id = $_SESSION['user']['id'];
+    $selectedCategories = $request->getParam('categoriesChecked');
+    $expectedCategories = DB::queryFirstColumn("SELECT id from category");
 
     $errorList = [];
 
@@ -281,11 +287,22 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         $errorList[] = $result;
     };
 
+    // category validation
+    $result = verifyCategories($selectedCategories, $expectedCategories);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
+
     if ($errorList) {
+        $categories = DB::query("SELECT id, name FROM category");
         $valuesList = [
             'name' => $name, 'description' => $description, 'image' => $image, 'pricing' => $pricing, 'street' => $street, 'appartmentNo' => $appartmentNo,
-            'postalCode' => $postalCode, 'city' => $city, 'province' => $province];
-        $log->debug(sprintf("Error with adding: name=%s, street=%s", $name, $street));
+            'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 
+            'selectedCategories' => $selectedCategories, 'categories' => $categories
+        ];
+        $log->debug(sprintf("Error with adding: name=%s, street=%s, cates=[%s], expectedCates=[%s]", 
+            $name, $street, implode(',', $selectedCategories), implode(',', $expectedCategories)
+        ));
         return $this->view->render($response, "add-restaurant.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         $addressValueList = [
@@ -301,6 +318,10 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['imageFilePath'] = $destImageFilePath;
         DB::insert('restaurant', $valuesList);
+        $restaurantId = DB::insertId();
+        foreach ($selectedCategories as &$categoryId) {
+            DB::insert('restaurant_category', ['restaurant_id' => $restaurantId, 'category_id' => $categoryId]);
+        }
 
         return $this->view->render($response, "add-restaurant-success.html.twig");
     }
