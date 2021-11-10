@@ -37,7 +37,7 @@ $app->post(
         $record = DB::queryFirstRow("SELECT * FROM user WHERE username=%s", $userName);
         $loginSuccess = false;
         $errorList = [];
-        if (password_verify($password, $record['password'])) {
+        if ($record !== null && password_verify($password, $record['password'])) {
             $loginSuccess = true;
         } else {
             $errorList[] = "Wrong username or password";
@@ -205,13 +205,14 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
 });
 
 // used via AJAX
-$app->get('/isemailtaken/[{newEmail}]', function ($request, $response, $args) {
+$app->get('/isemailtaken/{email}', function ($request, $response, $args) {
     $email = isset($args['email']) ? $args['email'] : "";
     $record = DB::queryFirstRow("SELECT id FROM user WHERE email=%s", $email);
     if ($record) {
-        return $response->write("Email already in use");
+        $json = json_encode("Email already in use", JSON_PRETTY_PRINT);
+        return $response->write($json);
     } else {
-        return $response->write("");
+        return $response->write(json_encode("", JSON_PRETTY_PRINT));
     }
 });
 
@@ -336,7 +337,6 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
     $price = $request->getParam('price');
     $description = $request->getParam('description');
     $image = $request->getParam('image');
-    $owner_id = $_SESSION['user']['id'];
     $errorList = [];
 
     $result = verifyName($name);

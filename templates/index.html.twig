@@ -97,8 +97,8 @@
 				{% for r in restaurants %}
 					<a href="/restaurant/{{r.id}}">
 						<section class="rounded shadow">
-							<div class="w-100" style="height:150px">
-								<img class="img-fluid rounded-top h-100 w-100" style="object-fit:cover;" src="{{r.imageFilePath}}"/>
+							<div class="w-100">
+								<img class="img-fluid rounded-top w-100" style="max-height:300px;object-fit:cover;" src="{{r.imageFilePath}}"/>
 							</div>
 							<div class="p-3">
 								<h3>{{r.name}}</h3>

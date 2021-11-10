@@ -8,8 +8,8 @@ require_once 'init.php';
 
 function verifyName($name)
 { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 ,\.-]{2,50}$/', $name) != 1) { // no match
-        return "The name must be 2-50 characters long made up of letters, digits, space, comma, dot, dash!";
+    if (preg_match('/^[a-zA-Z0-9 \',\.-]{2,50}$/', $name) != 1) { // no match
+        return "The name must be 2-50 characters long made up of apostrophe, letters, digits, space, comma, dot, dash!";
     }
     return TRUE;
 }
@@ -101,7 +101,7 @@ function verifyProvince($province)
     }
     function verifyPrice($price)
     {
-        if (!is_numeric($price) || $price > 0 || $price < 999.99) {
+        if (!is_numeric($price) && ($price <= 0 || $price > 999.99)) {
             return "Price must be a number greater than 0 and less than 1000";
         }
         return TRUE;

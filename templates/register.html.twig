@@ -8,9 +8,13 @@
 	<script>
 		$(document).ready(function () {
 $('input[name=email]').keyup(function () {
-var newemail = $(this).val();
-newemail = encodeURIComponent(newemail);
-$("#emailIsTaken").load('/isemailtaken/               {{ newemail }}' + newemail);
+	$.ajax({
+		url: '/isemailtaken/' + $(this).val(),
+		type: 'GET',
+		dataType: 'json'
+	}).done(function (data) {
+		$("#emailIsTaken").html(data);
+	})
 });
 });
 	</script>
@@ -71,20 +75,10 @@ $("#emailIsTaken").load('/isemailtaken/               {{ newemail }}' + newemail
 			city: v.city, 
 			province: v.province
 			} %}
-        Business Owner:
-        <select required name="accountType">
-            <option value="" disabled selected hidden> Choose an option</option>  
-            <option name="accountType" value="customer"{% if accountType == 'customer' %} selected="selected"{% endif %}>NO</option>
-            <option name="accountType" value="business"{% if accountType == 'business' %} selected="selected"{% endif %}>YES</option> 
-        </select>
-
-		<div class="mb-3">
-			<label for="phone" class="form-label">Phone: </label>
-			<input type="text" class="form-control" name="phone" value="{{ v.phone }}">
-		</div>
-		<input class="btn btn-danger"  type="submit" name="submit" value="Register">
-	</form>
-	<br>
-	<p>Have an Account?&nbsp;&nbsp;<a href="/login">Log in?</a></p>
-</div>
-{% endblock content%}
+					<input class="btn btn-danger" type="submit" name="submit" value="Register">
+				</form>
+				<br>
+				<p>Have an Account?&nbsp;&nbsp;<a href="/login">Log in?</a>
+				</p>
+			</div>
+		{% endblock content%}
