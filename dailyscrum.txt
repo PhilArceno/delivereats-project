@@ -167,3 +167,20 @@ Dmitri
 1. 
 2. 
 3. 
+
+DeliverEats Scrum 11/10/2021
+
+Phil
+1. N/A
+2. Category image check image upload or path
+3. how to check if image url is valid
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. 
+2. 
+3. 
