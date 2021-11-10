@@ -150,3 +150,20 @@ Dmitri
 1. 
 2. 
 3. 
+
+DeliverEats Scrum 11/07/2021
+
+Phil
+1. Modifying/fixing forms, added category implementation when adding restaurants.
+2. Admins can add/delete/update categories
+3. Nothing im stuck with at the moment
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. 
+2. 
+3. 
