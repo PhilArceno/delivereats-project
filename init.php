@@ -36,7 +36,7 @@ if (strpos($_SERVER['HTTP_HOST'], "fsd01.ca") !== false) {
     DB::$user = 'delivereats';
     DB::$password = ')!sNqREdhs6EIlGx';
     DB::$host = 'localhost';
-    //DB::$port = 80;
+    DB::$port = 3333;
 }
 
 DB::$error_handler = 'db_error_handler'; // runs on mysql query errors
@@ -84,3 +84,20 @@ $container['view'] = function ($c) {
     $view->addExtension(new \Slim\Views\TwigExtension($router, $uri));
     return $view;
 };
+
+$container['view']->getEnvironment()->addGlobal('flashMessage', getAndClearFlashMessage());
+
+function setFlashMessage($message) {
+    $_SESSION['flashMessage'] = $message;
+}
+
+// returns empty string if no message, otherwise returns string with message and clears is
+function getAndClearFlashMessage() {
+    if (isset($_SESSION['flashMessage'])) {
+        $message = $_SESSION['flashMessage'];
+        unset($_SESSION['flashMessage']);
+        return $message;
+    }
+    return "";
+}
+
