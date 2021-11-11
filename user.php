@@ -226,6 +226,10 @@ $app->get('/isemailtaken/{email}', function ($request, $response, $args) {
 
 //  ************************ ADD RESTAURANT *********************
 $app->get('/add-restaurant', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $apiKey = $_ENV['gMapsAPIKey'];
     $categories = DB::query("SELECT id, name FROM category");
     $valuesList = [
@@ -337,10 +341,18 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
 });
 //********************************** ADD FOOD *************************************************/
 $app->get('/add-food/{id:[0-9]+}', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     return $this->view->render($response, "add-food.html.twig");
 });
 
 $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $name = $request->getParam('name');
     $price = $request->getParam('price');
     $description = $request->getParam('description');
