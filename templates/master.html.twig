@@ -30,6 +30,7 @@
 		</script>
 	</head>
 	<body>
+	{% if flashMessage %}<div class="alert alert-success">{{flashMessage}}</div>{% endif %}
 		<div id="modal" class="p-4 fixed-top vw-100 vh-100 bg-white invisible">
 			<button onclick="hideModal()">X</button>
 			<div id="modal-content">{% block addModal %}{% endblock %}</div>
