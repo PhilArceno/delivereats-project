@@ -406,6 +406,10 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 //********************************** Manage Restaurant *************************************************/
 
 $app->get('/manage-restaurants', function ($request, $response, $args) use ($log)  {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
     foreach ($restaurantList as &$restaurant) {
         $fullBodyNoTags = strip_tags($restaurant['description']);
