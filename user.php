@@ -428,13 +428,14 @@ $app->get('/browse', function ($request, $response, $args) {
 });
 
 
-$app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
+// ****************** Browse-->Categories *********************
+$app->get('/browse/{id:[0-9]+}', function ($request, $response, $args) {
     $id = $args['id'];
-    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
-
-    $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
-    return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+    $restaurant = DB::query("SELECT * FROM `restaurant` WHERE `id` IN (SELECT `restaurant_id` FROM `restaurant_category` WHERE `category_id`=%d)", $id);
+    return $this->view->render($response, 'browse-category.html.twig', ['restaurant' => $restaurant, 'userSession' => $_SESSION['user']]);
 });
+
+// ****************** Cart *********************
 
 $app->get('/cart', function ($request, $response, $args) {
     return $this->view->render($response, 'cart.html.twig', []);
@@ -452,3 +453,4 @@ $app->get('/orders', function ($request, $response, $args) {
 $app->get('/feature-not-implemented', function ($request, $response, $args) {
     return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
+

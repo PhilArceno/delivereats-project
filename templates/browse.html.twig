@@ -18,7 +18,7 @@
 			{# Max # of elements in a row is two. if first col in row, start a new row. #}
 			<div class="row">
 			{% endif %}
-			<a href="/browse/{{c.name}}" class="col bg-primary container-fluid m-3 p-3 text-center rounded" style="text-decoration: none; color:white;">{{c.name}}</a>
+			<a href="/browse/{{c.id}}" class="col bg-primary container-fluid m-3 p-3 text-center rounded" style="text-decoration: none; color:white;">{{c.name}}</a>
 
 			{% if (key + 1) is divisible by(2) or loop.last %}
 					{# need to close row div, if max cols reached, or if last element (may be an odd number)#}

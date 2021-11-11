@@ -1,0 +1,24 @@
+{% extends "master.html.twig" %}
+{% block title %}Category
+{% endblock %}
+
+
+{% block content %}
+	{% if userSession %}
+		<div>
+			{% for r in restaurant %}
+				<a href="/restaurant/{{r.id}}">
+					<section class="rounded shadow">
+						<div class="w-100">
+							<img class="img-fluid rounded-top w-100" style="max-height:300px;object-fit:cover;" src="/{{r.imageFilePath}}"/>
+						</div>
+						<div class="p-3">
+							<h3>{{r.name}}</h3>
+							<p>{{r.pricing}}</p>
+						</div>
+					</section>
+				</a>
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
