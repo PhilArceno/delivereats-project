@@ -2,63 +2,59 @@
 {% block title %}Home page
 {% endblock %}
 {% block addHead %}
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    {% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	{% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
 	<script>
-	let addressId = null;
-		$(document).ready(function () {
-			$('#location-icon').click(function() {
-			getAddress();
-			showModal();
-		});
-			$('#changeAddress').click(function() {
-				let street = $('input[name="street"]').val();
-				let apt_num = $('input[name="appartmentNo"]').val();
-				let city = $('input[name="city"]').val();
-				let province = $('input[name="province"]').val();
-				let postal_code = $('input[name="postalCode"]').val();
-				let addressObj = {
-					province,
-					city,
-					street,
-					apt_num,
-					postal_code
-				}
-				$.ajax({
-					url: '/api/address/' + addressId,
-					type: 'PUT',
-					data: JSON.stringify(addressObj),
-					dataType: 'json'
-				}).done(function() {
-					alert('updated successfully');
-					hideModal();
-				})
-			})
-		});
-			function getAddress() {
-			$.ajax({
-				url: 'api/address',
-				type: 'GET',
-				dataType: 'json',
-			}).done(function (address) {
-				$('input[name="street"]').val(address.street);
-				if (address.apt_num != 0 && address.apt_num != null) {
-					$('input[name="appartmentNo"]').val(address.apt_num)
-				}
-				$('input[name="city"]').val(address.city);
-				$('input[name="province"]').val(address.province);
-				$('input[name="postalCode"]').val(address.postal_code);
-				addressId = address.id;
-			});
-		}
+		let addressId = null;
+$(document).ready(function () {
+$('#location-icon').click(function () {
+getAddress();
+showModal();
+});
+$('#changeAddress').click(function () {
+let street = $('input[name="street"]').val();
+let apt_num = $('input[name="appartmentNo"]').val();
+let city = $('input[name="city"]').val();
+let province = $('input[name="province"]').val();
+let postal_code = $('input[name="postalCode"]').val();
+let addressObj = {
+province,
+city,
+street,
+apt_num,
+postal_code
+}
+$.ajax({
+url: '/api/address/' + addressId,
+type: 'PUT',
+data: JSON.stringify(addressObj),
+dataType: 'json'
+}).done(function () {
+alert('updated successfully');
+hideModal();
+})
+})
+});
+function getAddress() {
+$.ajax({url: 'api/address', type: 'GET', dataType: 'json'}).done(function (address) {
+$('input[name="street"]').val(address.street);
+if (address.apt_num != 0 && address.apt_num != null) {
+$('input[name="appartmentNo"]').val(address.apt_num)
+}
+$('input[name="city"]').val(address.city);
+$('input[name="province"]').val(address.province);
+$('input[name="postalCode"]').val(address.postal_code);
+addressId = address.id;
+});
+}
 	</script>
 {% endblock %}
 
 {% block addModal %}
-{% include "address-form.html.twig" %}
-<button id="changeAddress">
-	Change Address
-</button>
+	{% include "address-form.html.twig" %}
+	<button id="changeAddress">
+		Change Address
+	</button>
 {% endblock %}
 
 {% block content %}
@@ -71,7 +67,8 @@
 				</svg>
 				<div>
 					<b>
-						<span style="color:#ff8400">Deliver</span><span style="color:#ff0001">Eats</span>
+						<span style="color:#ff8400">Deliver</span>
+						<span style="color:#ff0001">Eats</span>
 					</b>
 				</div>
 				<svg id='location-icon' transform="scale(1.5)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewbox="0 0 16 16">
@@ -83,9 +80,9 @@
 				<div class="d-flex">
 					{% for c in categories %}
 						<div class="me-2 text-center">
-              <img src="{{c.imageFilePath}}"/>
-              <div>{{c.name}}</div>
-            </div>
+							<img src="{{c.imageFilePath}}"/>
+							<div>{{c.name}}</div>
+						</div>
 					{% endfor %}
 				</div>
 				<div class="d-flex">
@@ -103,19 +100,28 @@
 							<div class="p-3">
 								<h3>{{r.name}}</h3>
 								<p>{{r.pricing}}
-									- Categories</p>
-							</div>
-						</section>
-					</a>
-				{% endfor %}
-			</div>
+									-
+									{% for pair in rc %}
+										{% if pair.restaurant_id is same as r.id %}
+											{% for c in categories %}
+											
+												{% if c.id is same as pair.category_id %}
+													 {{c.name}} 
+												{% endif %}
+											{% endfor %}
+										{% endif %}
+									{% endfor %}
+								</p>
+							</p>
+						</div>
+					</section>
+				</a>
+			{% endfor %}
 		</div>
-	{% else %}
-		<h1>Food's Ninja is Here!</h1>
-		<h2>Life is better when you're a member</h2>
-		<a href="/register">Get Started</a>
-		<a href="/login">Sign In</a>
-	{% endif %}
-
-
-{% endblock %}
+	</div>
+{% else %}
+	<h1>Food's Ninja is Here!</h1>
+	<h2>Life is better when you're a member</h2>
+	<a href="/register">Get Started</a>
+	<a href="/login">Sign In</a>
+{% endif %}{% endblock %}
