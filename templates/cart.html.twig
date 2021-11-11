@@ -13,23 +13,25 @@
 	refreshList();
 	
 	function refreshList() {
-	$ajax({url: '/cart',
+	$.ajax({url: '/api/cart',
 	type: 'GET',
 	dataType: 'json'}
 	).done(function (list) {
-	var tbody = '<tr><<th>Name</th><th>Description</th><th>Quantity</th><th>Price</th></tr>';
+	var tbody = '<tr><th>Img</th><th>Name</th><th>Description</th><th>Quantity</th><th>Price</th></tr>';
 	for (var i = 0; i < list.length; i++) {
 	var item = list[i];
 	tbody += '<tr onclick="selectItem(' + item.name + ')">';
+	tbody += '<td><img style="object-fit: scale-down;" width=100 height=100 src="' + item.imageFilePath + '"/></td>';
 	tbody += '<td>' + item.name + '</td>';
 	tbody += '<td>' + item.description + '</td>';
 	tbody += '<td>' + item.quantity + '</td>';
 	tbody += '<td>' + item.price + '</td>';
-	tbody += '</tr>;
+	tbody += '</tr>';
 	}
 	$("#cartItems").html(tbody);
 	});
 	}
+	});
  </script>
 {% endblock %}
 	

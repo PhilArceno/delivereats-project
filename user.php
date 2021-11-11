@@ -436,6 +436,10 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
     return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
 });
 
+$app->get('/cart', function ($request, $response, $args) {
+    return $this->view->render($response, 'cart.html.twig', []);
+});
+
 
 // ****************** Order *********************
 

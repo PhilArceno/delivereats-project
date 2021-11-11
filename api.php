@@ -86,6 +86,27 @@ $app->group('/api', function (App $app) use ($log) {
         $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
         return $response->getBody()->write($json);
     });
+
+    $app->get('/cart', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+        if (!$userId) {
+            // NOTE: This should really be 401 code but JS will not cooperate in such case
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed"));
+            return $response;
+        }
+    
+        $foodList = DB::query("SELECT * FROM cart_detail LEFT JOIN food ON cart_detail.food_id = food.id WHERE cart_detail.user_id = %i;", $userId);
+        if (!$foodList) {
+            $response = $response->withStatus(404);
+            $response->getBody()->write(json_encode("404 - not found"));
+            return $response;
+        }
+        $json = json_encode($foodList, JSON_PRETTY_PRINT);
+        $response->getBody()->write($json);
+        return $response;
+    });
+
     $app->post('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
@@ -118,23 +139,3 @@ $app->group('/api', function (App $app) use ($log) {
     });
 });
 
-
-$app->get('/cart', function (Request $request, Response $response, array $args) use ($log) {
-    $userId = $_SESSION['user']['id'];
-    if (!$userId) {
-        // NOTE: This should really be 401 code but JS will not cooperate in such case
-        $response = $response->withStatus(403);
-        $response->getBody()->write(json_encode("403 - authentication failed"));
-        return $response;
-    }
-
-    $foodList = DB::query("SELECT * FROM cart_detail LEFT JOIN food ON cart_detail.food_id = food.id WHERE cart_detail.user_id = %i;", $userId);
-    if (!$foodList) {
-        $response = $response->withStatus(404);
-        $response->getBody()->write(json_encode("404 - not found"));
-        return $response;
-    }
-    $json = json_encode($foodList, JSON_PRETTY_PRINT);
-    $response->getBody()->write($json);
-    return $response;
-});
