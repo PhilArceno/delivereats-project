@@ -147,9 +147,9 @@ Bahar
 3.
 
 Dmitri
-1. 
-2. 
-3. 
+1. admin templates
+2. middleware
+3. admin CRUD php logic
 
 DeliverEats Scrum 11/07/2021
 
@@ -181,6 +181,6 @@ Bahar
 3.
 
 Dmitri
-1. 
-2. 
-3. 
+1. middleware
+2. order php logic
+3. admin CRUD php logic
