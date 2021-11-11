@@ -25,7 +25,7 @@
 					postal_code
 				}
 				$.ajax({
-					url: '/api/change-address/' + addressId,
+					url: '/api/address/' + addressId,
 					type: 'PUT',
 					data: JSON.stringify(addressObj),
 					dataType: 'json'

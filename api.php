@@ -32,7 +32,7 @@ $app->group('/api', function (App $app) use ($log) {
         return $response;
     });
 
-    $app->put('/change-address/{id: [0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
+    $app->put('/address/{id: [0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
             // NOTE: This should really be 401 code but JS will not cooperate in such case
