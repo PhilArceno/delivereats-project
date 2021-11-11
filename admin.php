@@ -26,6 +26,10 @@ $app->add(function (ServerRequestInterface $request, ResponseInterface $response
 
 $app->group('/admin', function () use ($app, $log) {
 
+    $app->get('', function ($request, $response, $args) use ($log) {
+        return $this->view->render($response, 'admin/index.html.twig');
+    });
+
     $app->get('/user/list', function ($request, $response, $args) use ($log) {
 
         $list = DB::query("SELECT * FROM `user`");

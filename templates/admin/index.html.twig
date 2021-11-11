@@ -1,0 +1,32 @@
+{% extends "admin/admin-master.html.twig" %}
+
+{% block title %}My Account
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<h2>You can manage:</h2>
+		<div class="container mt-3">
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<a href="admin/user/list">Users</a>
+				</li>
+				<li class="list-group-item">
+					<a href="/feature-not-implemented">Categories</a>
+				</li>
+				<li class="list-group-item">
+					<a href="/feature-not-implemented">Restarants</a>
+				</li>
+				<li class="list-group-item">
+					<a href="/feature-not-implemented">Food items</a>
+				</li>
+				<li class="list-group-item">
+					<a href="/feature-not-implemented">Check orders</a>
+				</li>
+				<li class="list-group-item">
+					<a href="/logout">Log out</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+{% endblock %}
