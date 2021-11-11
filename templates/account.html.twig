@@ -16,6 +16,11 @@
 						<a href="/manage-restaurants">Manage Restaurants</a>
 					</li>
 				{% endif %}
+				{% if userSession.account_type == 'admin' %}
+					<li class="list-group-item">
+						<a href="/admin" target="_blank">Admin Interface</a>
+					</li>
+				{% endif %}
 				<li class="list-group-item">
 					<a href="/logout">Log out</a>
 				</li>
