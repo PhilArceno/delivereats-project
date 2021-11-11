@@ -50,7 +50,9 @@ $app->post(
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
             $log->debug(sprintf("Login successful for username %s, uid=%d, from %s", $userName, $record['id'], $_SERVER['REMOTE_ADDR']));
-            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            //return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            setFlashMessage("Login successful");
+            return $response->withRedirect("/");  
         }
     }
 );
@@ -61,7 +63,9 @@ $app->post(
 $app->get('/logout', function ($request, $response, $args) use ($log) {
     $log->debug(sprintf("Logout successful for uid=%d, from %s", @$_SESSION['user']['id'], $_SERVER['REMOTE_ADDR']));
     unset($_SESSION['user']);
-    return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
+    //return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
+    setFlashMessage("You've been logged out");
+    return $response->withRedirect("/");
 });
 
 // ************************ PROFILE USER *********************
@@ -413,6 +417,12 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
 
 // ****************** Order *********************
 
-$app->get('/order', function ($request, $response, $args) {
-    return $this->view->render($response, 'order.html.twig');
+$app->get('/orders', function ($request, $response, $args) {
+    return $this->view->render($response, 'feature-not-implemented.html.twig');
+});
+
+// ****************** Not implemented *********************
+
+$app->get('/feature-not-implemented', function ($request, $response, $args) {
+    return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
