@@ -50,7 +50,9 @@ $app->post(
             unset($record['password']); // for security reasons remove password from session
             $_SESSION['user'] = $record; // remember user logged in
             $log->debug(sprintf("Login successful for username %s, uid=%d, from %s", $userName, $record['id'], $_SERVER['REMOTE_ADDR']));
-            return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            //return $this->view->render($response, 'index.html.twig', ['userSession' => $_SESSION['user']]);
+            setFlashMessage("Login successful");
+            return $response->withRedirect("/");  
         }
     }
 );
@@ -61,12 +63,18 @@ $app->post(
 $app->get('/logout', function ($request, $response, $args) use ($log) {
     $log->debug(sprintf("Logout successful for uid=%d, from %s", @$_SESSION['user']['id'], $_SERVER['REMOTE_ADDR']));
     unset($_SESSION['user']);
-    return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
+    //return $this->view->render($response, 'index.html.twig', ['userSession' => null]);
+    setFlashMessage("You've been logged out");
+    return $response->withRedirect("/");
 });
 
 // ************************ PROFILE USER *********************
 
 $app->get('/account', function ($request, $response, $args) use ($log) {
+    if (!isset($_SESSION['user'])) { // refuse if user not logged in
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'error-access-denied.html.twig');
+    }
     $user = $_SESSION['user'];
     $profileAddress = DB::queryFirstRow("SELECT * FROM address WHERE id=%i", $user['address_id']);
     return $this->view->render($response, 'account.html.twig', ['list' => $profileAddress, 'userSession' => $_SESSION['user']]);
@@ -218,6 +226,10 @@ $app->get('/isemailtaken/{email}', function ($request, $response, $args) {
 
 //  ************************ ADD RESTAURANT *********************
 $app->get('/add-restaurant', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $apiKey = $_ENV['gMapsAPIKey'];
     $categories = DB::query("SELECT id, name FROM category");
     $valuesList = [
@@ -329,10 +341,18 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
 });
 //********************************** ADD FOOD *************************************************/
 $app->get('/add-food/{id:[0-9]+}', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     return $this->view->render($response, "add-food.html.twig");
 });
 
 $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $name = $request->getParam('name');
     $price = $request->getParam('price');
     $description = $request->getParam('description');
@@ -386,6 +406,10 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 //********************************** Manage Restaurant *************************************************/
 
 $app->get('/manage-restaurants', function ($request, $response, $args) use ($log)  {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'not-owner.html.twig');
+    }
     $restaurantList = DB::query("SELECT * FROM restaurant WHERE owner_id=%i",$_SESSION['user']['id']);
     foreach ($restaurantList as &$restaurant) {
         $fullBodyNoTags = strip_tags($restaurant['description']);
@@ -413,6 +437,12 @@ $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
 
 // ****************** Order *********************
 
-$app->get('/order', function ($request, $response, $args) {
-    return $this->view->render($response, 'order.html.twig');
+$app->get('/orders', function ($request, $response, $args) {
+    return $this->view->render($response, 'feature-not-implemented.html.twig');
+});
+
+// ****************** Not implemented *********************
+
+$app->get('/feature-not-implemented', function ($request, $response, $args) {
+    return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
