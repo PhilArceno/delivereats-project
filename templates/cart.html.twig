@@ -5,19 +5,24 @@
 {% block addHead %}
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
  <script>
-	$(document).ajaxError(function () {
-	alert("AJAX error");
-	});
-	
 	$(document).ready(function () {
 	refreshList();
 	
 	function refreshList() {
 	$.ajax({url: '/api/cart',
 	type: 'GET',
-	dataType: 'json'}
+	dataType: 'json',
+	statusCode: {
+		403: function() {
+			alert("Authentication failed");
+		},
+		404: function() {
+			$("#cartItems").html("No items in your cart!");
+		}
+	},
+	}
 	).done(function (list) {
-	var tbody = '<tr><th>Img</th><th>Name</th><th>Description</th><th>Quantity</th><th>Price</th></tr>';
+	var tbody = '<table><tr><th>Img</th><th>Name</th><th>Description</th><th>Quantity</th><th>Price</th></tr>';
 	for (var i = 0; i < list.length; i++) {
 	var item = list[i];
 	tbody += '<tr onclick="selectItem(' + item.name + ')">';
@@ -26,7 +31,7 @@
 	tbody += '<td>' + item.description + '</td>';
 	tbody += '<td>' + item.quantity + '</td>';
 	tbody += '<td>' + item.price + '</td>';
-	tbody += '</tr>';
+	tbody += '</tr></table>';
 	}
 	$("#cartItems").html(tbody);
 	});
@@ -38,9 +43,9 @@
 {% block content %}
 	<div class="container">
 	   <h2>Shopping Cart</h2>
-	  <div class="container mt-3">
-	    <table id="cartItems"></table>
-	   </div>
+	  <div class="container mt-3" id="cartItems">
+
+	  </div>
 	   <div class="container mt-3">
 	      <a class="btn btn-primary" href="/order" role="button">Place order</a>
 	    </div>
