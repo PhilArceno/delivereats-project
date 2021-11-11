@@ -86,6 +86,36 @@ $app->group('/api', function (App $app) use ($log) {
         $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
         return $response->getBody()->write($json);
     });
+    $app->post('/cart', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+        if (!$userId) {
+            // NOTE: This should really be 401 code but JS will not cooperate in such case
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+        $json = $request->getBody();
+        $food = json_decode($json, TRUE);
+
+        //check if item exists in cart already
+        if (($cartItem = DB::queryFirstRow("SELECT user_id, food_id FROM cart_detail WHERE user_id=%i and food_id=%i", $userId, $food['id'])) == FALSE) {
+            $log->debug("cart item=" . $cartItem);
+            //get the food's price
+            $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $food['id']);
+
+            DB::insert('cart_detail', [
+                'user_id' => $userId, 'food_id' => $food['id'], 'quantity' => 1, 'price' => $price
+            ]);
+            $log->debug("cart detail added for user id=" . $userId . " and food id=" . $food['id']);
+            $response = $response->withStatus(201);
+            $response->getBody()->write(json_encode("Added successfully", JSON_PRETTY_PRINT));
+            return $response;
+        } else {
+            $response = $response->withStatus(409);
+            $response->getBody()->write(json_encode("Meal is already in your cart!", JSON_PRETTY_PRINT));
+            return $response;
+        }
+    });
 });
 
 
@@ -108,4 +138,3 @@ $app->get('/cart', function (Request $request, Response $response, array $args) 
     $response->getBody()->write($json);
     return $response;
 });
-

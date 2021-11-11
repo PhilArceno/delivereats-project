@@ -1,6 +1,47 @@
 {% extends "master.html.twig" %}
 {% block title %}Add your Items!
 {% endblock %}
+{% block addHead %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script>
+	      function httpErrorHandler(jqxhr, status, errorThrown) {
+        if (jqxhr.status == 403) {
+          // authentication failed
+          alert("Authentication failed");
+        }
+		if (jqxhr.status == 409) {
+          // meal exists in cart
+          alert("Meal already exists in your cart!");
+        }
+		else {
+          // other error - inform the user
+          alert(
+            "AJAX error: " + jqxhr.responseText + ", status: " + jqxhr.status
+          );
+        }
+      }
+
+
+	$(document).ready(function(){
+		$("button").click(function() {
+			$.ajax({
+				url: '/api/cart',
+				type: 'POST',
+				dataType:'json',
+				data: JSON.stringify({
+					id: $(this).attr("id")
+				}),
+				headers: { "Content-Type": "application/json; charset=UTF-8" },
+				error: function (jqxhr, status, errorThrown) {
+            	  httpErrorHandler(jqxhr, status, errorThrown);
+            	}
+			}).done(function(data){
+				$('#food' + id).html(data)
+			})
+		})
+	})
+	</script>
+{% endblock %}
 {% block content %}
 
 	<div>
@@ -28,7 +69,8 @@
 						<div>{{f.price}}</div>
 					</div>
 					<p>{{f.description}}</p>
-					<button class="btn btn-danger">add item</button>
+					<button id="{{f.id}}" class="btn btn-danger">add item</button>
+					<span id="food{{f.id}}"><span>
 				</div>
 			</section>
 		{% endfor %}
