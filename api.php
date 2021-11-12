@@ -96,7 +96,7 @@ $app->group('/api', function (App $app) use ($log) {
             return $response;
         }
 
-        $foodList = DB::query("SELECT * FROM cart_detail LEFT JOIN food ON cart_detail.food_id = food.id WHERE cart_detail.user_id = %i;", $userId);
+        $foodList = DB::query("SELECT user_id,food_id,id, name, cd.price,quantity, description,imageFilePath FROM cart_detail as cd LEFT JOIN food as f ON cd.food_id = f.id WHERE cd.user_id = %i;", $userId);
         if (!$foodList) {
             $response = $response->withStatus(404);
             $response->getBody()->write(json_encode("404 - not found"));
@@ -133,15 +133,27 @@ $app->group('/api', function (App $app) use ($log) {
         $response = $response->withStatus(201);
         $response->getBody()->write(json_encode("Added successfully", JSON_PRETTY_PRINT));
         return $response;
-        // else {
-        //     $cartItem['quantity'] += 1;
-        //     DB::update('cart_detail', [
-        //         'quantity' => $cartItem['quantity'],
-        //         'price' =>  $cartItem['price'] + $price
-        //     ]);
-        //     $response = $response->withStatus(200);
-        //     $response->getBody()->write(json_encode("Added to cart", JSON_PRETTY_PRINT));
-        //     return $response;
-        // }
+    });
+
+    $app->delete('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+        $foodId = $args['foodId'];
+
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
+        DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId,$foodId);
+        if (($counter = DB::affectedRows()) == false) {
+            $response = $response->withStatus(404);
+            $response->getBody()->write(json_encode("404 - not found"));
+            return $response;
+        } else {
+            $response = $response->withStatus(200);
+            $response->getBody()->write(json_encode(true));
+            return $response;
+        }
     });
 });

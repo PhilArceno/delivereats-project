@@ -4,20 +4,6 @@
 {% block addHead %}
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script>
-	      function httpErrorHandler(jqxhr, status, errorThrown) {
-        if (jqxhr.status == 403) {
-          // authentication failed
-          alert("Authentication failed");
-        }
-		else {
-          // other error - inform the user
-          alert(
-            "AJAX error: " + jqxhr.responseText + ", status: " + jqxhr.status
-          );
-        }
-      }
-
-
 	$(document).ready(function(){
 		$("button").click(function() {
 			let id = $(this).attr("id");
@@ -29,11 +15,16 @@
 					id: id
 				}),
 				headers: { "Content-Type": "application/json; charset=UTF-8" },
-				error: function (jqxhr, status, errorThrown) {
-            	  httpErrorHandler(jqxhr, status, errorThrown);
-            	}
+				statusCode: {
+					403: function() {
+						alert("Authentication failed");
+					},
+					404: function() {
+						$("#cartItems").html("No items in your cart!");
+					}
+				}
 			}).done(function(data){
-				$('#food' + id).html(data)
+				$(`#food${id}`).html(data)
 			})
 		})
 	})
