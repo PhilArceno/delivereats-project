@@ -4,7 +4,6 @@
 {% endblock %}
 
 {% block addHead %}
-	{% include 'address-js.html.twig' with {apiKey, addressType: "establishment"} %}
 	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
 	<script>
 		tinymce.init({selector: 'textarea[name=description]'});
@@ -76,3 +75,6 @@
 		</form>
 	</div>
 {% endblock content %}
+{% block endScript %}
+	{% include 'address-js.html.twig' with {apiKey, addressType: "establishment"} %}
+{% endblock %}

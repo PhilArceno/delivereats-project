@@ -407,6 +407,14 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 
 //********************************** Manage Restaurant *************************************************/
 
+$app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
+    $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
+    return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+});
+
+
 $app->get('/manage-restaurants', function ($request, $response, $args) use ($log)  {
     if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
         $response = $response->withStatus(403);

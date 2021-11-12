@@ -118,16 +118,21 @@ $app->group('/api', function (App $app) use ($log) {
         $json = $request->getBody();
         $food = json_decode($json, TRUE);
 
+        $addedQuantity = null;
         //check if item exists in cart already
         $cartItem = DB::queryFirstRow("SELECT * FROM cart_detail WHERE user_id=%i and food_id=%i", $userId, $food['id']);
-
         //get the food's price
         $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $food['id']);
+
+        if ($cartItem) {
+            $addedQuantity = $cartItem['quantity'] + 1;
+            $price = $price + $cartItem['price'];
+        }
 
         DB::insertUpdate(
             'cart_detail',
             ['user_id' => $userId, 'food_id' => $food['id'], 'quantity' => 1, 'price' => $price],
-            ['quantity' => $cartItem['quantity'] + 1, 'price' => $cartItem['price'] + $price]
+            ['quantity' => $addedQuantity, 'price' => $price]
         );
         $log->debug("cart detail added for user id=" . $userId . " and food id=" . $food['id']);
         $response = $response->withStatus(201);
@@ -170,10 +175,14 @@ $app->group('/api', function (App $app) use ($log) {
         $json = $request->getBody();
         $food = json_decode($json, TRUE);
 
-        //get the food's price
-        $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $foodId);
-        
-        DB::update("cart_detail", ['quantity' => $food['quantity'], 'price' => ($price * $food['quantity'])], "user_id=%i and food_id=%i", $userId, $foodId);
+        if ($food['quantity'] == 0) {
+            DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId,$foodId);
+        } else {
+            //get the food's price
+            $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $foodId);
+            DB::update("cart_detail", ['quantity' => $food['quantity'], 'price' => ($price * $food['quantity'])], "user_id=%i and food_id=%i", $userId, $foodId);
+        }
+
         $log->debug("Record cart_detail updated, user_id=" . $userId . ", food_id=" . $foodId);
         $count = DB::affectedRows();
         $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
