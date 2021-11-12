@@ -5,25 +5,6 @@
 {% block addHead %}
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
  <script>
-	function deleteItem(userId, foodId) {
-		$.ajax({url: '/api/cart/' + foodId,
-		type: 'DELETE',
-		dataType: 'json',
-		statusCode: {
-			403: function() {
-				alert("Authentication failed");
-			},
-			404: function() {
-				$("#cartItems").html("No items in your cart!");
-			}
-		}
-		}).done(function(data) {
-			$(`#${foodId}-${userId}`).remove()
-		});
-	}
-	$(document).ready(function () {
-	refreshList();
-	
 	function refreshList() {
 		$.ajax({url: '/api/cart',
 		type: 'GET',
@@ -45,7 +26,15 @@
 			tbody += '<td><img style="object-fit: scale-down;" width=100 height=100 src="' + item.imageFilePath + '"/></td>';
 			tbody += '<td>' + item.name + '</td>';
 			tbody += '<td>' + item.description + '</td>';
-			tbody += '<td>' + item.quantity + '</td>';
+			tbody += `<td>
+					<svg onclick="changeQuantity(${item.quantity},${item.user_id},${item.food_id},-1)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-minus-fill" viewBox="0 0 16 16">
+						<path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM6 7.5h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1 0-1z"/>
+					</svg>
+					<div id="quantity-${item.food_id}-${item.user_id}">${item.quantity}</div>
+					<svg onclick="changeQuantity(${item.quantity},${item.user_id},${item.food_id},1)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-plus-fill" viewBox="0 0 16 16">
+ 						<path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM8.5 6v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 1 0z"/>
+					</svg>
+				</td>`;
 			tbody += '<td>' + item.price + '</td>';
 			tbody += `<td><svg onclick="deleteItem(${item.user_id}, ${item.food_id})" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle-fill" viewBox="0 0 16 16">
 						  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
@@ -55,6 +44,40 @@
 			$("#cartItems").html(tbody);
 		});
 	}	
+	function deleteItem(userId, foodId) {
+		$.ajax({url: '/api/cart/' + foodId,
+		type: 'DELETE',
+		dataType: 'json',
+		statusCode: {
+			403: function() {
+				alert("Authentication failed");
+			},
+			404: function() {
+				$("#cartItems").html("No items in your cart!");
+			}
+		}
+		}).done(function(data) {
+			$(`#${foodId}-${userId}`).remove()
+		});
+	}
+	function changeQuantity(quantity, userId, foodId, num) {
+		let newQuantity = quantity + num;
+		$.ajax({
+			url: '/api/cart/' + foodId,
+			type: 'PUT',
+			dataType: 'json',
+			data: JSON.stringify({
+				quantity: newQuantity
+			}),
+			403: function() {
+				alert("Authentication failed");
+			}
+		}).done(function(data) {
+			refreshList();
+		})
+	}
+	$(document).ready(function () {
+	refreshList();
 	});
  </script>
 {% endblock %}

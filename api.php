@@ -156,4 +156,27 @@ $app->group('/api', function (App $app) use ($log) {
             return $response;
         }
     });
+
+    $app->put('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+        
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+        
+        $foodId = $args['foodId'];
+        $json = $request->getBody();
+        $food = json_decode($json, TRUE);
+
+        //get the food's price
+        $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $foodId);
+        
+        DB::update("cart_detail", ['quantity' => $food['quantity'], 'price' => ($price * $food['quantity'])], "user_id=%i and food_id=%i", $userId, $foodId);
+        $log->debug("Record cart_detail updated, user_id=" . $userId . ", food_id=" . $foodId);
+        $count = DB::affectedRows();
+        $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
+        return $response->getBody()->write($json);
+    });
 });
