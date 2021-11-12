@@ -9,10 +9,6 @@
           // authentication failed
           alert("Authentication failed");
         }
-		if (jqxhr.status == 409) {
-          // meal exists in cart
-          alert("Meal already exists in your cart!");
-        }
 		else {
           // other error - inform the user
           alert(
@@ -24,12 +20,13 @@
 
 	$(document).ready(function(){
 		$("button").click(function() {
+			let id = $(this).attr("id");
 			$.ajax({
 				url: '/api/cart',
 				type: 'POST',
 				dataType:'json',
 				data: JSON.stringify({
-					id: $(this).attr("id")
+					id: id
 				}),
 				headers: { "Content-Type": "application/json; charset=UTF-8" },
 				error: function (jqxhr, status, errorThrown) {

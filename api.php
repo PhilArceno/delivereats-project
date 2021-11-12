@@ -95,7 +95,7 @@ $app->group('/api', function (App $app) use ($log) {
             $response->getBody()->write(json_encode("403 - authentication failed"));
             return $response;
         }
-    
+
         $foodList = DB::query("SELECT * FROM cart_detail LEFT JOIN food ON cart_detail.food_id = food.id WHERE cart_detail.user_id = %i;", $userId);
         if (!$foodList) {
             $response = $response->withStatus(404);
@@ -119,23 +119,29 @@ $app->group('/api', function (App $app) use ($log) {
         $food = json_decode($json, TRUE);
 
         //check if item exists in cart already
-        if (($cartItem = DB::queryFirstRow("SELECT user_id, food_id FROM cart_detail WHERE user_id=%i and food_id=%i", $userId, $food['id'])) == FALSE) {
-            $log->debug("cart item=" . $cartItem);
-            //get the food's price
-            $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $food['id']);
+        $cartItem = DB::queryFirstRow("SELECT * FROM cart_detail WHERE user_id=%i and food_id=%i", $userId, $food['id']);
 
-            DB::insert('cart_detail', [
-                'user_id' => $userId, 'food_id' => $food['id'], 'quantity' => 1, 'price' => $price
-            ]);
-            $log->debug("cart detail added for user id=" . $userId . " and food id=" . $food['id']);
-            $response = $response->withStatus(201);
-            $response->getBody()->write(json_encode("Added successfully", JSON_PRETTY_PRINT));
-            return $response;
-        } else {
-            $response = $response->withStatus(409);
-            $response->getBody()->write(json_encode("Meal is already in your cart!", JSON_PRETTY_PRINT));
-            return $response;
-        }
+        //get the food's price
+        $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $food['id']);
+
+        DB::insertUpdate(
+            'cart_detail',
+            ['user_id' => $userId, 'food_id' => $food['id'], 'quantity' => 1, 'price' => $price],
+            ['quantity' => $cartItem['quantity'] + 1, 'price' => $cartItem['price'] + $price]
+        );
+        $log->debug("cart detail added for user id=" . $userId . " and food id=" . $food['id']);
+        $response = $response->withStatus(201);
+        $response->getBody()->write(json_encode("Added successfully", JSON_PRETTY_PRINT));
+        return $response;
+        // else {
+        //     $cartItem['quantity'] += 1;
+        //     DB::update('cart_detail', [
+        //         'quantity' => $cartItem['quantity'],
+        //         'price' =>  $cartItem['price'] + $price
+        //     ]);
+        //     $response = $response->withStatus(200);
+        //     $response->getBody()->write(json_encode("Added to cart", JSON_PRETTY_PRINT));
+        //     return $response;
+        // }
     });
 });
-
