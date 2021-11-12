@@ -3,6 +3,10 @@
 {% block title %}User list{% endblock %}
 
 {% block content %}
+		<div class="container mt-3">
+			<h2>Create record</h2>
+			<a href="/admin/user/add" class="btn btn-primary"> Create new user</a>
+		</div>
     <table class="table table-striped">
         <tr><th>#</th><th>name</th><th>username</th><th>email</th><th>account_type</th><th>actions</th></tr>
         {% for u in list %}
@@ -14,9 +18,7 @@
             <td>{{u.account_type}}</td>
             <td>
                 <button class="btn btn-primary" onclick="window.location='/admin/user/delete/{{u.id}}';">Delete</button>
-                <form action="/admin/user/edit/{{u.id}}">
-                    <input class="btn btn-primary" type="submit" value="Edit">
-                </form>
+                <button class="btn btn-primary" onclick="window.location='/admin/user/edit/{{u.id}}';">Edit</button>
             </td>
         </tr>                
         {% endfor %}
