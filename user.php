@@ -493,3 +493,90 @@ $app->get('/food-list/{id:[0-9]+}', function ($request, $response, $args) {
     return $this->view->render($response, 'businessOwner/food-list.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
 });
 
+//  ************************ Delete food item**********************
+$app->get('/food-delete/{id:[0-9]+}', function ($request, $response, $args) {
+    $food = DB::queryFirstRow("SELECT * FROM food WHERE id=%d", $args['id']);
+    if (!$food) {
+        $response = $response->withStatus(404);
+        return $this->view->render($response, 'error-page-not-found.html.twig');
+    }
+    return $this->view->render($response, 'businessOwner/food-delete.html.twig', ['v' => $food]);
+});
+
+$app->post('/food-delete/{id:[0-9]+}', function ($request, $response, $args) {
+    $food = DB::queryFirstField("SELECT restaurant_id FROM food WHERE id=%d", $args['id']);
+    DB::delete('food', "id=%d", $args['id']);
+    setFlashMessage("The food item has been deleted");
+    return $response->withRedirect("/food-list/" . $food);
+});
+
+//  ************************ Edit food item**********************
+$app->get('/food-edit/{id:[0-9]+}', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'businessOwner/not-owner.html.twig');
+    }
+    $item = DB::queryFirstRow("SELECT * FROM food WHERE id=%d", $args['id']);
+    if (!$item) {
+        $response = $response->withStatus(404);
+        return $this->view->render($response, 'error-page-not-found.html.twig');
+    }
+    return $this->view->render($response, "businessOwner/food-edit.html.twig", ['v' => $item]);
+});
+
+/*$app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'businessOwner/not-owner.html.twig');
+    }
+    $name = $request->getParam('name');
+    $price = $request->getParam('price');
+    $description = $request->getParam('description');
+    $image = $request->getParam('image');
+    $errorList = [];
+
+    $result = verifyName($name);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
+    // description validation
+    $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+    $result = verifyPrice($price);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+    // image validation
+    $uploadedImage = $request->getUploadedFiles()['image'];
+    $destImageFilePath = null;
+    $result = verifyUploadedPhoto($uploadedImage, $destImageFilePath);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+    if ($errorList) {
+        $valuesList = [
+            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image
+        ];
+        $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
+        return $this->view->render($response, "businessOwner/add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+    } else {
+        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE id=%i", $args['id']);
+        $valuesList = [
+            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
+            'restaurant_id' => $restaurant_id
+        ];
+        $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
+        $valuesList['imageFilePath'] = $destImageFilePath;
+        DB::insert('food', $valuesList);
+        setFlashMessage("The food item has been added successfully.");
+        return $response->withRedirect("/manage-restaurants");
+        //return $this->view->render($response, "businessOwner/add-food-success.html.twig");
+    } 
+});
+*/
