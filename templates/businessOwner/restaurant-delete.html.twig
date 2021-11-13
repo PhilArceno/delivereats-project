@@ -3,14 +3,14 @@
 {% endblock %}
 
 {%block content %}
-	<div>
+	<div class="container mt-3">
 		<h1>Delete restaurant</h1>
-		<div>Delete restaurant with name:
-			{{ v.name }}</div>
+		<div class="container mt-3">Yiu are going to delete restaurant with name: <b>
+			{{ v.name }} </b></div>
 		<form method="POST">
-			<div>Please confirm this action. It is irreversible</div>
-			<input type="submit" value="Yes, delete the restaurant">
+			<div class="container mt-3">Please confirm this action. It is irreversible</div>
+			<input class="btn btn-danger" type="submit" value="Yes, delete the restaurant">
 		</form>
-		<a href="/admin/user/list">Cancel - go back to the list</a>
+		<a class="btn btn-success" href="/manage-restaurants">Cancel - go back to the list</a>
 	</div>
 {% endblock %}
