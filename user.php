@@ -337,8 +337,8 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
         foreach ($selectedCategories as &$categoryId) {
             DB::insert('restaurant_category', ['restaurant_id' => $restaurantId, 'category_id' => $categoryId]);
         }
-
-        return $this->view->render($response, "add-restaurant-success.html.twig");
+        setFlashMessage("The restaurant has been added successfully. We are glad that you have become a member of our family.");
+        return $response->withRedirect("/manage-restaurants");
     }
 });
 //********************************** ADD FOOD *************************************************/
@@ -400,8 +400,9 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['imageFilePath'] = $destImageFilePath;
         DB::insert('food', $valuesList);
-
-        return $this->view->render($response, "add-food-success.html.twig");
+        setFlashMessage("The food item has been added successfully.");
+        return $response->withRedirect("/manage-restaurants");
+        //return $this->view->render($response, "add-food-success.html.twig");
     }
 });
 
@@ -465,5 +466,21 @@ $app->get('/orders', function ($request, $response, $args) {
 
 $app->get('/feature-not-implemented', function ($request, $response, $args) {
     return $this->view->render($response, 'feature-not-implemented.html.twig');
+});
+
+//  ************************ Delete restaurant**********************
+$app->get('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $args) {
+    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant WHERE id=%d", $args['id']);
+    if (!$restaurant) {
+        $response = $response->withStatus(404);
+        return $this->view->render($response, 'error-page-not-found.html.twig');
+    }
+    return $this->view->render($response, 'businessOwner/restaurant-delete.html.twig', ['v' => $restaurant]);
+});
+
+$app->post('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $args) {
+    DB::delete('restaurant', "id=%d", $args['id']);
+    setFlashMessage("The restaurant has been deleted");
+    return $response->withRedirect("/manage-restaurants");
 });
 
