@@ -1,21 +1,35 @@
 {% extends "master.html.twig" %}
 
-{% block title %}List of Your Restaurant(s){% endblock %} 
+{% block title %}List of Your Restaurant(s)
+{% endblock %}
 
 {% block content %}
 
-<h4> List of your restaurant(s) </h4>
-<table>
-    <tr><th>Name</th><th>Image</th><th>**Manage your menu**</th></tr>
-    {% for restaurant in list %}
-        <tr>
-            <td>{{restaurant.name}}</td>
-            <td><img src="{{restaurant.imageFilePath}}" width="150" alt="Restaurant image"></td>
-            <td><a class="btn btn-danger" href="/add-food/{{restaurant.id}}">ADD FOOD</a></td>
-        </tr>
-
-    {% endfor %}
-</table>
-<a href="/add-restaurant">Add a restaurant</a>
+	<h2 class="text-center">List of your restaurant(s)</h2>
+	<div class="container mt-3">
+		<a type="button" class="btn btn-outline-success" href="/add-restaurant">Add new restaurant</a>
+	</div>
+	<div class="container mt-3">
+		<h4>Update existing record(s)</h4>
+		<table class="table table-striped">
+			<tr>
+				<th>Name</th>
+				<th class="text-center">Actions</th>
+			</tr>
+			{% for restaurant in list %}
+				<tr>
+					<td>
+						{{restaurant.name}}
+					</td>
+					<td>
+						<a type="button" class="btn btn-outline-primary" href="/add-food/{{restaurant.id}}">Add food</a>
+						<a type="button" class="btn btn-outline-secondary" href="/add-food/{{restaurant.id}}">Menu</a>
+						<a type="button" class="btn btn-outline-dark" href="/add-food/{{restaurant.id}}">Change details</a>
+						<a class="btn btn-danger" href="/add-food/{{restaurant.id}}">Delete</a>
+					</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
 
 {% endblock content %}
