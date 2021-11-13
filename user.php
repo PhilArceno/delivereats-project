@@ -484,3 +484,12 @@ $app->post('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $arg
     return $response->withRedirect("/manage-restaurants");
 });
 
+//********************************** Food List *************************************************/
+
+$app->get('/food-list/{id:[0-9]+}', function ($request, $response, $args) {
+    $id = $args['id'];
+    $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
+    $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
+    return $this->view->render($response, 'businessOwner/food-list.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+});
+
