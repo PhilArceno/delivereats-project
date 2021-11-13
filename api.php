@@ -7,6 +7,7 @@ require_once 'init.php';
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
+\Stripe\Stripe::setApiKey('sk_test_51Jv6wCLkqYXs25lQjH3qEJLO2TwoYnL7H5WJzKdiOFWNPNOzAPj7JKJ7n7c8A4OdRmEfKm7eTWRgiHMxkJebMikX003aHW48c1');
 
 
 $app->group('/api', function (App $app) use ($log) {
@@ -187,5 +188,29 @@ $app->group('/api', function (App $app) use ($log) {
         $count = DB::affectedRows();
         $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
         return $response->getBody()->write($json);
+    });
+
+    $app->post('/create-stripe', function (Request $request, Response $response, array $args) use ($log) {
+        $json = $request->getBody();
+        $jsonObj = json_decode($json, TRUE);
+
+        $paymentIntent = \Stripe\PaymentIntent::create([
+            'amount' => calculateOrderAmount($jsonObj['items']),
+            'currency' => 'eur',
+            'payment_method_types' => [
+                'card'
+            ],
+        ]);
+        if (!$paymentIntent) {
+            $response = $response->withStatus(400);
+            $response->getBody()->write(json_encode("400 - There was an error creating payment intent."));
+            return $response;
+        }
+        $output = [
+            'clientSecret' => $paymentIntent->client_secret,
+        ];
+        $response = $response->withStatus(200);
+        $response->getBody()->write(json_encode($output));
+        return $response;
     });
 });

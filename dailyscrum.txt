@@ -185,7 +185,7 @@ Dmitri
 2. order php logic
 3. admin CRUD php logic
 
-DeliverEats Scrum 11/10/2021
+DeliverEats Scrum 11/11/2021
 
 Phil
 1. add-to-cart post working
@@ -196,3 +196,15 @@ Dmitri
 1. admin panel (/admin)
 2. /browse/{category} and search
 3. admin CRUD php logic
+
+DeliverEats Scrum 11/12/2021
+
+Phil
+1. add-to-cart fixes, remove from cart, change quantity
+2. Checkout page, stripe implementation
+3. stripe documentation
+
+Dmitri
+1. 
+2. 
+3. 

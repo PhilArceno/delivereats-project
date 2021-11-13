@@ -449,6 +449,11 @@ $app->get('/cart', function ($request, $response, $args) {
     return $this->view->render($response, 'cart.html.twig', []);
 });
 
+$app->get('/checkout', function ($request, $response, $args) {
+    return $this->view->render($response, 'checkout.html.twig', []);
+});
+
+
 
 // ****************** Order *********************
 
