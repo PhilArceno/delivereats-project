@@ -1,0 +1,80 @@
+{% extends "master.html.twig" %}
+
+{% block title %}Update restaurant
+{% endblock %}
+
+{% block addHead %}
+	<script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+	<script>
+		tinymce.init({selector: 'textarea[name=description]'});
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	{% if errorList %}
+		<ul>
+			{% for error in errorList %}
+				<li>{{ error }}</li>
+			{% endfor %}
+		</ul>
+	{% endif %}
+	<div class="container mt-3">
+		<h2>Update restaurant</h2>
+		<form method="post" enctype="multipart/form-data">
+
+			<div class="mb-3 mt-3">
+				<label for="name" class="form-label">Restaurant name:</label>
+				<input type="text" class="form-control" name="name" placeholder="Enter name of your restaurant" id="name" value="{{ r.name }}"><br>
+			</div>
+			<div class="mb-3">
+				<label for="description" class="form-label">Restaurant description:</label>
+				<textarea class="form-control" name="description">{{r.description}}</textarea><br>
+			</div>
+			<div class="mb-3">
+				<label for="image" class="form-label">If you want to change image (logo), please choose new one:</label>
+				<input type="file" class="form-control" name="image"/><br>
+			</div>
+			<div class="mb-3">
+				<p>Your pricing range is:
+					{{r.pricing}}</p>
+				<label for="pricing" class="form-label">If you want to change range, please choose new one: :</label>
+				<select name="pricing" required>
+					<option value="" disabled selected hidden>Select pricing</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$">$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$">$$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$$">$$$</option>
+					<option name="pricing" {% if pricingRange == 'customer' %} selected="selected" {% endif %} value="$$$$">$$$$</option>
+				</select>
+			</div>
+			<div class="mb-3">
+				<input type="text" placeholder="Street" name="street" id="location" value="{{a.street}}"/>
+				<input type="text" placeholder="Apt, Suite, etc (optional)" name="appartmentNo" value="{{a.apt_num}}"/>
+				<input type="text" placeholder="City" id="locality" name='city' value="{{a.city}}"/>
+				<input type="text" class="half-input" placeholder="Province" id="administrative_area_level_1" name="province" value="{{a.province}}"/>
+				<input type="text" class="half-input" placeholder="Postal code" id="postal_code" name="postalCode" value="{{a.postal_code}}"/>
+			</div>
+			<label for="categories">Choose categories:</label>
+			<div>
+				{% for key, c in v.categories %}
+					{% if (key + 1) is not divisible by(2) %}
+						{# Max # of elements in a row is two. if first col in row, start a new row. #}
+						<div class="row">
+						{% endif %}
+						<div class="col m-1">
+							<input type="checkbox" name="categoriesChecked[]" value="{{c.id}}" {% if c.id in v.selectedCategories %} checked {% endif %}>
+							{{c.name}}
+						</div>
+						{% if (key + 1) is divisible by(2) or loop.last %}
+							{# need to close row div, if max cols reached, or if last element (may be an odd number)#}
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+			<button type="submit" class="btn btn-primary">Update</button>
+		</form>
+	</div>
+{% endblock content %}
+{% block endScript %}
+	{% include 'address-js.html.twig' with {apiKey, addressType: "establishment"} %}
+{% endblock %}
