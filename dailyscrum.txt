@@ -208,3 +208,15 @@ Dmitri
 1. Crud for business owner
 2. validation and middleware
 3. admin CRUD php logic
+
+DeliverEats Scrum 11/12/2021
+
+Phil
+1. Stripe implemented. checkout uses stripe webhook to call api on success
+2. Profile Page, styling
+3. Bootstrap
+
+Dmitri
+1. 
+2. 
+3. 
