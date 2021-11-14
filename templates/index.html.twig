@@ -77,9 +77,9 @@ addressId = address.id;
 				</svg>
 			</div>
 			<div class="mt-3 mb-3">
-				<div class="d-flex">
+				<div id="category-nav">
 					{% for c in categories %}
-						<div class="me-2 text-center">
+						<div class="text-center">
 							<img src="{{c.imageFilePath}}"/>
 							<div>{{c.name}}</div>
 						</div>

@@ -4,8 +4,51 @@
 /*Have to be changed*/
 
 body {
-  max-width:800px;
   margin:0 auto;
+  background-color:#f8f8f8;
+}
+
+nav {
+  
+  max-width:800px;
+  background-color:white;
+}
+
+#main {
+  width:100%;
+  max-width:800px;
+  background-color:white;
+}
+
+#category-nav {
+  display:flex;
+  max-width:90vw;
+  overflow: auto;
+  gap:30px;
+  touch-action: pan-x;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height:10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 5px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
 }
 
 * {
