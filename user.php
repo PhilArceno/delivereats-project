@@ -463,7 +463,7 @@ $app->get('/checkout-success', function ($request, $response, $args) {
 // ****************** Order *********************
 
 $app->get('/orders', function ($request, $response, $args) {
-    return $this->view->render($response, 'feature-not-implemented.html.twig');
+    return $this->view->render($response, 'orders.html.twig');
 });
 
 // ****************** Not implemented *********************

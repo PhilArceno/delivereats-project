@@ -1,0 +1,69 @@
+{% extends "master.html.twig" %}
+
+{% block title %}Past Orders{% endblock %}
+{% block addHead %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            getOrders();
+        })
+        function showDetails(orderId) {
+            $(`#order-${orderId}`).show();
+        }
+        function getOrders() {
+            $.ajax({
+                url: '/api/orders',
+                type: 'GET',
+                dataType: 'JSON',
+                statusCode: {
+                    403: function() {
+                        alert("Authentication failed");
+                    },
+                    404: function() {
+                        $("#orders").html("No orders found.");
+                    }
+                }
+            }).done(function (data) {
+                let listOfOrdersHtml = "";
+                data.items.forEach(order => {
+                    let orderDetailsHtml = `<span class="orders" id="order-${order.id}"><div class="d-flex justify-content-between align-items-center">`;
+                    data.orderDetails.forEach(detail => {
+                        if (detail.order_id === order.id) {
+                            for (let foodItem of data.food) {
+                                if (foodItem.id === detail.food_id) {
+                                    orderDetailsHtml += `<img style="max-height:50px; max-width:50px; object-fit:cover;" src="${foodItem.imageFilePath}"/>`;
+                                    orderDetailsHtml += `<div>${foodItem.name}</div>`;
+                                    orderDetailsHtml += `<div>Qty: ${detail.quantity}</div>`;
+                                    orderDetailsHtml += `<div>Total: $${detail.price}</div>`;
+                                    break;
+                                }
+                            }
+                        }
+                    })
+                    orderDetailsHtml += '</div></span>';
+
+                    listOfOrdersHtml += `<div onclick="showDetails(${order.id})" class="d-flex">
+                        <img style="max-height:200px; max-width:200px; object-fit:cover;" src="${data.restaurant.imageFilePath}" alt="restaurant-img"/>
+                        <div>
+                            <div>${data.restaurant.name}</div>
+                            <div>${order.total_price}</div>
+                            <div>${order.date} &mdash; ${order.order_status}</div>
+                        </div>
+                    </div>${orderDetailsHtml}`
+                });
+                $("#orders").html(listOfOrdersHtml);
+                $('.orders').hide();
+            })
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div id="orders">
+    </div>
+{% endblock %}
+
+{% block endScript %}
+<script>
+</script>
+{% endblock %}

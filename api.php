@@ -189,6 +189,7 @@ $app->group('/api', function (App $app) use ($log) {
 
         $log->debug("Record cart_detail updated, user_id=" . $userId . ", food_id=" . $foodId);
         $count = DB::affectedRows();
+        $response = $response->withStatus(200);
         $json = json_encode($count != 0, JSON_PRETTY_PRINT); // true or false
         return $response->getBody()->write($json);
     });
@@ -226,6 +227,50 @@ $app->group('/api', function (App $app) use ($log) {
         $response = $response->withStatus(200);
         $response->getBody()->write(json_encode($output));
         return $response;
+    });
+
+    $app->get('/orders', function (Request $request, Response $response, array $args) {
+        $userId = $_SESSION['user']['id'];
+
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
+        $orders = DB::query("SELECT * FROM user_order WHERE customer_id=%i ORDER BY date DESC", $userId);
+
+        if (!$orders) {
+            $response = $response->withStatus(404);
+            $response->getBody()->write(json_encode("404 - not found", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
+        $orderDetails = [];
+        foreach ($orders as $order) {
+            array_push($orderDetails, 
+            DB::queryFirstRow("SELECT * FROM order_details WHERE order_id=%i", $order['id'])
+            );
+        }
+
+        if (!$orderDetails) {
+            $response = $response->withStatus(404);
+            $response->getBody()->write(json_encode("404 - not found", JSON_PRETTY_PRINT));
+            return $response;
+        }
+        $food = [];
+        foreach ($orderDetails as $detail) {
+            array_push($food, 
+            DB::queryFirstRow("SELECT id, name, imageFilePath FROM food WHERE id=%i", $detail['food_id'])
+            );
+        }
+
+        $restaurantId = DB::queryFirstField("SELECT restaurant_id FROM food WHERE id=%i", $orderDetails[0]['food_id']);
+        $restaurant = DB::queryFirstRow("SELECT name, imageFilePath FROM restaurant WHERE id=%i", $restaurantId);
+
+        $response = $response->withStatus(200);
+        $json = json_encode(['items' => $orders, 'orderDetails' => $orderDetails, 'restaurant' => $restaurant, 'food' => $food], JSON_PRETTY_PRINT); // true or false
+        return $response->getBody()->write($json);
     });
 
     $app->post('/order', function (Request $request, Response $response, array $args) use ($log) {
