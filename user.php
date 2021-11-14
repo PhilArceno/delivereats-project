@@ -524,7 +524,7 @@ $app->get('/food-edit/{id:[0-9]+}', function ($request, $response, $args) {
     return $this->view->render($response, "businessOwner/food-edit.html.twig", ['v' => $item]);
 });
 
-/*$app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+$app->post('/food-edit/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
     if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
         $response = $response->withStatus(403);
         return $this->view->render($response, 'businessOwner/not-owner.html.twig');
@@ -566,17 +566,12 @@ $app->get('/food-edit/{id:[0-9]+}', function ($request, $response, $args) {
         $log->debug(sprintf("Error with adding: name=%s, price=%s, description=%s, image=%s", $name, $price, $description, $image));
         return $this->view->render($response, "businessOwner/add-food.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
     } else {
-        $restaurant_id = DB::queryFirstField("SELECT id FROM restaurant WHERE id=%i", $args['id']);
         $valuesList = [
-            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image,
-            'restaurant_id' => $restaurant_id
-        ];
+            'name' => $name, 'price' => $price, 'description' => $description, 'imageFilePath' => $image];
         $uploadedImage->moveTo($destImageFilePath); // FIXME: check if it failed !
         $valuesList['imageFilePath'] = $destImageFilePath;
-        DB::insert('food', $valuesList);
-        setFlashMessage("The food item has been added successfully.");
+        DB::update('food', $valuesList, "id=%d", $args['id']);
+        setFlashMessage("The food item has been updated successfully.");
         return $response->withRedirect("/manage-restaurants");
-        //return $this->view->render($response, "businessOwner/add-food-success.html.twig");
     } 
 });
-*/
