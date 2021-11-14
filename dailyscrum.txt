@@ -205,6 +205,6 @@ Phil
 3. stripe documentation
 
 Dmitri
-1. 
-2. 
-3. 
+1. Crud for business owner
+2. validation and middleware
+3. admin CRUD php logic

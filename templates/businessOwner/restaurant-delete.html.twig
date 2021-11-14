@@ -1,0 +1,16 @@
+{% extends "master.html.twig" %}
+{% block title %}Delete restaurant
+{% endblock %}
+
+{%block content %}
+	<div class="container mt-3">
+		<h1>Delete restaurant</h1>
+		<div class="container mt-3">You are going to delete restaurant with name: <b>
+			{{ v.name }} </b></div>
+		<form method="POST">
+			<div class="container mt-3">Please confirm this action. It is irreversible</div>
+			<input class="btn btn-danger" type="submit" value="Yes, delete the restaurant">
+		</form>
+		<a class="btn btn-success" href="/manage-restaurants">Cancel - go back to the list</a>
+	</div>
+{% endblock %}
