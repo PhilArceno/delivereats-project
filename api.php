@@ -7,6 +7,7 @@ require_once 'init.php';
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
+
 \Stripe\Stripe::setApiKey('sk_test_51Jv6wCLkqYXs25lQjH3qEJLO2TwoYnL7H5WJzKdiOFWNPNOzAPj7JKJ7n7c8A4OdRmEfKm7eTWRgiHMxkJebMikX003aHW48c1');
 
 
@@ -128,13 +129,15 @@ $app->group('/api', function (App $app) use ($log) {
         if ($cartItem) {
             $addedQuantity = $cartItem['quantity'] + 1;
             $price = $price + $cartItem['price'];
+            DB::insertUpdate(
+                'cart_detail',
+                ['user_id' => $userId, 'food_id' => $food['id'], 'quantity' => $addedQuantity, 'price' => $price],
+                ['quantity' => $addedQuantity, 'price' => $price]
+            );
+        } else {
+            $addedQuantity = 1;
+            DB::insert("cart_detail", ['user_id' => $userId, 'food_id' => $food['id'], 'quantity' => $addedQuantity, 'price' => $price]);
         }
-
-        DB::insertUpdate(
-            'cart_detail',
-            ['user_id' => $userId, 'food_id' => $food['id'], 'quantity' => 1, 'price' => $price],
-            ['quantity' => $addedQuantity, 'price' => $price]
-        );
         $log->debug("cart detail added for user id=" . $userId . " and food id=" . $food['id']);
         $response = $response->withStatus(201);
         $response->getBody()->write(json_encode("Added successfully", JSON_PRETTY_PRINT));
@@ -151,7 +154,7 @@ $app->group('/api', function (App $app) use ($log) {
             return $response;
         }
 
-        DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId,$foodId);
+        DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId, $foodId);
         if (($counter = DB::affectedRows()) == false) {
             $response = $response->withStatus(404);
             $response->getBody()->write(json_encode("404 - not found"));
@@ -165,19 +168,19 @@ $app->group('/api', function (App $app) use ($log) {
 
     $app->put('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        
+
         if (!$userId) {
             $response = $response->withStatus(403);
             $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
             return $response;
         }
-        
+
         $foodId = $args['foodId'];
         $json = $request->getBody();
         $food = json_decode($json, TRUE);
 
         if ($food['quantity'] == 0) {
-            DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId,$foodId);
+            DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId, $foodId);
         } else {
             //get the food's price
             $price = DB::queryFirstField("SELECT price FROM food WHERE id=%i", $foodId);
@@ -191,15 +194,26 @@ $app->group('/api', function (App $app) use ($log) {
     });
 
     $app->post('/create-stripe', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
         $json = $request->getBody();
         $jsonObj = json_decode($json, TRUE);
 
         $paymentIntent = \Stripe\PaymentIntent::create([
-            'amount' => calculateOrderAmount($jsonObj['items']),
-            'currency' => 'eur',
+            'amount' => calculateOrderAmount($jsonObj['items'], $log),
+            'currency' => 'cad',
             'payment_method_types' => [
                 'card'
             ],
+            'metadata' => [
+                'user_id' => $userId
+            ]
         ]);
         if (!$paymentIntent) {
             $response = $response->withStatus(400);
@@ -212,5 +226,71 @@ $app->group('/api', function (App $app) use ($log) {
         $response = $response->withStatus(200);
         $response->getBody()->write(json_encode($output));
         return $response;
+    });
+
+    $app->post('/order', function (Request $request, Response $response, array $args) use ($log) {
+        $endpoint_secret = 'whsec_2n1r3qrXttmwmVhB35L3oQ8QLSNooryx';
+
+        $payload = @file_get_contents('php://input');
+        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+        $event = null;
+
+        try {
+            $event = \Stripe\Webhook::constructEvent(
+                $payload,
+                $sig_header,
+                $endpoint_secret
+            );
+        } catch (\UnexpectedValueException $e) {
+            // Invalid payload
+            http_response_code(400);
+            exit();
+        } catch (\Stripe\Exception\SignatureVerificationException $e) {
+            // Invalid signature
+            http_response_code(400);
+            exit();
+        }
+
+        // Handle the event
+        switch ($event->type) {
+            case 'payment_intent.created':
+                // intent has been created
+            case 'charge.succeeded':
+                // charge went through
+                $paymentIntent = $event->data->object;
+                // ... handle other event types
+
+                $amount = $paymentIntent['amount'] / 100;
+
+                $cart = DB::query("SELECT * FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
+                if (!$cart) {
+                    $response = $response->withStatus(404);
+                    $response->getBody()->write(json_encode("404 - cart not found", JSON_PRETTY_PRINT));
+                    return $response;
+                }
+
+                DB::insert("user_order", [
+                    'date' => date_create('now')->format('Y-m-d'),
+                    'order_status' => 'delivered',
+                    'total_price' => $amount,
+                    'customer_id' => $paymentIntent['metadata']['user_id']
+                ]);
+                $orderId = DB::insertId();
+                
+                foreach ($cart as $cd) {
+                    DB::insert("order_details", [
+                        'order_id' => $orderId, 'food_id' => $cd['food_id'], 'quantity' => $cd['quantity'], 'price' => $cd['price']
+                    ]);
+                }
+                DB::query("DELETE FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
+                $response = $response->withStatus(201);
+                $response->getBody()->write(json_encode($orderId));
+                return $response;
+
+            case 'payment_intent.succeeded':
+                //payment intent success
+            default:
+                $log->debug('Received unknown event type ' . $event->type);
+        }
     });
 });

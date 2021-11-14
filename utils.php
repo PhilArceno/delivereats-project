@@ -155,12 +155,17 @@ function verifyProvince($province)
         $fileName = 'uploads/' . $sanitizedFileName . "." . $ext;
         return TRUE;
     }
-
-    function calculateOrderAmount(array $items): int {
+    function calculateOrderAmount(array $items, $log): int {
         // Replace this constant with a calculation of the order's amount
         // Calculate the order total on the server to prevent
         // people from directly manipulating the amount on the client
+        $total = 0;
         
-        return 1400;
+        foreach ($items as $item) {
+            $price = DB::queryFirstField("SELECT price FROM cart_detail WHERE user_id=%i and food_id=%i",$_SESSION['user']['id'], $item['id']);
+            $total += $price;
+        }
+        $total = (($total + 10) * 1.15);
+        //stripe uses cents
+        return $total * 100;
     }
-

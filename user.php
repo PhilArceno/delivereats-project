@@ -193,7 +193,7 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
             'postalCode' => $postalCode, 'city' => $city, 'province' => $province, 'phone' => $phone,
             'accountType' => $accountType
         ];
-        $log->debug(sprintf("Error with registration: name=%s, street=%s, province=%s, address=%s", $name, $street, $province));
+        $log->debug(sprintf("Error with registration: name=%s, street=%s, province=%s, address=%s", $name, $street, $province, $street));
         return $this->view->render($response, "register.html.twig", ['errorList' => $errorList, 'v' => $valuesList, 'apiKey' => $apiKey]);
     } else {
         //  ************************ REGISTRATION DONE **********************
@@ -443,7 +443,7 @@ $app->get('/browse/{id:[0-9]+}', function ($request, $response, $args) {
     return $this->view->render($response, 'browse-category.html.twig', ['restaurant' => $restaurant, 'userSession' => $_SESSION['user']]);
 });
 
-// ****************** Cart *********************
+// ****************** Cart & checkout *********************
 
 $app->get('/cart', function ($request, $response, $args) {
     return $this->view->render($response, 'cart.html.twig', []);
@@ -451,6 +451,10 @@ $app->get('/cart', function ($request, $response, $args) {
 
 $app->get('/checkout', function ($request, $response, $args) {
     return $this->view->render($response, 'checkout.html.twig', []);
+});
+
+$app->get('/checkout-success', function ($request, $response, $args) {
+    return $this->view->render($response, 'checkout-success.html.twig', []);
 });
 
 

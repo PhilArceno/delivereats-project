@@ -6,7 +6,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://js.stripe.com/v3/"></script>
 <script>
-let items = [];
+var items = [];
 	function refreshList() {
 		$.ajax({url: '/api/cart',
 		type: 'GET',
@@ -44,7 +44,7 @@ let items = [];
 			$("#subTotal").html('$' + total.toFixed(2));
 			$("#totalCost").html('$' + ((total + 10) * 1.15).toFixed(2));
 			$('#calculations').removeClass("invisible");
-			$('#placeOrder').html(`<a class="btn btn-primary" href="/order" role="button">Place order</a>`);
+			initialize(items);
 		});
 	}
 	$(document).ready(function () {
@@ -98,8 +98,6 @@ let items = [];
 	
 	// The items the customer wants to buy	
 	let elements;
-	
-	initialize();
 	checkStatus();
 	
 	document
@@ -107,11 +105,11 @@ let items = [];
 	  .addEventListener("submit", handleSubmit);
 	
 	// Fetches a payment intent and captures the client secret
-	async function initialize() {
+	async function initialize(itemList) {
 	  const { clientSecret } = await fetch("/api/create-stripe", {
 	    method: "POST",
 	    headers: { "Content-Type": "application/json" },
-	    body: JSON.stringify({ items }),
+	    body: JSON.stringify({ items: itemList }),
 	  }).then((r) => r.json());
 	
 	  elements = stripe.elements({ clientSecret });
@@ -128,7 +126,7 @@ let items = [];
 	    elements,
 	    confirmParams: {
 	      // Make sure to change this to your payment completion page
-	      return_url: "http://localhost:4242/public/checkout.html",
+	      return_url: "http://delivereats/checkout-success",
 	    },
 	  });
 	
