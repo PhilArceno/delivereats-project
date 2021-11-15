@@ -1,0 +1,36 @@
+{% extends "admin/admin-master.html.twig" %}
+
+{% block title %}List of food items
+{% endblock %}
+
+{% block content %}
+	<div class="container mt-3">
+		<a href="/admin" class="btn btn-success">
+			Back to main page</a>
+	</div>
+    <div class="container mt-3">
+    <h4>List of food items</h4>
+	<table class="table table-striped">
+		<tr>
+			<th>#</th>
+			<th>name</th>
+			<th>price</th>
+			<th>description</th>
+			<th>image</th>
+			<th>actions</th>
+		</tr>
+		{% for u in list %}
+			<tr>
+				<td>{{u.id}}</td>
+				<td>{{u.name}}</td>
+                <td>{{u.price}}</td>
+				<td>{{u.description}}</td>
+				<td><img style="max-height:40px" src="/{{u.imageFilePath}}"</td>
+				<td>
+					<button class="btn btn-danger" onclick="window.location='/admin/food/delete/{{u.id}}';">Delete</button>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+    </div>
+{% endblock content %}

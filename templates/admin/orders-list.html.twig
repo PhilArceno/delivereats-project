@@ -1,0 +1,34 @@
+{% extends "admin/admin-master.html.twig" %}
+
+{% block title %}OList of orders
+{% endblock %}
+
+{% block content %}
+	<div class="container mt-3">
+		<a href="/admin" class="btn btn-success">
+			Back to main page</a>
+	</div>
+	<div class="container mt-3">
+		<h4>List of orders</h4>
+		<table class="table table-striped">
+			<tr>
+				<th>#</th>
+				<th>date</th>
+				<th>order status</th>
+				<th>total price</th>
+				<th>note</th>
+				<th>customer id</th>
+			</tr>
+			{% for u in list %}
+				<tr>
+					<td>{{u.id}}</td>
+					<td>{{u.date}}</td>
+					<td>{{u.order_status}}</td>
+					<td>{{u.total_price}}</td>
+					<td>{{u.note}}</td>
+					<td>{{u.customer_id}}</td>
+				</tr>
+			{% endfor %}
+		</table>
+	</div>
+{% endblock content %}

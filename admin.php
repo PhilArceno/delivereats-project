@@ -36,14 +36,14 @@ $app->group('/admin', function () use ($app, $log) {
     });
 
     $app->get('/user/edit/{id:[0-9]+}', function ($request, $response, $args) {
-            $user = DB::queryFirstRow("SELECT * FROM user WHERE id=%d", $args['id']);
-            if (!$user) {
-                $response = $response->withStatus(404);
-                return $this->view->render($response, 'admin/error-not-found.html.twig');
-            }
-            $address = DB::queryFirstRow("SELECT * FROM `address` WHERE id=%d", $user['address_id']);
-            print_r($user);
-            print_r($address);
+        $user = DB::queryFirstRow("SELECT * FROM user WHERE id=%d", $args['id']);
+        if (!$user) {
+            $response = $response->withStatus(404);
+            return $this->view->render($response, 'admin/error-not-found.html.twig');
+        }
+        $address = DB::queryFirstRow("SELECT * FROM `address` WHERE id=%d", $user['address_id']);
+        print_r($user);
+        print_r($address);
         return $this->view->render($response, 'admin/user-edit.html.twig', ['v' => $user, 'a' => $address]);
     });
 
@@ -63,18 +63,18 @@ $app->group('/admin', function () use ($app, $log) {
         $province = $request->getParam('province');
         $phone = $request->getParam('phone');
         $accountType = $request->getParam('accountType');
-    
-      
-            //  ************************ UPDATE DONE **********************
-            $password = password_hash($pass1, PASSWORD_DEFAULT);
-            $valuesList = ['name' => $name, 'username' => $userName, 'password' => $password, 'email' => $email,
-            ];
-            DB::update('user', $valuesList, "id=%d", $args['id']);
-            return $this->view->render($response, "admin/user-edit-success.html.twig");
-        
+
+
+        //  ************************ UPDATE DONE **********************
+        $password = password_hash($pass1, PASSWORD_DEFAULT);
+        $valuesList = [
+            'name' => $name, 'username' => $userName, 'password' => $password, 'email' => $email,
+        ];
+        DB::update('user', $valuesList, "id=%d", $args['id']);
+        return $this->view->render($response, "admin/user-edit-success.html.twig");
     });
 
- //  ************************ Delete **********************
+    //  ************************ Delete user**********************
     $app->get('/user/delete/{id:[0-9]+}', function ($request, $response, $args) {
         $user = DB::queryFirstRow("SELECT * FROM user WHERE id=%d", $args['id']);
         if (!$user) {
@@ -88,6 +88,30 @@ $app->group('/admin', function () use ($app, $log) {
         DB::delete('user', "id=%d", $args['id']);
         return $this->view->render($response, 'admin/user-delete-success.html.twig');
     });
+    //  ************************ List of orders **********************
+    $app->get('/orders-check', function ($request, $response, $args) use ($log) {
+        $list = DB::query("SELECT * FROM `user_order`");
+        return $this->view->render($response, 'admin/orders-list.html.twig', ['list' => $list]);
+    });
+
+    //  ************************ List of food items **********************
+    $app->get('/food-items', function ($request, $response, $args) use ($log) {
+        $list = DB::query("SELECT * FROM `food`");
+        return $this->view->render($response, 'admin/food-list.html.twig', ['list' => $list]);
+    });
+
+        //  ************************ Delete food item **********************
+        $app->get('/food/delete/{id:[0-9]+}', function ($request, $response, $args) {
+            $item = DB::queryFirstRow("SELECT * FROM food WHERE id=%d", $args['id']);
+            if (!$item) {
+                $response = $response->withStatus(404);
+                return $this->view->render($response, 'admin/error-not-found.html.twig');
+            }
+            return $this->view->render($response, 'admin/food-delete.html.twig', ['v' => $item]);
+        });
+    
+        $app->post('/food/delete/{id:[0-9]+}', function ($request, $response, $args) {
+            DB::delete('food', "id=%d", $args['id']);
+            return $this->view->render($response, 'admin/food-delete-success.html.twig');
+        });
 });
-
-
