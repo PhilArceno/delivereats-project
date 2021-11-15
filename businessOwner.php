@@ -171,6 +171,60 @@ $app->post('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $arg
     return $response->withRedirect("/manage-restaurants");
 });
 
+//********************************** Update restaurant details *************************************************/
+
+$app->get('/restaurant-update/{id:[0-9]+}', function ($request, $response, $args) {
+    if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'businessOwner/not-owner.html.twig');
+    }
+    $item = DB::queryFirstRow("SELECT * FROM restaurant WHERE id=%d", $args['id']);
+    if (!$item || $item['owner_id'] != $_SESSION['user']['id']) {
+        $response = $response->withStatus(404);
+        return $this->view->render($response, 'error-page-not-found.html.twig');
+    }
+    return $this->view->render($response, "businessOwner/restaurant-update.html.twig", ['v' => $item]);
+});
+
+
+$app->post('/restaurant-update/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+    $name = $request->getParam('name');
+    $description = $request->getParam('description');
+    $image = $request->getParam('image');
+    
+    $errorList = [];
+
+    $result = verifyName($name);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+    $description = strip_tags($description, "<p><ul><li><em><strong><i><b><ol><h3><h4><h5><span>");
+
+    // description validation
+    $result = verifyDescription($description);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    }
+
+     // image validation
+ 
+     if ($errorList) {
+        $valuesList = [
+            'name' => $name, 'description' => $description];
+        $log->debug(sprintf("Error with updating: name=%s", 
+            $name));
+        return $this->view->render($response, "businessOwner/restaurant-update.html.twig", ['errorList' => $errorList, 'v' => $valuesList]);
+    } else {
+            $valuesList = [
+            'name' => $name, 'description' => $description];
+        DB::update('restaurant', $valuesList, "id=%i", $args['id']);
+        setFlashMessage("The restaurant has been updated successfully.");
+        return $response->withRedirect("/manage-restaurants");
+    }
+});
+
+
+
 //********************************** Food List *************************************************/
 
 $app->get('/food-list/{id:[0-9]+}', function ($request, $response, $args) {

@@ -220,3 +220,19 @@ Dmitri
 1. food list, order list for admin CRUD
 2. /user/edit, /restaurant-update
 3. Bootstrap
+
+DeliverEats Scrum 11/15/2021
+Phil
+1.
+2. 
+3. 
+
+Bahar
+1.
+2.
+3.
+
+Dmitri
+1. 
+2. 
+3. 
