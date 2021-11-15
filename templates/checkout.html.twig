@@ -38,8 +38,9 @@ var items = [];
 					<div id="quantity-${item.food_id}-${item.user_id}">${item.quantity}</div>
 				</td>`;
 			tbody += '<td>' + item.price + '</td>';
-			tbody += `</tr></table>`;
+			tbody += `</tr>`;
 			}
+			tbody += `</table>`;
 			$("#cartItems").html(tbody);
 			$("#subTotal").html('$' + total.toFixed(2));
 			$("#totalCost").html('$' + ((total + 10) * 1.15).toFixed(2));

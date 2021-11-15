@@ -25,31 +25,40 @@
                 }
             }).done(function (data) {
                 let listOfOrdersHtml = "";
-                data.items.forEach(order => {
-                    let orderDetailsHtml = `<span class="orders" id="order-${order.id}"><div class="d-flex justify-content-between align-items-center">`;
+                //save order ids so we can skip iterations
+                let orders = [];
+                //iterate over orders
+                data.orderDetails.forEach(order => {
+                    if (orders.includes(order.order_id)) {
+                        return;
+                    }
+                    let orderDetailsHtml = `<span class="orders" id="order-${order.order_id}"><div class="p-3 bg-light">`;
+                    //iterate over the orders again to match the food details in the same order
                     data.orderDetails.forEach(detail => {
-                        if (detail.order_id === order.id) {
-                            for (let foodItem of data.food) {
-                                if (foodItem.id === detail.food_id) {
-                                    orderDetailsHtml += `<img style="max-height:50px; max-width:50px; object-fit:cover;" src="${foodItem.imageFilePath}"/>`;
-                                    orderDetailsHtml += `<div>${foodItem.name}</div>`;
-                                    orderDetailsHtml += `<div>Qty: ${detail.quantity}</div>`;
-                                    orderDetailsHtml += `<div>Total: $${detail.price}</div>`;
-                                    break;
-                                }
-                            }
+                        if (order.order_id === detail.order_id) {
+                            orderDetailsHtml += `<div class="border-bottom border-top py-2 d-flex justify-content-between align-items-center"><img style="max-height:50px; max-width:50px; object-fit:cover;" src="${detail.foodImage}"/>`;
+                            orderDetailsHtml += `<div>${detail.foodItem}</div>`;
+                            orderDetailsHtml += `<div>Qty: ${detail.quantity}</div>`;
+                            orderDetailsHtml += `<div>Total: $${detail.price}</div></div>`;
                         }
-                    })
-                    orderDetailsHtml += '</div></span>';
-
-                    listOfOrdersHtml += `<div onclick="showDetails(${order.id})" class="d-flex">
-                        <img style="max-height:200px; max-width:200px; object-fit:cover;" src="${data.restaurant.imageFilePath}" alt="restaurant-img"/>
-                        <div>
-                            <div>${data.restaurant.name}</div>
-                            <div>${order.total_price}</div>
-                            <div>${order.date} &mdash; ${order.order_status}</div>
-                        </div>
-                    </div>${orderDetailsHtml}`
+                    });
+                orderDetailsHtml += '</div></span>';
+                                    
+                listOfOrdersHtml += `<div class="p-3 my-4 rounded shadow-sm"><div onclick="showDetails(${order.order_id})" class="my-3 d-flex gap-20">
+                    <img style="max-height:200px; max-width:200px; object-fit:cover;" src="${order.restaurantImage}" alt="restaurant-img"/>
+                    <div class="food-separator">
+                        <h5>${order.restaurantName}</h5>
+                        <div class="text-black-50">$${order.total_price}</div>
+                        <div class="text-black-50">${order.date} &mdash; ${order.order_status}</div>
+                    </div>
+                    <div class="flex-fill" style="text-align:right;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                    </svg>
+                    </div>
+                    </div>${orderDetailsHtml}</div>`
+                    //push order id to array
+                    orders.push(order.order_id);
                 });
                 $("#orders").html(listOfOrdersHtml);
                 $('.orders').hide();
@@ -59,8 +68,11 @@
 {% endblock %}
 
 {% block content %}
+<div class="m-3">
+<h2>Your Orders</h2>
     <div id="orders">
     </div>
+</div>
 {% endblock %}
 
 {% block endScript %}

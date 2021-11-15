@@ -9,6 +9,7 @@ body {
 }
 #modal {
   background-color: white;
+  z-index:10000;
 }
 nav {
   max-width:800px;
@@ -132,6 +133,11 @@ gap:20px;
 
 .max-w-800 {
   max-width:800px;
+}
+
+.food-separator {
+  border-left: 1px solid lightgray;
+  padding-left: 25px;
 }
 
 .panel {

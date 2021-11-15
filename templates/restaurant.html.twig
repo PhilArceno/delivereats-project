@@ -58,9 +58,8 @@
 		{% for f in food %}
 			<section class="align-items-center my-3 mx-auto rounded p-4 w-75 d-flex gap-20 bg-white shadow">
 				<img class="w-25 h-25" src="../{{f.imageFilePath}}" alt="food-image"/>
-				<div class="flex-grow-1">
+				<div class="food-separator container-fluid">
 					<div class="d-flex justify-content-between">
-						{# flex here #}
 						<h3>{{f.name}}</h3>
 						<div>${{f.price}}</div>
 					</div>
