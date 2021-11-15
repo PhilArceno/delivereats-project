@@ -38,16 +38,20 @@ function verifyAptNo($apt)
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
 function verifyStreet($street)
 {
-    if (preg_match('/^[0-9A-Za-z ,\.-]{2,30}$/', $street) != 1) { // no match
-        return "Street name is not valid! it should be 2-30 characters long made up of letters, digits , space, comma, dot, dash!";
+    if (preg_match('/^[0-9A-Za-z ,\.-]{2,50}$/', $street) != 1) { // no match
+        return "Street name is not valid! it should be 2-50 characters long made up of letters, digits , space, comma, dot, dash!";
     }
     return TRUE;
 }
-function verifyCityName($city)
+function verifyCity($city)
 {
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
     }
+    if (strlen($city)<2 || strlen($city)>30) { // no match
+        return "City name should be between 2-30 character.";
+    }
+
     return TRUE;
 }
 

@@ -123,7 +123,7 @@ $app->group('/api', function (App $app) use ($log) {
             $errorList[] = $result;
         };
 
-        $result = verifyCityName($address['city']);
+        $result = verifyCity($address['city']);
         if ($result !== TRUE) {
             $errorList[] = $result;
         };
