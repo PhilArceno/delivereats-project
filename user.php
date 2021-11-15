@@ -168,6 +168,11 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
+    // city format validation
+    $result = verifyCity($city);
+    if ($result !== TRUE) {
+        $errorList[] = $result;
+    };
 
     // verify province
     $result = verifyProvince($province);
