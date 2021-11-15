@@ -418,8 +418,16 @@ $app->post('/add-food/{id:[0-9]+}', function ($request, $response, $args) use ($
 $app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
     $id = $args['id'];
     $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
+    if (!$restaurant) {
+        $response = $response->withStatus(404);
+        return $this->view->render($response, 'error-page-not-found.html.twig');
+    }
     $food = DB::query("SELECT * FROM food WHERE restaurant_id=%d", $id);
-    return $this->view->render($response, 'restaurant.html.twig', ['restaurant' => $restaurant, 'food' => $food]);
+    foreach ($food as &$item) {
+        $item['description'] = strip_tags($item['description']);
+    }
+    $categories = DB::query("SELECT c.id, name, rc.restaurant_id, rc.category_id FROM category as c JOIN restaurant_category as rc WHERE rc.restaurant_id=%i AND c.id=rc.category_id", $restaurant['id']); 
+    return $this->view->render($response, 'restaurant.html.twig', ['categories' => $categories, 'restaurant' => $restaurant, 'food' => $food, 'userSession' => $_SESSION['user']]);
 });
 
 

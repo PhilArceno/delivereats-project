@@ -11,15 +11,16 @@ body {
   background-color: white;
 }
 nav {
-  
   max-width:800px;
   background-color:white;
 }
+
 
 #main {
   width:100%;
   max-width:800px;
   background-color:white;
+  min-height:100vh;
 }
 
 #category-nav {
@@ -102,6 +103,10 @@ input[type=submit]:hover {
   margin-top: 6px;
 }
 
+.gap-20 {
+gap:20px;
+}
+
 /***************GOOGLE MAPS****************/
 .pac-container {
   z-index: 10000 !important;
@@ -123,6 +128,10 @@ input[type=submit]:hover {
   width: 100%;
   flex-direction: column-reverse;
   gap:20px;
+}
+
+.max-w-800 {
+  max-width:800px;
 }
 
 .panel {

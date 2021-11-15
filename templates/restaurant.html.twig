@@ -5,7 +5,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 	<script>
 	$(document).ready(function(){
+		$('#main').css("background-color","transparent");
 		$("button").click(function(e) {
+			loading();
 		e.preventDefault();
 			let id = $(this).attr("id");
 			$.ajax({
@@ -25,6 +27,7 @@
 					}
 				}
 			}).done(function(data){
+				hideModal();
 				$(`#food${id}`).html(data)
 			})
 		})
@@ -32,34 +35,38 @@
 	</script>
 {% endblock %}
 {% block content %}
-
-	<div>
-		<img src="../{{restaurant.imageFilePath}}" alt="Restuarant Image"/>
+	<div class="mt-2 bg-white rounded">
+		<img class="max-w-800 rounded-top" src="../{{restaurant.imageFilePath}}" alt="Restuarant Image"/>
 		<div class="d-flex container-fluid justify-content-between">
-			<div>
-				<h2>{{restaurant.name}}</h2>
-				<p>
-					{{restaurant.pricing}}
+			<div class="mx-auto my-3 text-center">
+				<h1>{{restaurant.name}}</h1>
+				<p class="text-black-50 text-center mb-1">
+					{% for c in categories %}
+					{{c.name}}
+						{% if loop.last %}
+						{% else %}•
+						{% endif %}
+					{% endfor %}
 				</p>
-			</div>
-			<div>
-				Rating
+				<p class="text-black-50 text-center">
+					Price range — {{restaurant.pricing}}
+				</p>
 			</div>
 		</div>
 	</div>
-	<div>
+	<div class="mt-3 p-3 bg-white rounded">
 		{% for f in food %}
-			<section class="d-flex">
-				<img src="../{{f.imageFilePath}}" alt="food-image"/>
+			<section class="align-items-center my-3 mx-auto rounded p-4 w-75 d-flex gap-20 bg-white shadow">
+				<img class="w-25 h-25" src="../{{f.imageFilePath}}" alt="food-image"/>
 				<div class="flex-grow-1">
 					<div class="d-flex justify-content-between">
 						{# flex here #}
 						<h3>{{f.name}}</h3>
-						<div>{{f.price}}</div>
+						<div>${{f.price}}</div>
 					</div>
 					<p>{{f.description}}</p>
 					<button id="{{f.id}}" class="btn btn-danger">add item</button>
-					<span id="food{{f.id}}"><span>
+					<br><span id="food{{f.id}}"><span>
 				</div>
 			</section>
 		{% endfor %}
