@@ -8,8 +8,8 @@ require_once 'init.php';
 
 function verifyName($name)
 { // // alternative regular expression: ^\d+\s+\w+\s+\w+$
-    if (preg_match('/^[a-zA-Z0-9 \',\.-]{2,50}$/', $name) != 1) { // no match
-        return "The name must be 2-50 characters long made up of apostrophe, letters, digits, space, comma, dot, dash!";
+    if (preg_match('/^[a-zA-Z0-9 \',\.\&#-]{2,50}$/', $name) != 1) { // no match
+        return "The name must be 2-50 characters long made up of apostrophe, letters, digits, space, comma, dot, dash, or ampersand!";
     }
     return TRUE;
 }
@@ -86,8 +86,8 @@ function verifyProvince($province)
 
     function verifyDescription($description)
     {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!?%*,-<>]{4,1000}$/', $description) != 1) { // no match
-            return "Description must be 4-1000 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? % * ,<>).";
+        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!\&?%#*,-<>]{4,1000}$/', $description) != 1) { // no match
+            return "Description must be 4-1000 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? & % * ,<>).";
         }
         return TRUE;
     }

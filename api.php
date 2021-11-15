@@ -204,6 +204,53 @@ $app->group('/api', function (App $app) use ($log) {
         return $response;
     });
 
+    $app->get('/cart/is-restaurant-same/{id:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
+        $bool = true;
+        $restaurantId = $args['id'];
+        $cartItems = DB::query("SELECT * FROM cart_detail as cd JOIN food as f WHERE cd.food_id=f.id AND cd.user_id=%i", $userId);
+
+        if (!$cartItems) {
+            $response = $response->withStatus(200);
+            $response->getBody()->write(json_encode($bool));
+            return $response;
+        }
+
+        foreach ($cartItems as $item) {
+            if ($item['restaurant_id'] !== $restaurantId) {
+                $bool = false;
+                break;
+            }
+            $bool = true;
+        }
+
+        $response = $response->withStatus(200);
+        $response->getBody()->write(json_encode($bool));
+        return $response;
+    });
+
+    $app->delete('/cart', function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+
+        if (!$userId) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+            return $response;
+        }
+
+        DB::delete('cart_detail', 'user_id=%i', $userId);
+        $response = $response->withStatus(200);
+        $response->getBody()->write(json_encode(true));
+        return $response;
+    });
+
     $app->delete('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         $foodId = $args['foodId'];
@@ -380,4 +427,8 @@ $app->group('/api', function (App $app) use ($log) {
                 $log->debug('Received unknown event type ' . $event->type);
         }
     });
+})->add(function ($request, $response, $next) {
+    $response.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
+    $response = $next($request, $response);
+    return $response;
 });

@@ -8,30 +8,50 @@
 		$('#main').css("background-color","transparent");
 		$("button").click(function(e) {
 			loading();
-		e.preventDefault();
+			e.preventDefault();
 			let id = $(this).attr("id");
+			let restaurantId = $("input[type='hidden']").val();
 			$.ajax({
-				url: '/api/cart',
-				type: 'POST',
-				dataType:'json',
-				data: JSON.stringify({
-					id: id
-				}),
-				headers: { "Content-Type": "application/json; charset=UTF-8" },
-				statusCode: {
-					403: function() {
-						alert("Authentication failed");
-					},
-					404: function() {
-						$("#cartItems").html("No items in your cart!");
+				url: '/api/cart/is-restaurant-same/' + restaurantId,
+				type: 'GET',
+				dataType: 'json'
+			}).done(function(data) {
+				if (!data) {
+					hideModal();
+					if (confirm("Restaurant is not the same, would you like to clear your cart?")) {
+						$.ajax({
+						url:'/api/cart', 
+						type: "DELETE",
+						dataType:'json'})
 					}
+				} else {
+					addToCart(id);
 				}
-			}).done(function(data){
-				hideModal();
-				$(`#food${id}`).html(data)
 			})
 		})
 	})
+	function addToCart(id) {
+		$.ajax({
+			url: '/api/cart',
+			type: 'POST',
+			dataType:'json',
+			data: JSON.stringify({
+				id: id
+			}),
+			headers: { "Content-Type": "application/json; charset=UTF-8" },
+			statusCode: {
+				403: function() {
+					alert("Authentication failed");
+				},
+				404: function() {
+					$("#cartItems").html("No items in your cart!");
+				}
+			}
+		}).done(function(data){
+			hideModal();
+			$(`#food${id}`).html(data)
+		});
+	}
 	</script>
 {% endblock %}
 {% block content %}
@@ -51,6 +71,7 @@
 				<p class="text-black-50 text-center">
 					Price range — {{restaurant.pricing}}
 				</p>
+				<input type="hidden" value="{{restaurant.id}}"/>
 			</div>
 		</div>
 	</div>
