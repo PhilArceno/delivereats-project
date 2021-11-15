@@ -6,6 +6,7 @@ require_once 'utils.php';
 require_once 'api.php';
 require_once 'admin.php';
 require_once 'user.php';
+require_once 'businessOwner.php';
 
 // Run app
 $app->run();
