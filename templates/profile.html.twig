@@ -1,0 +1,122 @@
+{% extends "master.html.twig" %}
+
+{% block title %}My Profile
+{% endblock %}
+
+{% block addHead %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+{% include 'address-js.html.twig' with {apiKey, addressType: "address"} %}
+<script>
+    let detailState = 0;
+    let addressState = 0;
+    const chevron = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+            </svg>`;
+
+    $(document).ready(function() {
+        getAddress();
+        showHide('#details-container', "#detail-dropdown", '#profile-details', detailState);
+        showHide('#address-container', "#address-dropdown", '#address-details', addressState);
+        $('#changeProfile').click(function() {
+            loading();
+            let newName = $('input[name="name"]').val();
+            let newEmail = $('input[name="email"]').val();
+            $.ajax({
+                url: '/api/user',
+                type: 'PUT',
+                dataType: 'json',
+                data: JSON.stringify({
+                    name: newName,
+                    email: newEmail
+                })
+            }).done(function(data) {
+                location.reload();
+            }).fail(function(data) {
+                hideModal();
+                let errors = "<ul>";
+                JSON.parse(data.responseText).forEach(element => {
+                    errors += `<li>${element}</li>`
+                });
+                errors += "</ul>";
+                $("#profile-errors").html(errors)
+            });
+        });
+        $('#changeAddress').click(function () {
+            loading();
+            let street = $('input[name="street"]').val();
+            let apt_num = $('input[name="appartmentNo"]').val();
+            let city = $('input[name="city"]').val();
+            let province = $('input[name="province"]').val();
+            let postal_code = $('input[name="postalCode"]').val();
+            let addressObj = {
+                province,
+                city,
+                street,
+                apt_num,
+                postal_code
+            }
+            $.ajax({
+                url: '/api/address/' + addressId,
+                type: 'PUT',
+                data: JSON.stringify(addressObj),
+                dataType: 'json'
+            }).done(function () {
+                alert('updated successfully');
+                // location.reload();
+            }).fail(function(data) {
+                hideModal();
+                let errors = "<ul>";
+                JSON.parse(data.responseText).forEach(element => {
+                    errors += `<li>${element}</li>`
+                });
+                errors += "</ul>";
+                $("#address-errors").html(errors)
+            });
+        });
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h2 class="p-3">Your Profile</h2>
+	<div class="p-3 border-bottom">
+		<div id="details-container" class="clickable d-flex justify-content-between">
+            <h4 class="m-0">Details</h4>
+            <div id="detail-dropdown"></div>
+        </div>
+        <div id="profile-details">
+        <div id="profile-errors"></div>
+            	<div class="input-group my-3">
+                    <label class="input-group-text bg-dark text-light">Username</label>
+                    <div class="form-control ">{{userSession.username}}</div>
+                </div>
+                <div class="input-group my-3">
+                    <label class="input-group-text bg-dark text-light">Account Type</label>
+                    <div class="form-control">{{userSession.account_type}}</div>
+                </div>
+                <div class="input-group my-3">
+                    <label class="input-group-text">Name</label>
+                    <input class="form-control" name="name" value="{{userSession.name}}"></input>
+                </div>
+        		<div class="input-group my-3">
+                    <label class="input-group-text">Email</label>
+                    <input class="form-control" name="email" value="{{userSession.email}}"></input>
+                </div>
+            <button id="changeProfile">
+	        	Submit Changes
+	        </button>
+        </div>
+    </div>
+    <div class="p-3 border-bottom">
+        <div id="address-container" class="clickable d-flex justify-content-between">
+            <h4 class="m-0">Address</h4>
+            <div id="address-dropdown"></div>
+        </div>
+        <div id="address-details" class="my-3">
+	        {% include "address-form.html.twig" %}
+	        <button id="changeAddress" class="mt-3">
+	        	Change Address
+	        </button>
+        </div>
+		</div>
+{% endblock %}

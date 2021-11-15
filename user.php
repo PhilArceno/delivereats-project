@@ -77,9 +77,16 @@ $app->get('/account', function ($request, $response, $args) use ($log) {
         $response = $response->withStatus(403);
         return $this->view->render($response, 'error-access-denied.html.twig');
     }
-    $user = $_SESSION['user'];
-    $profileAddress = DB::queryFirstRow("SELECT * FROM address WHERE id=%i", $user['address_id']);
-    return $this->view->render($response, 'account.html.twig', ['list' => $profileAddress, 'userSession' => $_SESSION['user']]);
+    return $this->view->render($response, 'account.html.twig', ['userSession' => $_SESSION['user']]);
+});
+
+$app->get('/profile', function ($request, $response, $args) use ($log) {
+    $apiKey = $_ENV['gMapsAPIKey'];
+    if (!isset($_SESSION['user'])) { // refuse if user not logged in
+        $response = $response->withStatus(403);
+        return $this->view->render($response, 'error-access-denied.html.twig');
+    }
+    return $this->view->render($response, 'profile.html.twig', ['userSession' => $_SESSION['user'],'apiKey' => $apiKey]);
 });
 
 

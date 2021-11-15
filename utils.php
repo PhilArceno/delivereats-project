@@ -77,6 +77,7 @@ function verifyAccountType($accountType)
 
 function verifyProvince($province)
 { //   '/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/'
+    if ($province == "") return "Province should not be empty";
     if (preg_match('/^(?:AB|BC|MB|N[BLTSU]|ON|PE|QC|SK|YT)*$/', $province) != 1) { //no match
         return "Province should be exactly one of the following:\n \"AB\", \"BC\", \"MB\", \"NB\", \"NL\", \"NT\", \"NS\", \"NU\", \"ON\", \"PE\", \"QC\", \"SK\", \"YT\"";
     }

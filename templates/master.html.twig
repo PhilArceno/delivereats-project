@@ -19,23 +19,14 @@
 			- DeliverEats
 		</title>
 		{% block addHead %}{% endblock %}
-		<script>
-			function showModal() {
-var element = document.getElementById('modal');
-element.classList.remove("invisible");
-}
-function hideModal() {
-var element = document.getElementById('modal');
-element.classList.add("invisible");
-}
-		</script>
+		{% include './functions.html.twig' %}
 	</head>
 	<body>
 		{% if flashMessage %}
 			<div class="alert alert-success">{{flashMessage}}</div>
 		{% endif %}
-		<div id="modal" class="p-4 fixed-top vw-100 vh-100 bg-white invisible">
-			<button onclick="hideModal()">X</button>
+		<div id="modal" class="p-4 fixed-top vw-100 vh-100 invisible">
+			<button id="modal-button" class="hidden" onclick="hideModal()">X</button>
 			<div id="modal-content"> {% block addModal %}{% endblock %}
 				</div>
 			</div>
@@ -99,7 +90,7 @@ element.classList.add("invisible");
 			<!-- Body -->
 			<main id="main"> {% block content %}{% endblock %}
 				<!-- Footer -->
-				<footer class="text-center" id="footer">
+				<footer class="my-5 text-center" id="footer">
 					{% block footer %}
 						&copy; Copyright 2021 by
 						<a href="http://continuingeducation.johnabbott.qc.ca/">FSD01 Team 4</a>.

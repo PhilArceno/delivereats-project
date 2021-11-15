@@ -1,0 +1,49 @@
+<script>
+    function loading() {
+        $("#modal").css(`margin`, '0 auto')
+        $("#modal").css(`display`, 'flex')
+        $("#modal").css(`align-items`, 'center')
+        $("#modal").css(`justify-content`, 'center')
+        $("#modal").css(`background-color`, 'gray')
+        $("#modal").css(`opacity`, '50%')
+        $("#loading-spinner").show();
+        showModal();
+    }
+    function showHide(container, dropdown, details, state) {
+        $(dropdown).html(chevron);
+        $(details).hide();
+        $(container).click(function() {
+        $(dropdown).css("height", "fit-content");
+        if (detailState === 0) {
+            $(details).show();
+            $(dropdown).css("transform", "scaleY(-1)");
+            detailState = 1;
+        } else {
+            $(details).hide();
+            $(dropdown).css("transform", "scaleY(1)");
+            detailState = 0;
+        }});
+    }
+    function getAddress() {
+        $.ajax({url: 'api/address', type: 'GET', dataType: 'json'}).done(function (address) {
+            $('input[name="street"]').val(address.street);
+            if (address.apt_num != 0 && address.apt_num != null) {
+            $('input[name="appartmentNo"]').val(address.apt_num)
+            }
+            $('input[name="city"]').val(address.city);
+            $('input[name="province"]').val(address.province);
+            $('input[name="postalCode"]').val(address.postal_code);
+            addressId = address.id;
+        });
+    }
+    function showModal() {
+        var element = document.getElementById('modal');
+        element.classList.remove("invisible");
+    }
+    function hideModal() {
+    	$('#modal-button').removeClass(`visible`);
+    	$('#modal-content').html();
+        var element = document.getElementById('modal');
+        element.classList.add("invisible");
+    }
+</script>

@@ -12,7 +12,66 @@ use Slim\App;
 
 
 $app->group('/api', function (App $app) use ($log) {
+    // User
+    $app->put("/user", function (Request $request, Response $response, array $args) use ($log) {
+        $userId = $_SESSION['user']['id'];
+        if (!$userId) {
+            // NOTE: This should really be 401 code but JS will not cooperate in such case
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("403 - authentication failed"));
+            return $response;
+        }
+        
+        $json = $request->getBody();
+        $userChanges = json_decode($json, TRUE);
+        $expectedFields = ['name', 'email'];
+        $submittedFields = array_keys($userChanges);
 
+        if ($diff = array_diff($submittedFields, $expectedFields)) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("Invalid fields: [" . implode(',', $diff). "]"));
+            return $response;
+        }
+        if ($diff = array_diff($expectedFields, $submittedFields)) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("Missing fields in Todo: [". implode(',', $diff). "]"));
+            return $response;
+        }
+
+        $errorList = [];
+
+        // name validation
+        $result = verifyName($userChanges['name']);
+        if ($result !== TRUE) {
+            $errorList[] = $result;
+        }
+
+        // email validation
+        if (filter_var($userChanges['email'], FILTER_VALIDATE_EMAIL) === false) {
+            $errorList[] = "Email does not look valid";
+        }
+
+        if ($errorList) {
+            $log->debug(sprintf("Error with user update: name=%s, email=%s", $userChanges['name'], $userChanges['email']));
+            $response = $response->withStatus(400);
+            $response->getBody()->write(json_encode($errorList, JSON_PRETTY_PRINT));
+            return $response;
+        }
+        
+        DB::update("user", [
+            'name' => $userChanges['name'],
+            'email' => $userChanges['email']
+        ], "id=%i", $userId);
+        $log->debug(sprintf("User updated=%s", $userId));
+        $_SESSION['user']['email'] = $userChanges['email'];
+        $_SESSION['user']['name'] = $userChanges['name'];
+
+        $response = $response->withStatus(200);
+        $response->getBody()->write(json_encode("User updated with id=".$userId));
+        return $response;
+    });
+
+    // Address
     $app->get('/address', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
@@ -49,29 +108,29 @@ $app->group('/api', function (App $app) use ($log) {
 
         $result = verifyStreet($address['street']);
         if ($result !== TRUE) {
-            $errorList['street'] = $result;
+            $errorList[] = $result;
         };
 
         // verify province
         $result = verifyProvince($address['province']);
         if ($result !== TRUE) {
-            $errorList['province'] = $result;
+            $errorList[] = $result;
         };
 
         //  postal code validation
         $result = verifyPostalCode($address['postal_code']);
         if ($result !== TRUE) {
-            $errorList['postalCode'] = $result;
+            $errorList[] = $result;
         };
 
         $result = verifyCityName($address['city']);
         if ($result !== TRUE) {
-            $errorList['city'] = $result;
+            $errorList[] = $result;
         };
 
         if ($errorList) {
             $response = $response->withStatus(400);
-            $response->getBody()->write(json_encode($errorList));
+            $response->getBody()->write(json_encode($errorList, JSON_PRETTY_PRINT));
             return $response;
         }
 
@@ -89,6 +148,7 @@ $app->group('/api', function (App $app) use ($log) {
         return $response->getBody()->write($json);
     });
 
+    //cart
     $app->get('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         if (!$userId) {
@@ -194,6 +254,7 @@ $app->group('/api', function (App $app) use ($log) {
         return $response->getBody()->write($json);
     });
 
+    //stripe
     $app->post('/create-stripe', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
 
@@ -229,6 +290,7 @@ $app->group('/api', function (App $app) use ($log) {
         return $response;
     });
 
+    //orders
     $app->get('/orders', function (Request $request, Response $response, array $args) {
         $userId = $_SESSION['user']['id'];
 
