@@ -148,6 +148,27 @@ $app->group('/api', function (App $app) use ($log) {
         return $response->getBody()->write($json);
     });
 
+    //restaurant
+    $app->get('/restaurant/sort/{sort:[0-1]}', function (Request $request, Response $response, array $args) use ($log) {
+        $desc = $args['sort'];
+        $sortedRestaurants = [];
+        if (intval($desc) == 0) {
+            $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$','$$','$$$','$$$$')");
+        } else {
+            $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$$$$','$$$','$$','$')");
+        }
+        $categories = DB::query("SELECT restaurant_id, category_id, name FROM category as c JOIN restaurant_category as rc 
+        WHERE c.id=category_id");
+        
+        if (!$sortedRestaurants) {
+            $response = $response->withStatus(403);
+            $response->getBody()->write(json_encode("404 - not found"));
+            return $response;
+        }
+        $json = json_encode(['restaurants' => $sortedRestaurants, 'categories' => $categories], JSON_PRETTY_PRINT);
+        $response->getBody()->write($json);
+        return $response;
+    });
     //cart
     $app->get('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
@@ -363,32 +384,28 @@ $app->group('/api', function (App $app) use ($log) {
     });
 
     $app->post('/order', function (Request $request, Response $response, array $args) use ($log) {
-        $endpoint_secret = 'whsec_2n1r3qrXttmwmVhB35L3oQ8QLSNooryx';
+        $endpoint_secret = 'whsec_CGRMXaTNaYE4QENPOaH3p5ND0N3hR3jg';
 
-        $payload = @file_get_contents('php://input');
+        $payload = $request->getBody();
         $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
         $event = null;
-
+        
         try {
-            $event = \Stripe\Webhook::constructEvent(
-                $payload,
-                $sig_header,
-                $endpoint_secret
-            );
-        } catch (\UnexpectedValueException $e) {
-            // Invalid payload
-            http_response_code(400);
-            exit();
-        } catch (\Stripe\Exception\SignatureVerificationException $e) {
-            // Invalid signature
-            http_response_code(400);
-            exit();
+          $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, $endpoint_secret
+          );
+        } catch(\UnexpectedValueException $e) {
+          // Invalid payload
+          http_response_code(400);
+          exit();
+        } catch(\Stripe\Exception\SignatureVerificationException $e) {
+          // Invalid signature
+          http_response_code(400);
+          exit();
         }
 
         // Handle the event
         switch ($event->type) {
-            case 'payment_intent.created':
-                // intent has been created
             case 'charge.succeeded':
                 // charge went through
                 $paymentIntent = $event->data->object;
@@ -420,15 +437,9 @@ $app->group('/api', function (App $app) use ($log) {
                 $response = $response->withStatus(201);
                 $response->getBody()->write(json_encode($orderId));
                 return $response;
-
-            case 'payment_intent.succeeded':
-                //payment intent success
             default:
                 $log->debug('Received unknown event type ' . $event->type);
         }
+        http_response_code(200);
     });
-})->add(function ($request, $response, $next) {
-    $response.header("Access-Control-Allow-Methods", "GET, POST, DELETE");
-    $response = $next($request, $response);
-    return $response;
 });

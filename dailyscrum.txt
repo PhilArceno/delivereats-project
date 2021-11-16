@@ -222,10 +222,11 @@ Dmitri
 3. Bootstrap
 
 DeliverEats Scrum 11/15/2021
+
 Phil
-1.
-2. 
-3. 
+1. Profile Page done
+2. Upload to server, touch up code, styling.
+3. Stripe webhooks for live site.
 
 Bahar
 1.
