@@ -382,4 +382,3 @@ $app->post('/food-edit/{id:[0-9]+}', function ($request, $response, $args) use (
         return $response->withRedirect("/manage-restaurants");
     } 
 });
-

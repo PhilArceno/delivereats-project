@@ -6,7 +6,7 @@ require_once 'init.php';
 
 $app->get('/', function ($request, $response, $args) use ($log) {
     $user = null;
-    if ($_SESSION) {
+    if (isset($_SESSION['user'])) {
         $user = $_SESSION['user'];
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
@@ -275,4 +275,3 @@ $app->get('/orders', function ($request, $response, $args) {
 $app->get('/feature-not-implemented', function ($request, $response, $args) {
     return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
-

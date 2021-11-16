@@ -100,4 +100,3 @@ function getAndClearFlashMessage() {
     }
     return "";
 }
-

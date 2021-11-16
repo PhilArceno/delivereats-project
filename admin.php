@@ -13,18 +13,7 @@ function startsWith($string, $startString)
     return (substr($string, 0, $len) === $startString);
 }
 
-$app->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
-    $url = $request->getUri()->getPath();
-    if (startsWith($url, "/admin")) {
-        if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "admin") { // refuse if user not logged in AS ADMIN
-            $response = $response->withStatus(403);
-            return $this->view->render($response, 'admin/error-access-denied.html.twig');
-        }
-    }
-    return $next($request, $response);
-});
-
-$app->group('/admin', function () use ($app, $log) {
+$app->group('/admin', function ($app) use ($log) {
 
     $app->get('', function ($request, $response, $args) use ($log) {
         return $this->view->render($response, 'admin/index.html.twig');
@@ -114,4 +103,11 @@ $app->group('/admin', function () use ($app, $log) {
             DB::delete('food', "id=%d", $args['id']);
             return $this->view->render($response, 'admin/food-delete-success.html.twig');
         });
+})->add(function (ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+        if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "admin") { // refuse if user not logged in AS ADMIN
+            $response = $response->withStatus(403);
+            return $this->view->render($response, 'admin/error-access-denied.html.twig');
+        }
+    $response = $next($request, $response);
+    return $response;
 });
