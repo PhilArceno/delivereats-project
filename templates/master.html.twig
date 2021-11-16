@@ -33,9 +33,25 @@
 			</div>
 			<!-- Logo -->
 			<!-- Search Bar -->
+
+				<div
+					class="search-bars mx-auto">
+					<!-- Search Bar -->
+					<ul class="navbar-nav" id="searchBar">
+						<li class="nav-item">
+							<form class="" action="/foodsearch">
+								<div class="search-box">
+									<input name="result" class="form-control search-bar" id="search" type="search" placeholder="Search smth to eat..." required/>
+								</div>
+							</form>
+						</li>
+					</ul>
+				</div>
+
 			<!-- Menu Items -->
-				{% if userSession %}
-					<nav class="container-fluid fixed-bottom d-flex justify-content-between shadow-lg py-3 px-5"> <div class="flex-row">
+			{% if userSession %}
+				<nav class="container-fluid fixed-bottom d-flex justify-content-between shadow-lg py-3 px-5">
+					<div class="flex-row">
 						<a class="text-decoration-none" href="/">
 							<svg class="d-block mx-auto " transform="scale(1.2)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-house" viewbox="0 0 16 16">
 								<path fill-rule="evenodd" d="M2 13.5V7h1v6.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5V7h1v6.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5zm11-11V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
@@ -98,7 +114,7 @@
 					{% endblock %}
 				</footer>
 			</main>
-		{% block endScript %}
-		{% endblock %}
+			{% block endScript %}{% endblock %}
 		</body>
 	</html>
+</body></html>

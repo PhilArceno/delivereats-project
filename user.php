@@ -168,11 +168,6 @@ $app->post('/register', function ($request, $response, $args) use ($log) {
     if ($result !== TRUE) {
         $errorList[] = $result;
     };
-    // city format validation
-    $result = verifyCity($city);
-    if ($result !== TRUE) {
-        $errorList[] = $result;
-    };
 
     // verify province
     $result = verifyProvince($province);
@@ -270,7 +265,6 @@ $app->get('/checkout-success', function ($request, $response, $args) {
 });
 
 
-
 // ****************** Order *********************
 
 $app->get('/orders', function ($request, $response, $args) {
@@ -283,3 +277,11 @@ $app->get('/feature-not-implemented', function ($request, $response, $args) {
     return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
 
+// ******************** Search page for Ads ***********************
+
+$app->get('/foodsearch', function($request, $response, $args) {
+    
+    $result = $_GET['result'];
+    $items = DB::query("SELECT * FROM food WHERE `name` LIKE '%$result%'");
+    return $this->view->render($response, 'result-search.html.twig', ['results' => $items]);
+});
