@@ -11,7 +11,6 @@ $app->get('/', function ($request, $response, $args) use ($log) {
         $restaurants = DB::query("SELECT * FROM restaurant");
         $categories = DB::query("SELECT * FROM category");
         $restaurantCategories = DB::query("SELECT * FROM restaurant_category");
-        $log->debug(sprintf("apiKey %s", $_ENV['gMapsAPIKey']));
         return $this->view->render($response, 'index.html.twig', ['userSession' => $user, 'restaurants' => $restaurants, 
         'categories' => $categories, 'rc' => $restaurantCategories, 'apiKey' => $_ENV['gMapsAPIKey']]);
     }
