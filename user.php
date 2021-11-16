@@ -277,11 +277,3 @@ $app->get('/feature-not-implemented', function ($request, $response, $args) {
     return $this->view->render($response, 'feature-not-implemented.html.twig');
 });
 
-// ******************** Search page for Ads ***********************
-
-$app->get('/foodsearch', function($request, $response, $args) {
-    
-    $result = $_GET['result'];
-    $items = DB::query("SELECT * FROM food WHERE `name` LIKE '%$result%'");
-    return $this->view->render($response, 'result-search.html.twig', ['results' => $items]);
-});
