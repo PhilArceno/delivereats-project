@@ -119,10 +119,14 @@
 		</div>
 	</div>
 {% else %}
-	<h1>Food's Ninja is Here!</h1>
-	<h2>Life is better when you're a member</h2>
-	<a href="/register">Get Started</a>
-	<a href="/login">Sign In</a>
+<div id="starting-page">
+	<h1 class="font-700">Deliver<span class="text-color1">Eats</span></h1>
+	<h2>We <b>deliver</b> your <b>eats</b></h2>
+	<div class="d-flex gap-20 mt-4 mx-auto">
+		<a class="btn bg-white" href="/register">Get Started</a>
+		<a class="btn text-white bg-color1" href="/login">Sign In</a>
+	</div>
+</div>
 {% endif %}{% endblock %}
 
 {% block endScript %}

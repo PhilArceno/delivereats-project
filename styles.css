@@ -2,40 +2,86 @@
 /* CSS Document for DeliverEats.*/
 
 /*Have to be changed*/
-
+/* color1:#ff8400 */
+/* color2:#ff0001 */
 body {
-  margin:0 auto;
-  background-color:#f8f8f8;
+  margin: 0 auto;
+  background-color: #f8f8f8;
 }
 #modal {
   background-color: white;
-  z-index:10000;
+  z-index: 10000;
 }
 nav {
-  max-width:800px;
-  background-color:white;
+  max-width: 800px;
+  background-color: white;
 }
 
+#starting-page {
+  height: 100%;
+  letter-spacing: 1px;
+  line-height: 1em;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  background-color: #ff0001;
+}
+
+.font-700 {
+  font-weight: 700;
+}
+
+.text-color1 {
+  color: #ff8400;
+}
+.text-color2 {
+  color: #ff0001;
+}
+
+.bg-color1 {
+  background-color: #ff8400;
+}
+.bg-color2 {
+  background-color: #ff0001;
+}
 
 #main {
-  width:100%;
-  max-width:800px;
-  background-color:white;
-  min-height:100vh;
+  width: 100%;
+  max-width: 800px;
+  background-color: white;
+  min-height: 100vh;
 }
 
 #category-nav {
-  display:flex;
-  max-width:90vw;
+  display: flex;
+  max-width: 90vw;
   overflow: auto;
-  gap:30px;
+  gap: 30px;
   touch-action: pan-x;
+}
+
+.alert {
+  position: fixed;
+  top: 2em;
+  animation: fadeout 5s;
+  animation-timing-function: ease-out;
+  opacity: 0;
+}
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 /* width */
 ::-webkit-scrollbar {
   width: 10px;
-  height:10px;
+  height: 10px;
 }
 
 /* Track */
@@ -43,23 +89,25 @@ nav {
   background: #f1f1f1;
   border-radius: 5px;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #888; 
+  background: #888;
   border-radius: 5px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-  background: #555; 
+  background: #555;
 }
 
 * {
   box-sizing: border-box;
 }
 
-input[type=text], select, textarea {
+input[type="text"],
+select,
+textarea {
   width: 100%;
   padding: 12px;
   border: 1px solid #ccc;
@@ -72,8 +120,8 @@ label {
   display: inline-block;
 }
 
-input[type=submit] {
-  background-color: #4CAF50;
+input[type="submit"] {
+  background-color: #4caf50;
   color: white;
   padding: 12px 20px;
   border: none;
@@ -82,7 +130,7 @@ input[type=submit] {
   float: right;
 }
 
-input[type=submit]:hover {
+input[type="submit"]:hover {
   background-color: #45a049;
 }
 
@@ -105,7 +153,7 @@ input[type=submit]:hover {
 }
 
 .gap-20 {
-gap:20px;
+  gap: 20px;
 }
 
 /***************GOOGLE MAPS****************/
@@ -128,11 +176,11 @@ gap:20px;
   display: flex;
   width: 100%;
   flex-direction: column-reverse;
-  gap:20px;
+  gap: 20px;
 }
 
 .max-w-800 {
-  max-width:800px;
+  max-width: 800px;
 }
 
 .food-separator {
@@ -144,15 +192,15 @@ gap:20px;
   width: 100%;
   padding: 20px 0;
   display: flex;
-  gap:30px;
+  gap: 30px;
   flex-direction: column;
   justify-content: space-around;
 }
 
 .panel div:first-child {
   display: flex;
-    align-items: baseline;
-    justify-content: center;
+  align-items: baseline;
+  justify-content: center;
 }
 
 .half-input-container {
@@ -167,7 +215,7 @@ gap:20px;
 .map {
   border-radius: 5px;
   width: 100%;
-  height:300px;
+  height: 300px;
 }
 
 .button-cta {
@@ -180,7 +228,7 @@ gap:20px;
   font-family: Roboto, sans-serif;
   border: 0;
   border-radius: 3px;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.48);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.48);
   cursor: pointer;
 }
 /***********google maps end***********/
@@ -216,7 +264,7 @@ form {
 }
 
 .clickable:hover {
-  cursor:pointer;
+  cursor: pointer;
 }
 
 #payment-message {
@@ -336,28 +384,30 @@ button:disabled {
 
 /* Clear floats after the columns */
 .row:after {
-    content: "";
-    display: table;
-    clear: both;
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 600px) {
+  .col-25,
+  .col-75,
+  input[type="submit"] {
+    width: 100%;
+    margin-top: 0;
   }
-  
-  /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-  @media screen and (max-width: 600px) {
-    .col-25, .col-75, input[type=submit] {
-      width: 100%;
-      margin-top: 0;
-    }
-  }
-  
-  #centeredContent {
-      margin: 0 auto;
-      padding: 20px;
-      width: 500px; /* 960px; */
-      background-color: white;
-  }
-  
-  .errorMessage {
-      font-weight: bold;
-      background-color: yellow;
-      color: red;
-  }
+}
+
+#centeredContent {
+  margin: 0 auto;
+  padding: 20px;
+  width: 500px; /* 960px; */
+  background-color: white;
+}
+
+.errorMessage {
+  font-weight: bold;
+  background-color: yellow;
+  color: red;
+}
