@@ -1,11 +1,16 @@
-{% extends "admin/admin-master.html.twig" %}
+{% extends "master.html.twig" %}
 {% block title %}Delete user
 {% endblock %}
 {%
 block content %}
-	<div>
+	<div class="container mt-3">
+		<a href="/admin" class="btn btn-success">
+			Back to main page</a>
+	</div>
+	<div class="container mt-3">
 		<h1>Delete user</h1>
-		<div>Delete user with username:  {{ v.name }}</div>
+		<div>Delete user with username:
+			{{ v.name }}</div>
 		<form method="POST">
 			<div>Please confirm this action. It is irreversible</div>
 			<input type="submit" value="Yes, delete the user">

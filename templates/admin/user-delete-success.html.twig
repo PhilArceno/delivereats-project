@@ -1,9 +1,13 @@
-{% extends "admin/admin-master.html.twig" %}
+{% extends "amaster.html.twig" %}
 {% block title %}Operation successful - user deleted
 {% endblock %}
 {%
 block content %}
-	<div>
+	<div class="container mt-3">
+		<a href="/admin" class="btn btn-success">
+			Back to main page</a>
+	</div>
+	<div class="container mt-3">
 		<h1>Operation successful - user deleted</h1>
 		<p><a href="/admin/user/list">Click to continue</a>.</p>
 	</div>
