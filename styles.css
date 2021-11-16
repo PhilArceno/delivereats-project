@@ -4,6 +4,15 @@
 /*Have to be changed*/
 /* color1:#ff8400 */
 /* color2:#ff0001 */
+
+a {
+  text-decoration: none;
+  color:#ff0001;
+}
+a:hover {
+  color:#ff8400;
+}
+
 body {
   margin: 0 auto;
   background-color: #f8f8f8;

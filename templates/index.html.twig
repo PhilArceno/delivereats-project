@@ -20,7 +20,7 @@
 				}
 				sortType = desc ? 0 : 1;
 				$.ajax({
-					url: '/api/restaurant/sort/' + sortType,
+					url: '/api/restaurants/sort/' + sortType,
 					type: 'GET',
 					dataType:'json'
 				}).done(function(data) {
@@ -35,7 +35,7 @@
 						})
 						categories = categories.substring(0, categories.length - 2);
 						allItems += `
-						<a href="/restaurant/${resto.id}">
+						<a href="/restaurants/${resto.id}">
 						<section class="my-4 rounded shadow">
 							<div class="w-100">
 								<img class="img-fluid rounded-top w-100" style="max-height:300px;object-fit:cover;" src="${resto.imageFilePath}"/>
@@ -75,10 +75,10 @@
 			<div class="mt-3 mb-3">
 				<div id="category-nav">
 					{% for c in categories %}
-						<div class="text-center">
+						<a href="/browse/{{c.id}}"><div class="text-center">
 							<img src="{{c.imageFilePath}}"/>
 							<div>{{c.name}}</div>
-						</div>
+						</div></a>
 					{% endfor %}
 				</div>
 				<div class="d-flex">
@@ -92,7 +92,7 @@
 			</div>
 			<div id="restaurant-list">
 				{% for r in restaurants %}
-					<a href="/restaurant/{{r.id}}">
+					<a href="/restaurants/{{r.id}}">
 						<section class="my-4 rounded shadow">
 							<div class="w-100">
 								<img class="img-fluid rounded-top w-100" style="max-height:300px;object-fit:cover;" src="{{r.imageFilePath}}"/>

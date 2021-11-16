@@ -9,7 +9,7 @@ use Psr\Http\Message\ResponseInterface;
 
 //********************************** Manage Restaurant *************************************************/
 
-$app->get('/restaurant/{id:[0-9]+}', function ($request, $response, $args) {
+$app->get('/restaurants/{id:[0-9]+}', function ($request, $response, $args) {
     $id = $args['id'];
     $restaurant = DB::queryFirstRow("SELECT * FROM restaurant as r WHERE r.id=%d", $id);
     if (!$restaurant) {
@@ -156,7 +156,7 @@ $app->post('/add-restaurant', function ($request, $response, $args) use ($log) {
 });
 
 //  ************************ Delete restaurant**********************
-$app->get('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $args) {
+$app->get('/restaurants/delete/{id:[0-9]+}', function ($request, $response, $args) {
     $restaurant = DB::queryFirstRow("SELECT * FROM restaurant WHERE id=%d", $args['id']);
     if (!$restaurant) {
         $response = $response->withStatus(404);
@@ -165,7 +165,7 @@ $app->get('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $args
     return $this->view->render($response, 'businessOwner/restaurant-delete.html.twig', ['v' => $restaurant]);
 });
 
-$app->post('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $args) {
+$app->post('/restaurants/delete/{id:[0-9]+}', function ($request, $response, $args) {
     DB::delete('restaurant', "id=%d", $args['id']);
     setFlashMessage("The restaurant has been deleted");
     return $response->withRedirect("/manage-restaurants");
@@ -173,7 +173,7 @@ $app->post('/restaurant-delete/{id:[0-9]+}', function ($request, $response, $arg
 
 //********************************** Update restaurant details *************************************************/
 
-$app->get('/restaurant-update/{id:[0-9]+}', function ($request, $response, $args) {
+$app->get('/restaurants/update/{id:[0-9]+}', function ($request, $response, $args) {
     if (!isset($_SESSION['user']) || $_SESSION['user']['account_type'] != "business") { // refuse if user not logged in AS Business Owner
         $response = $response->withStatus(403);
         return $this->view->render($response, 'businessOwner/not-owner.html.twig');
@@ -187,7 +187,7 @@ $app->get('/restaurant-update/{id:[0-9]+}', function ($request, $response, $args
 });
 
 
-$app->post('/restaurant-update/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
+$app->post('/restaurants/update/{id:[0-9]+}', function ($request, $response, $args) use ($log) {
     $name = $request->getParam('name');
     $description = $request->getParam('description');
     $image = $request->getParam('image');

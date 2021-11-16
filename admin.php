@@ -30,12 +30,12 @@ $app->group('/admin', function () use ($app, $log) {
         return $this->view->render($response, 'admin/index.html.twig');
     });
 
-    $app->get('/user/list', function ($request, $response, $args) use ($log) {
+    $app->get('/users/list', function ($request, $response, $args) use ($log) {
         $list = DB::query("SELECT * FROM `user`");
         return $this->view->render($response, 'admin/user-list.html.twig', ['list' => $list]);
     });
 
-    $app->get('/user/edit/{id:[0-9]+}', function ($request, $response, $args) {
+    $app->get('/users/edit/{id:[0-9]+}', function ($request, $response, $args) {
         $user = DB::queryFirstRow("SELECT * FROM user WHERE id=%d", $args['id']);
         if (!$user) {
             $response = $response->withStatus(404);
@@ -47,7 +47,7 @@ $app->group('/admin', function () use ($app, $log) {
         return $this->view->render($response, 'admin/user-edit.html.twig', ['v' => $user, 'a' => $address]);
     });
 
-    $app->post('/user/{op:edit|add}/{id:[0-9]+}', function ($request, $response, $args) {
+    $app->post('/users/{op:edit|add}/{id:[0-9]+}', function ($request, $response, $args) {
         if (($args['op'] == 'add' && !empty($args['id'])) || ($args['op'] == 'edit' && empty($args['id']))) {
             $response = $response->withStatus(404);
             return $this->view->render($response, 'admin/error-not-found.html.twig');
@@ -75,7 +75,7 @@ $app->group('/admin', function () use ($app, $log) {
     });
 
     //  ************************ Delete user**********************
-    $app->get('/user/delete/{id:[0-9]+}', function ($request, $response, $args) {
+    $app->get('/users/delete/{id:[0-9]+}', function ($request, $response, $args) {
         $user = DB::queryFirstRow("SELECT * FROM user WHERE id=%d", $args['id']);
         if (!$user) {
             $response = $response->withStatus(404);
@@ -84,7 +84,7 @@ $app->group('/admin', function () use ($app, $log) {
         return $this->view->render($response, 'admin/user-delete.html.twig', ['v' => $user]);
     });
 
-    $app->post('/user/delete/{id:[0-9]+}', function ($request, $response, $args) {
+    $app->post('/users/delete/{id:[0-9]+}', function ($request, $response, $args) {
         DB::delete('user', "id=%d", $args['id']);
         return $this->view->render($response, 'admin/user-delete-success.html.twig');
     });

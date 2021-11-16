@@ -1,3 +1,4 @@
+
 <?php
 
 require_once 'vendor/autoload.php';
@@ -25,7 +26,7 @@ function verifyUsername($name)
 // different regular expression for street: [0-9A-Z]* [0-9A-Z]*$     ^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$
 function verifyAptNo($apt)
 {
-    if($apt==""){
+    if ($apt == "") {
         return TRUE;
     }
     if (!is_numeric($apt) || $apt < 0 || $apt > 99999999999) {
@@ -48,7 +49,7 @@ function verifyCity($city)
     if (preg_match('/^[a-zA-Z]+(?:[\s-][a-zA-Z]+)*$/', $city) != 1) { // no match
         return "City name is not valid! please try again";
     }
-    if (strlen($city)<2 || strlen($city)>30) { // no match
+    if (strlen($city) < 2 || strlen($city) > 30) { // no match
         return "City name should be between 2-30 character.";
     }
 
@@ -88,89 +89,93 @@ function verifyProvince($province)
     return TRUE;
 }
 
-    function verifyDescription($description)
-    {
-        if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!\&?%#*,-<>]{4,1000}$/', $description) != 1) { // no match
-            return "Description must be 4-1000 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? & % * ,<>).";
-        }
-        return TRUE;
+function verifyDescription($description)
+{
+    if (preg_match('/^[a-zA-Z0-9\/\ \._\'"!\&?%#*,-<>]{4,1000}$/', $description) != 1) { // no match
+        return "Description must be 4-1000 characters long and consist of letters and digits and special characters (. _ ' \" ! - ? & % * ,<>).";
     }
+    return TRUE;
+}
 
-    function verifyPricing($pricing)
-    {
-        $expectedFields = ['$', '$$', '$$$', '$$$$'];
-        if (!in_array($pricing, $expectedFields)) {
-            return "Invalid Pricing Submitted. Must be '$', '$$', '$$$', or '$$$$'";
-        }
-        return TRUE;
+function verifyPricing($pricing)
+{
+    $expectedFields = ['$', '$$', '$$$', '$$$$'];
+    if (!in_array($pricing, $expectedFields)) {
+        return "Invalid Pricing Submitted. Must be '$', '$$', '$$$', or '$$$$'";
     }
-    function verifyPrice($price)
-    {
-        if (!is_numeric($price) && ($price <= 0 || $price > 999.99)) {
-            return "Price must be a number greater than 0 and less than 1000";
-        }
-        return TRUE;
+    return TRUE;
+}
+function verifyPrice($price)
+{
+    if (!is_numeric($price) && ($price <= 0 || $price > 999.99)) {
+        return "Price must be a number greater than 0 and less than 1000";
     }
+    return TRUE;
+}
 
-    
-    function verifyCategories($selectedCategories, $expectedCategories)
-    {
-        if (empty($selectedCategories)) {
-            return "You didnt select any categories.";
-        }
-        if (!array_intersect($selectedCategories, $expectedCategories)) {
-            return "Invalid Categories Submitted. Must be one of the input options.";
-        }
-        return TRUE;
-    }
 
-    function verifyUploadedPhoto($photo, &$fileName)
-    {
+function verifyCategories(&$selectedCategories, $expectedCategories)
+{
+    if (empty($selectedCategories)) {
+        $selectedCategories = [];
+        return "You didnt select any categories.";
+    }
+    if (!array_intersect($selectedCategories, $expectedCategories)) {
+        return "Invalid Categories Submitted. Must be one of the input options.";
+    }
+    return TRUE;
+}
 
-        if ($photo->getError() !== UPLOAD_ERR_OK) {
-            return "Error uploading photo " . $photo->getError();
-        }
-        if ($photo->getSize() > 1024 * 1024) { // 1MB max
-            return "File too big. 1MB max is allowed";
-        }
-        $info = getimagesize($photo->file);
-        if (!$info) {
-            return "File is not an image";
-        }
-        if ($info[0] < 200 || $info[0] > 1000 || $info[1] < 200 || $info[1] > 1000) {
-            return "Width and height must be within 200-1000 pixels range";
-        }
-        $ext = "";
-        switch ($info['mime']) {
-            case 'image/jpeg':
-                $ext = "jpg";
-                break;
-            case 'image/gif':
-                $ext = "gif";
-                break;
-            case 'image/png':
-                $ext = "png";
-                break;
-            default:
-                return "Only JPG, GIF and PNG file types are allowed";
-        }
-        $filenameWithoutExtension = pathinfo($photo->getClientFilename(), PATHINFO_FILENAME);
-        // Note: keeping the original extension is dangerious and would allow for code injection - very dangerous
-        $sanitizedFileName = mb_ereg_replace('([^A-Za-z0-9_-])', '_', $filenameWithoutExtension);
-        $fileName = 'uploads/' . $sanitizedFileName . "." . $ext;
-        return TRUE;
+function verifyUploadedPhoto($photo, &$fileName)
+{
+
+    if ($photo->getError() !== UPLOAD_ERR_OK) {
+        return "Error uploading photo " . $photo->getError();
     }
-    function calculateOrderAmount(array $items, $log): int {
-        // Replace this constant with a calculation of the order's amount
-        // Calculate the order total on the server to prevent
-        // people from directly manipulating the amount on the client
-        $total = 0;
-        
-        foreach ($items as $item) {
-            $price = DB::queryFirstField("SELECT price FROM cart_detail WHERE user_id=%i and food_id=%i",$_SESSION['user']['id'], $item['id']);
-            $total += $price;
-        }
-        $total = (($total + 10) * 1.15);
-        //stripe uses cents
-        return $total * 100;
+    if ($photo->getSize() > 1024 * 1024) { // 1MB max
+        return "File too big. 1MB max is allowed";
     }
+    $info = getimagesize($photo->file);
+    if (!$info) {
+        return "File is not an image";
+    }
+    if ($info[0] < 200 || $info[0] > 1000 || $info[1] < 200 || $info[1] > 1000) {
+        return "Width and height must be within 200-1000 pixels range";
+    }
+    $ext = "";
+    switch ($info['mime']) {
+        case 'image/jpeg':
+            $ext = "jpg";
+            break;
+        case 'image/gif':
+            $ext = "gif";
+            break;
+        case 'image/png':
+            $ext = "png";
+            break;
+        default:
+            return "Only JPG, GIF and PNG file types are allowed";
+    }
+    $filenameWithoutExtension = pathinfo($photo->getClientFilename(), PATHINFO_FILENAME);
+    // Note: keeping the original extension is dangerious and would allow for code injection - very dangerous
+    $sanitizedFileName = mb_ereg_replace('([^A-Za-z0-9_-])', '_', $filenameWithoutExtension);
+    $fileName = 'uploads/' . $sanitizedFileName . "." . $ext;
+    return TRUE;
+}
+
+//Stripe calculation
+function calculateOrderAmount(array $items, $log): int
+{
+    // Replace this constant with a calculation of the order's amount
+    // Calculate the order total on the server to prevent
+    // people from directly manipulating the amount on the client
+    $total = 0;
+
+    foreach ($items as $item) {
+        $price = DB::queryFirstField("SELECT price FROM cart_detail WHERE user_id=%i and food_id=%i", $_SESSION['user']['id'], $item['id']);
+        $total += $price;
+    }
+    $total = (($total + 10) * 1.15);
+    //stripe uses cents
+    return $total * 100;
+}

@@ -13,15 +13,9 @@ use Slim\App;
 
 $app->group('/api', function (App $app) use ($log) {
     // User
-    $app->put("/user", function (Request $request, Response $response, array $args) use ($log) {
+    $app->put("/users", function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        if (!$userId) {
-            // NOTE: This should really be 401 code but JS will not cooperate in such case
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed"));
-            return $response;
-        }
-        
+
         $json = $request->getBody();
         $userChanges = json_decode($json, TRUE);
         $expectedFields = ['name', 'email'];
@@ -74,12 +68,6 @@ $app->group('/api', function (App $app) use ($log) {
     // Address
     $app->get('/address', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        if (!$userId) {
-            // NOTE: This should really be 401 code but JS will not cooperate in such case
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed"));
-            return $response;
-        }
 
         $addressId = DB::queryFirstField("SELECT address_id FROM user WHERE id=%i", $userId);
         $address = DB::queryFirstRow("SELECT * FROM address WHERE id=%i", $addressId);
@@ -93,14 +81,9 @@ $app->group('/api', function (App $app) use ($log) {
         return $response;
     });
 
-    $app->put('/address/{id: [0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
+    $app->put('/addresses/{id: [0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        if (!$userId) {
-            // NOTE: This should really be 401 code but JS will not cooperate in such case
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed"));
-            return $response;
-        }
+
         $id = $args['id'];
         $json = $request->getBody();
         $address = json_decode($json, TRUE);
@@ -148,36 +131,9 @@ $app->group('/api', function (App $app) use ($log) {
         return $response->getBody()->write($json);
     });
 
-    //restaurant
-    $app->get('/restaurant/sort/{sort:[0-1]}', function (Request $request, Response $response, array $args) use ($log) {
-        $desc = $args['sort'];
-        $sortedRestaurants = [];
-        if (intval($desc) == 0) {
-            $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$','$$','$$$','$$$$')");
-        } else {
-            $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$$$$','$$$','$$','$')");
-        }
-        $categories = DB::query("SELECT restaurant_id, category_id, name FROM category as c JOIN restaurant_category as rc 
-        WHERE c.id=category_id");
-        
-        if (!$sortedRestaurants) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("404 - not found"));
-            return $response;
-        }
-        $json = json_encode(['restaurants' => $sortedRestaurants, 'categories' => $categories], JSON_PRETTY_PRINT);
-        $response->getBody()->write($json);
-        return $response;
-    });
     //cart
     $app->get('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        if (!$userId) {
-            // NOTE: This should really be 401 code but JS will not cooperate in such case
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed"));
-            return $response;
-        }
 
         $foodList = DB::query("SELECT user_id,food_id,id, name, cd.price,quantity, description,imageFilePath FROM cart_detail as cd LEFT JOIN food as f ON cd.food_id = f.id WHERE cd.user_id = %i;", $userId);
         if (!$foodList) {
@@ -192,12 +148,7 @@ $app->group('/api', function (App $app) use ($log) {
 
     $app->post('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-        if (!$userId) {
-            // NOTE: This should really be 401 code but JS will not cooperate in such case
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
+
         $json = $request->getBody();
         $food = json_decode($json, TRUE);
 
@@ -228,12 +179,6 @@ $app->group('/api', function (App $app) use ($log) {
     $app->get('/cart/is-restaurant-same/{id:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
 
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
-
         $bool = true;
         $restaurantId = $args['id'];
         $cartItems = DB::query("SELECT * FROM cart_detail as cd JOIN food as f WHERE cd.food_id=f.id AND cd.user_id=%i", $userId);
@@ -260,12 +205,6 @@ $app->group('/api', function (App $app) use ($log) {
     $app->delete('/cart', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
 
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
-
         DB::delete('cart_detail', 'user_id=%i', $userId);
         $response = $response->withStatus(200);
         $response->getBody()->write(json_encode(true));
@@ -275,12 +214,6 @@ $app->group('/api', function (App $app) use ($log) {
     $app->delete('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
         $foodId = $args['foodId'];
-
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
 
         DB::delete('cart_detail', 'user_id=%i and food_id=%i', $userId, $foodId);
         if (($counter = DB::affectedRows()) == false) {
@@ -296,12 +229,6 @@ $app->group('/api', function (App $app) use ($log) {
 
     $app->put('/cart/{foodId:[0-9]+}', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
 
         $foodId = $args['foodId'];
         $json = $request->getBody();
@@ -325,12 +252,6 @@ $app->group('/api', function (App $app) use ($log) {
     //stripe
     $app->post('/create-stripe', function (Request $request, Response $response, array $args) use ($log) {
         $userId = $_SESSION['user']['id'];
-
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
 
         $json = $request->getBody();
         $jsonObj = json_decode($json, TRUE);
@@ -362,11 +283,6 @@ $app->group('/api', function (App $app) use ($log) {
     $app->get('/orders', function (Request $request, Response $response, array $args) {
         $userId = $_SESSION['user']['id'];
 
-        if (!$userId) {
-            $response = $response->withStatus(403);
-            $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
-            return $response;
-        }
         $orderDetails = DB::query("SELECT order_id,food_id,quantity,od.price,f.name 'foodItem',f.imageFilePath as 'foodImage',restaurant_id, 
             r.name as 'restaurantName', r.imageFilePath as 'restaurantImage',date,order_status,total_price,customer_id FROM order_details as od 
             JOIN food as f JOIN user_order as uo JOIN restaurant r WHERE od.order_id=uo.id AND f.id=od.food_id AND restaurant_id=r.id AND customer_id=%i 
@@ -382,64 +298,96 @@ $app->group('/api', function (App $app) use ($log) {
         $json = json_encode(['orderDetails' => $orderDetails], JSON_PRETTY_PRINT); // true or false
         return $response->getBody()->write($json);
     });
+})->add(function ($request, $response, $next) { //middleware to authenticate if the user is logged in. Only added to the routes that need user id
+    if(!isset($_SESSION['user'])){
+        $response = $response->withStatus(403);
+        $response->getBody()->write(json_encode("403 - authentication failed", JSON_PRETTY_PRINT));
+        return $response;
+    }
+    $response = $next($request, $response);
 
-    $app->post('/order', function (Request $request, Response $response, array $args) use ($log) {
-        $endpoint_secret = 'whsec_CGRMXaTNaYE4QENPOaH3p5ND0N3hR3jg';
+    return $response;
+});
 
-        $payload = $request->getBody();
-        $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
-        $event = null;
-        
-        try {
-          $event = \Stripe\Webhook::constructEvent(
-            $payload, $sig_header, $endpoint_secret
-          );
-        } catch(\UnexpectedValueException $e) {
-          // Invalid payload
-          http_response_code(400);
-          exit();
-        } catch(\Stripe\Exception\SignatureVerificationException $e) {
-          // Invalid signature
-          http_response_code(400);
-          exit();
-        }
 
-        // Handle the event
-        switch ($event->type) {
-            case 'charge.succeeded':
-                // charge went through
-                $paymentIntent = $event->data->object;
-                // ... handle other event types
+//restaurant
+$app->get('/api/restaurants/sort/{sort:[0-1]}', function (Request $request, Response $response, array $args) use ($log) {
+    $desc = $args['sort'];
+    $sortedRestaurants = [];
+    if (intval($desc) == 0) {
+        $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$','$$','$$$','$$$$')");
+    } else {
+        $sortedRestaurants = DB::query("SELECT id, imageFilePath, name, pricing FROM restaurant ORDER BY FIELD(pricing, '$$$$','$$$','$$','$')");
+    }
+    $categories = DB::query("SELECT restaurant_id, category_id, name FROM category as c JOIN restaurant_category as rc 
+    WHERE c.id=category_id");
+    
+    if (!$sortedRestaurants) {
+        $response = $response->withStatus(403);
+        $response->getBody()->write(json_encode("404 - not found"));
+        return $response;
+    }
+    $json = json_encode(['restaurants' => $sortedRestaurants, 'categories' => $categories], JSON_PRETTY_PRINT);
+    $response->getBody()->write($json);
+    return $response;
+});
 
-                $amount = $paymentIntent['amount'] / 100;
+$app->post('/api/order', function (Request $request, Response $response, array $args) use ($log) {
+    $endpoint_secret = 'whsec_CGRMXaTNaYE4QENPOaH3p5ND0N3hR3jg';
 
-                $cart = DB::query("SELECT * FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
-                if (!$cart) {
-                    $response = $response->withStatus(404);
-                    $response->getBody()->write(json_encode("404 - cart not found", JSON_PRETTY_PRINT));
-                    return $response;
-                }
+    $payload = $request->getBody();
+    $sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+    $event = null;
+    
+    try {
+      $event = \Stripe\Webhook::constructEvent(
+        $payload, $sig_header, $endpoint_secret
+      );
+    } catch(\UnexpectedValueException $e) {
+      // Invalid payload
+      http_response_code(400);
+      exit();
+    } catch(\Stripe\Exception\SignatureVerificationException $e) {
+      // Invalid signature
+      http_response_code(400);
+      exit();
+    }
 
-                DB::insert("user_order", [
-                    'date' => date_create('now')->format('Y-m-d'),
-                    'order_status' => 'delivered',
-                    'total_price' => $amount,
-                    'customer_id' => $paymentIntent['metadata']['user_id']
-                ]);
-                $orderId = DB::insertId();
-                
-                foreach ($cart as $cd) {
-                    DB::insert("order_details", [
-                        'order_id' => $orderId, 'food_id' => $cd['food_id'], 'quantity' => $cd['quantity'], 'price' => $cd['price']
-                    ]);
-                }
-                DB::query("DELETE FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
-                $response = $response->withStatus(201);
-                $response->getBody()->write(json_encode($orderId));
+    // Handle the event
+    switch ($event->type) {
+        case 'charge.succeeded':
+            // charge went through
+            $paymentIntent = $event->data->object;
+            // ... handle other event types
+
+            $amount = $paymentIntent['amount'] / 100;
+
+            $cart = DB::query("SELECT * FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
+            if (!$cart) {
+                $response = $response->withStatus(404);
+                $response->getBody()->write(json_encode("404 - cart not found", JSON_PRETTY_PRINT));
                 return $response;
-            default:
-                $log->debug('Received unknown event type ' . $event->type);
-        }
-        http_response_code(200);
-    });
+            }
+
+            DB::insert("user_order", [
+                'date' => date_create('now')->format('Y-m-d'),
+                'order_status' => 'delivered',
+                'total_price' => $amount,
+                'customer_id' => $paymentIntent['metadata']['user_id']
+            ]);
+            $orderId = DB::insertId();
+            
+            foreach ($cart as $cd) {
+                DB::insert("order_details", [
+                    'order_id' => $orderId, 'food_id' => $cd['food_id'], 'quantity' => $cd['quantity'], 'price' => $cd['price']
+                ]);
+            }
+            DB::query("DELETE FROM cart_detail WHERE user_id=%i", $paymentIntent['metadata']['user_id']);
+            $response = $response->withStatus(201);
+            $response->getBody()->write(json_encode($orderId));
+            return $response;
+        default:
+            $log->debug('Received unknown event type ' . $event->type);
+    }
+    http_response_code(200);
 });

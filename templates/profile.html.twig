@@ -18,7 +18,7 @@
             let newName = $('input[name="name"]').val();
             let newEmail = $('input[name="email"]').val();
             $.ajax({
-                url: '/api/user',
+                url: '/api/users',
                 type: 'PUT',
                 dataType: 'json',
                 data: JSON.stringify({
@@ -52,7 +52,7 @@
                 postal_code
             }
             $.ajax({
-                url: '/api/address/' + addressId,
+                url: '/api/addresses/' + addressId,
                 type: 'PUT',
                 data: JSON.stringify(addressObj),
                 dataType: 'json'
