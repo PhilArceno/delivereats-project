@@ -1,10 +1,15 @@
-{% extends "admin/admin-master.html.twig" %}
+{% extends "master.html.twig" %}
 {% block title %}Operation successful - food item deleted
 {% endblock %}
 {%
 block content %}
-	<div>
+	<div class="container mt-3">
+		<a href="/admin" class="btn btn-success">
+			Back to main page</a>
+	</div>
+	<div class="container mt-3">
 		<h1>Operation successful - food item  deleted</h1>
-		<p><a href="/admin/food-items">Click to continue</a>.</p>
+		<p>
+			<a href="/admin/food-items">Click to continue</a>.</p>
 	</div>
 {% endblock %}
